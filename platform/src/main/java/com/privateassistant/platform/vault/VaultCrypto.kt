@@ -22,6 +22,7 @@ import java.io.DataOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FilterOutputStream
+import java.io.IOException
 import java.io.OutputStream
 import java.security.KeyStore
 import java.security.SecureRandom
@@ -204,8 +205,12 @@ internal object DurableFiles {
     }
 
     fun syncDirectory(directory: File) {
-        val descriptor = Os.open(directory.absolutePath, OsConstants.O_RDONLY or OsConstants.O_DIRECTORY, 0)
+        val descriptor = Os.open(directory.absolutePath, OsConstants.O_RDONLY or OsConstants.O_CLOEXEC, 0)
         try {
+            // O_DIRECTORY is not part of Android's public SDK; check the opened inode instead.
+            if (!OsConstants.S_ISDIR(Os.fstat(descriptor).st_mode)) {
+                throw IOException("Directory sync requires a directory")
+            }
             Os.fsync(descriptor)
         } finally {
             Os.close(descriptor)

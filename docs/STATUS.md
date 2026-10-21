@@ -20,7 +20,12 @@ Python tests, source policy checks and `:core:test`, then failed in
 Both flavor KSP tasks shared one schema export directory. The fix uses the
 official Room 2.7.2 Gradle plugin with per-task schema outputs; runtime/compiler
 are pinned to the same version. It also includes Room's empty-schema-directory
-configuration fix. The next CI run must validate the change; no APK was uploaded.
+configuration fix. The [second run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641140014)
+passed both KSP tasks and schema consolidation, then found `O_DIRECTORY` is not
+in Android's public SDK. Directory sync now opens with public flags, validates
+the opened inode using `fstat`/`S_ISDIR`, and retains `fsync`/guaranteed close.
+Two synthetic Android durability probes are authored but device-unrun.
+The next CI run must validate compilation; no APK was uploaded.
 Do not request installation again or overwrite work added after this inspection.
 
 Locally, JDK 21 is available but the pinned Gradle distribution/wrapper and
@@ -115,7 +120,7 @@ access; retain sources and use synthetic files until device/recovery gates close
 
 ## Next concrete action
 
-1. Publish the supported Room schema export fix and
+1. Publish the public-API directory sync correction and
    inspect the next Host checks run in `nikslogy/private-doc-ai`. Source
    publishing is complete and GitHub access is already authorized;
    do not repeat the installation blocker.
