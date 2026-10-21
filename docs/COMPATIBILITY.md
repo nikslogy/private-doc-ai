@@ -32,7 +32,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `io.legere:pdfiumandroid:1.0.35` | Memory PDF parsing/rendering | Tagged Kotlin APIs inspected; AAR/ABI/16 KiB checks and phone run pending |
 | `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | Explicit M0 CPU model load probe | Tagged APIs inspected; downloaded AAR metadata, merged minSdk, bytecode/ABIs and actual model load pending |
 | `com.google.crypto.tink:tink-android:1.17.0` | Object Streaming AEAD and key envelopes | Official release exists; actual Android primitive probes remain device checks |
-| `androidx.room:room-runtime`, `room-ktx`, `room-compiler:2.7.1` | Encrypted metadata schema | Official release exists; requires Kotlin 2.0+; KSP2 selected |
+| `androidx.room:room-runtime`, `room-ktx`, `room-compiler` and `androidx.room` plugin `2.7.2` | Encrypted metadata schema | Official release; Kotlin 2.0+/KSP2; plugin isolates per-variant schema outputs and fixes empty schema directory configuration |
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/wrong-key/native checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |

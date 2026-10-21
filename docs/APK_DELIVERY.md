@@ -49,8 +49,10 @@ The upload action is pinned to
 [`actions/upload-artifact` v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2),
 commit [`cf430e030ddbb5b0abf93d22962f4752f3646cd9`](https://github.com/actions/upload-artifact/commit/cf430e030ddbb5b0abf93d22962f4752f3646cd9).
 Its official release-to-commit link and Node 24 action metadata were inspected
-on 19 October 2026. No external repository was pushed or workflow run from
-this workspace as part of adding this workflow.
+on 19 October 2026. On 21 October, the user-authorized source was published to
+[`nikslogy/private-doc-ai`](https://github.com/nikslogy/private-doc-ai), triggering
+the first [Host checks run](https://github.com/nikslogy/private-doc-ai/actions/runs/39640417464).
+See STATUS for its actual result; a running workflow is not an APK delivery.
 
 ## Before installing
 

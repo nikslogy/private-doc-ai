@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 android {
@@ -29,7 +30,8 @@ android {
     )
 }
 
-ksp { arg("room.schemaLocation", "$projectDir/schemas") }
+// The Room plugin isolates KSP output per variant, then verifies/copies equal schemas.
+room { schemaDirectory("$projectDir/schemas") }
 
 dependencies {
     implementation(project(":core"))

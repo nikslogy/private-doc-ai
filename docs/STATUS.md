@@ -10,8 +10,17 @@ The earlier implementation/evidence checkpoint is preserved in
 The user supplied `https://github.com/nikslogy/private-doc-ai` for the APK build.
 GitHub integration now reads the repository successfully and reports push/admin
 permissions. The contents API confirmed the repository is empty on 21 October.
-The prepared source/workflow is being published through the authorized GitHub
-connection; CI results and APK checksums will be recorded after the build.
+All 127 source files were published to `main` in commit
+`83667e96fcfac2c89aeb111e934ccee1461036a1`. The recursive Git tree matched
+every local blob hash and file mode, including executable scripts. The first
+[Host checks run](https://github.com/nikslogy/private-doc-ai/actions/runs/39640417464)
+started automatically and completed pinned Android/Gradle setup. It passed 57
+Python tests, source policy checks and `:core:test`, then failed in
+`:platform:kspConnectedDebugKotlin` with an empty-JSON schema decoding error.
+Both flavor KSP tasks shared one schema export directory. The fix uses the
+official Room 2.7.2 Gradle plugin with per-task schema outputs; runtime/compiler
+are pinned to the same version. It also includes Room's empty-schema-directory
+configuration fix. The next CI run must validate the change; no APK was uploaded.
 Do not request installation again or overwrite work added after this inspection.
 
 Locally, JDK 21 is available but the pinned Gradle distribution/wrapper and
@@ -28,6 +37,10 @@ required before any APK can be supplied. No credentials should be pasted into ch
 
 ## Changes made
 
+- Added the official Room Gradle plugin and pinned all Room components to 2.7.2
+  after the first real CI failure. Its separate KSP input/output paths prevent
+  concurrent variants from reading a partially written shared schema. Final
+  copy verifies equal schemas. Added Gradle stack traces for actionable failures.
 - Corrected nine invalid Tink keyset API calls to the actual pinned 1.17.0
   `readWithAssociatedData` / `writeWithAssociatedData` methods. Four production
   calls and five instrumentation calls changed. The purpose-bound AAD,
@@ -67,11 +80,13 @@ record is `artifacts/checkpoint-checks.json`.
 | Python compilation, Bash syntax, configuration/XML/resource checks | PASS |
 | Real APK staging attempt | EXIT 1: host prerequisites absent after 57 passing Python tests; no APK delivery published |
 
-**55 Kotlin domain tests remain authored and unrun.** Android dependency
+**`:core:test` completed successfully in CI.** Android dependency
 resolution, production dependency inventory, Kotlin/Room compilation, lint,
 APK assembly/signature/actual native checks, instrumentation and physical-device
-privacy/lifecycle/performance checks remain unrun. No actual API/model/phone
-result has been inferred from mocks or source review. No workflow was run by CI.
+privacy/lifecycle/performance checks remain pending. No actual API/model/phone
+result has been inferred from mocks or source review. The first CI run failed
+at Room code generation. App and platform have no JVM test sources;
+successful `test*UnitTest` task invocation alone would not establish coverage.
 
 ## Product and milestone state
 
@@ -100,9 +115,10 @@ access; retain sources and use synthetic files until device/recovery gates close
 
 ## Next concrete action
 
-1. Publish the prepared source/workflow to the verified empty repository
-   `nikslogy/private-doc-ai`, then inspect the automatically triggered CI run.
-   GitHub access is already authorized; do not repeat the installation blocker.
+1. Publish the supported Room schema export fix and
+   inspect the next Host checks run in `nikslogy/private-doc-ai`. Source
+   publishing is complete and GitHub access is already authorized;
+   do not repeat the installation blocker.
 2. Resolve actual dependency/compiler/lint/native/signature failures without
    suppressing gates. Run `python3 scripts/stage-apks.py` and provide the real
    APK files/checksums once it succeeds. Never rename a source archive to APK.

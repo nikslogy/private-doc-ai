@@ -10,7 +10,7 @@ python3 scripts/test-apk-delivery.py
 python3 scripts/security-check.py
 scripts/bootstrap-android.sh --check-only
 [[ -x ./gradlew ]] || { printf 'Gradle wrapper is missing. Restore the verified wrapper files; do not fetch an unverified JAR.\n' >&2; exit 1; }
-./gradlew --no-daemon --console=plain \
+./gradlew --no-daemon --console=plain --stacktrace \
   :core:test \
   :platform:testOfflineDebugUnitTest :platform:testConnectedDebugUnitTest \
   :platform:lintOfflineDebug :platform:lintConnectedDebug \
