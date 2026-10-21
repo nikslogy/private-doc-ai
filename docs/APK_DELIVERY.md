@@ -1,9 +1,15 @@
 # Development APK delivery
 
-Both offline and connected APKs can be supplied as downloadable development
-builds once the real Android build and all host gates pass. Source ZIPs are
-separate artifacts. No APK is represented as ready until its checks succeed.
-See [STATUS.md](STATUS.md) for actual build and device results.
+Both offline and connected development APKs passed the real Android build and
+host gates on 21 October 2026.
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323)
+and extract private-document-assistant-offline-debug.apk for the offline app.
+GitHub sign-in may be required. This 242,842,436-byte ZIP expires 28 October 2026.
+Its SHA-256 is e95b71fc4686fff95c1629cc661bd9a22dcbdcb0a9523cbc8a01c5a323be58a6.
+Built source: 82758e97a250d8dfca884a429146e4cfd416cdc2.
+See [STATUS.md](STATUS.md) for individual APK hashes and the device checks still
+pending. These are debug test builds, with vault/search available and OCR/AI
+answers unavailable.
 
 ## Build and stage
 

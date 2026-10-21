@@ -1,135 +1,125 @@
 # Development status
 
-Checkpoint 4: 21 October 2026 — authorized GitHub publishing and APK build.
-**No APK has been produced. Source is still uncompiled and device-unverified.**
-The earlier implementation/evidence checkpoint is preserved in
+Checkpoint 5: 21 October 2026 — first successful Android build and APK delivery.
+**Both host-verified debug APKs are available. Device behavior remains unverified.**
+The earlier implementation checkpoint is preserved in
 [checkpoints/2026-10-18.md](checkpoints/2026-10-18.md).
 
-## Current blocker and repository
+## Download and build identity
 
-The user supplied `https://github.com/nikslogy/private-doc-ai` for the APK build.
-GitHub integration now reads the repository successfully and reports push/admin
-permissions. The contents API confirmed the repository is empty on 21 October.
-All 127 source files were published to `main` in commit
-`83667e96fcfac2c89aeb111e934ccee1461036a1`. The recursive Git tree matched
-every local blob hash and file mode, including executable scripts. The first
-[Host checks run](https://github.com/nikslogy/private-doc-ai/actions/runs/39640417464)
-started automatically and completed pinned Android/Gradle setup. It passed 57
-Python tests, source policy checks and `:core:test`, then failed in
-`:platform:kspConnectedDebugKotlin` with an empty-JSON schema decoding error.
-Both flavor KSP tasks shared one schema export directory. The fix uses the
-official Room 2.7.2 Gradle plugin with per-task schema outputs; runtime/compiler
-are pinned to the same version. It also includes Room's empty-schema-directory
-configuration fix. The [second run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641140014)
-passed both KSP tasks and schema consolidation, then found `O_DIRECTORY` is not
-in Android's public SDK. Directory sync now opens with public flags, validates
-the opened inode using `fstat`/`S_ISDIR`, and retains `fsync`/guaranteed close.
-Two synthetic Android durability probes are authored but device-unrun.
-The next CI run must validate compilation; no APK was uploaded.
-Do not request installation again or overwrite work added after this inspection.
+[Download both APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323).
+Extract the ZIP and install private-document-assistant-offline-debug.apk for
+the offline development app. Android 12/API31 or newer is required.
 
-Locally, JDK 21 is available but the pinned Gradle distribution/wrapper and
-Android SDK are absent. Default downloads fail at `proxy:8080`. A narrowly
-scoped network-enabled wrapper download was interrupted while awaiting access;
-no file was downloaded and no permission approval is assumed. There is no
-pending download to wait on. Do not repeat the long permission wait or bypass
-the configured proxy. A working authorized build runner is required for an APK.
+- Repository: [nikslogy/private-doc-ai](https://github.com/nikslogy/private-doc-ai).
+- Built source commit: 82758e97a250d8dfca884a429146e4cfd416cdc2.
+- [Successful Host checks run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548),
+  attempt 1, job 119366471210; completed 21 October 2026 at 17:17 UTC.
+- Artifact 12364584323: private-document-assistant-debug-apks-39641658548-1.
+- ZIP: 242,842,436 bytes; expires 28 October 2026 at 17:17 UTC.
+- ZIP SHA-256: e95b71fc4686fff95c1629cc661bd9a22dcbdcb0a9523cbc8a01c5a323be58a6.
+- APK v2 signatures verified; debug certificate SHA-256:
+  4d211d949b97ce0ca966a00810966800610c6e7abfd88ff22e3fa4bb943c3e58.
 
-The remote-build route is prepared in `.github/workflows/host-checks.yml`:
-build and stage both development APKs, then upload their verified delivery for
-seven days. It will trigger on the source push. A successful build is still
-required before any APK can be supplied. No credentials should be pasted into chat.
+| APK | Application ID | Bytes | SHA-256 |
+| --- | --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | com.privateassistant.app | 121343048 | b9237d5a35fca31b8e1f2113a81c4c9dcc25620c9909fa43b5a67fa1d5716e28 |
+| private-document-assistant-connected-debug.apk | com.privateassistant.app.connected | 121343092 | 926566ed2ebed8501f30c3a431e4203eb43f9bd6f4be6e8832483c81379a8c7f |
 
-## Changes made
-
-- Added the official Room Gradle plugin and pinned all Room components to 2.7.2
-  after the first real CI failure. Its separate KSP input/output paths prevent
-  concurrent variants from reading a partially written shared schema. Final
-  copy verifies equal schemas. Added Gradle stack traces for actionable failures.
-- Corrected nine invalid Tink keyset API calls to the actual pinned 1.17.0
-  `readWithAssociatedData` / `writeWithAssociatedData` methods. Four production
-  calls and five instrumentation calls changed. The purpose-bound AAD,
-  intended envelope format and dependency versions are unchanged. Exact tagged
-  API source was inspected; this is not a successful compilation result.
-- Added shared Java proxy configuration for Gradle wrapper, installed Gradle
-  and SDK manager. Curl proxy variables alone do not configure Java networking.
-  Credential-free configured routes become validated JVM properties; existing
-  trust/header options stay in memory. Proxy credentials and unsupported route
-  shapes fail safely instead of being printed or silently ignored.
-- Default Gradle/Android user caches now use ignored writable `.tooling/`
-  directories. Bootstrap and wrapper consistently honor `JAVA_HOME`.
-- Added `scripts/stage-apks.py`. It always runs the full host gate and verifies
-  the exact copied APKs with manifest/native checks, official `apksigner` and
-  `zipalign`, expected IDs/versions/SDKs, compiled manifest/DEX presence and
-  SHA-256. Both APKs publish together only on success. No skip-gate option.
-- CI now runs staging with JDK 21 and uploads APKs/checksums/public reports only
-  after success, using a pinned official upload-artifact action. No signing keys,
-  models, SDKs, vaults or customer documents enter that delivery.
-- Added nine synthetic APK delivery tests and ten Java environment tests to
-  the host check. Test stubs cannot be mistaken for an actual Android build.
+Both have version code 1, minimum SDK 31 and target SDK 35. Version names are
+0.1.0-dev and 0.1.0-dev-connected. SHA256SUMS and APK_MANIFEST.json inside the
+download identify the exact APK bytes. The GitHub artifact is the delivery;
+SDKs, signing keys, models and private documents were not committed.
+See [APK_DELIVERY.md](APK_DELIVERY.md) for installation and signing limitations.
 
 ## Checks actually executed
 
-The real command `python3 scripts/stage-apks.py` was run in this workspace.
-Its output is retained in `artifacts/apk-build-attempt.txt`; the structured
-record is `artifacts/checkpoint-checks.json`.
+GitHub's Ubuntu 24.04 runner successfully executed pinned bootstrap with JDK 21,
+then python3 scripts/stage-apks.py, which invokes the full scripts/check-host.sh.
+Gradle reported BUILD SUCCESSFUL in 4m 55s; 197 tasks, 171 executed and 26 cached.
+Staging verified the copied APK bytes again before atomic publication and upload.
 
 | Check | Actual result |
 | --- | --- |
-| Fixture integrity | PASS: 6 Python tests |
-| Native ELF/ZIP parser | PASS: 22 synthetic Python tests |
-| Validation gates | PASS: 10 mocked-tool Python tests |
-| Java proxy/tool-home setup | PASS: 10 synthetic/fake-tool Python tests; no downloads |
-| APK delivery gates | PASS: 9 mocked-SDK/synthetic-ZIP Python tests; no real APK |
-| Source policy checks | PASS |
-| Python compilation, Bash syntax, configuration/XML/resource checks | PASS |
-| Real APK staging attempt | EXIT 1: host prerequisites absent after 57 passing Python tests; no APK delivery published |
+| Python fixture/native/validation/Java-environment/APK-delivery suites | PASS: 6 + 22 + 10 + 10 + 9 = 57 tests |
+| Source privacy/pinning policy | PASS |
+| :core:test | PASS; 55 authored test cases |
+| Platform/app offline and connected JVM unit-test tasks | NO-SOURCE; no Android-module JVM coverage claimed |
+| Platform Kotlin compilation and Room schema generation, both variants | PASS |
+| App Kotlin/Compose compilation, both variants | PASS |
+| Platform/app lint, both variants | PASS; warnings/deprecations are not a zero-warning claim |
+| :app:verifyProductionDependencies | PASS; production inventory generated and ML Kit excluded |
+| :app:assembleOfflineDebug / :app:assembleConnectedDebug | PASS |
+| Exact original and staged merged-manifest/native checks | PASS; offline has no INTERNET permission |
+| Actual native inventory | 18 libraries per APK: 5 arm64-v8a, 5 x86_64, 4 armeabi-v7a, 4 x86 |
+| All packaged 64-bit PT_LOAD and stored ZIP alignment | PASS: at least 16 KiB; 32-bit 16 KiB behavior remains unverified |
+| Official apksigner verify and zipalign -c -P 16 -v 4, both staged APKs | PASS |
+| Artifact upload | PASS; both APKs, SHA256SUMS, manifest and reports available |
+| Instrumentation, installation, physical-device/privacy/model checks | UNRUN; no provisioned explicit target |
 
-**`:core:test` completed successfully in CI.** Android dependency
-resolution, production dependency inventory, Kotlin/Room compilation, lint,
-APK assembly/signature/actual native checks, instrumentation and physical-device
-privacy/lifecycle/performance checks remain pending. No actual API/model/phone
-result has been inferred from mocks or source review. The first CI run failed
-at Room code generation. App and platform have no JVM test sources;
-successful `test*UnitTest` task invocation alone would not establish coverage.
+Full host/package/signature/alignment/dependency reports accompany the APKs.
+Static native alignment does not establish successful loading on a 16 KiB phone.
+No model, OCR quality, traffic, runtime leakage or recovery result is inferred
+from compilation, source review or mocked pipeline tests.
+
+## Build corrections and earlier attempts
+
+The user authorized this repository for the APK build. The initial empty repo
+was populated with 127 source files, and every remote blob hash/file mode was
+compared with its local source before updating main. Scripts retained executable
+modes. GitHub access is working; do not repeat the earlier installation blocker.
+
+1. [First CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39640417464),
+   source 83667e96fcfac2c89aeb111e934ccee1461036a1: setup, Python/source checks
+   and core tests passed; Room KSP failed while both variants shared a schema
+   output. No APK delivery.
+2. [Second CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641140014),
+   source 8173ded425dbb481f8bdc97d7391f8dab2229a52: Room generation passed after
+   pinning the official Room plugin/runtime/compiler to 2.7.2 and using its
+   separate per-task output directories with checked schema consolidation.
+   Compilation then found O_DIRECTORY is absent from Android's public SDK.
+   No APK delivery.
+3. Successful run above: directory sync uses public O_RDONLY/O_CLOEXEC,
+   validates the opened inode with fstat/S_ISDIR, and retains fsync and guaranteed
+   descriptor close. Two synthetic Android durability probes are authored;
+   their device execution remains pending.
+
+Earlier fixes corrected nine Tink calls to the pinned associated-data APIs.
+Bootstrap/wrapper use a shared credential-free Java proxy setup and ignored
+writable tool homes. Staging always runs all host checks and publishes both APKs
+together only after exact-byte manifest/native/package/signature/alignment checks.
+No privacy, lint or native gate was disabled to obtain this build.
+
+Locally, SDK/Gradle downloads remain unavailable through the workspace proxy;
+the successful build used the authorized GitHub runner. Do not repeat earlier
+long network permission waits. No local Android build or device pass is claimed.
 
 ## Product and milestone state
 
-M0/M1 remain open. Implemented source includes the encrypted immutable-original
-vault, system unlock, local native PDF/text evidence and literal content search,
-page-text viewer, explicit export/delete, lock/cancellation boundaries and
-schema-1→2 migration. These behaviors still require a successful build and
-device evidence. The prior checkpoint contains full M0–M11 status.
+Implemented and now host-compiled: encrypted immutable-original vault,
+system unlock, native PDF/text evidence, encrypted literal search, page-text
+viewer, explicit export/delete, lock/cancellation boundaries and schema 1→2
+migration. Runtime correctness still needs device evidence.
 
-No product feature was added in this build-focused checkpoint. Production OCR,
-AI questions/summaries, derivative tools, portable backup and recovery remain
-unavailable. ML Kit stays instrumentation-only under the no-telemetry rule.
-Do not weaken privacy/native/lint checks merely to produce an APK.
+Production OCR, AI questions/summaries, derivative tools, portable backup and
+recovery remain unavailable. ML Kit remains synthetic instrumentation-only;
+the model catalogue is empty. No production fake or remote processing was added.
+M0/M1 remain open until their real native/crypto/device gates close.
 
-## Expected APK delivery after a successful build
-
-`artifacts/apk/` will contain both actual debug APKs, `SHA256SUMS`,
-`APK_MANIFEST.json` and host/package/signature/alignment/dependency reports.
-Currently that directory does not exist, because staging did not succeed.
-See [APK_DELIVERY.md](APK_DELIVERY.md) for names, commands and limitations.
-
-These are development test builds, requiring Android 12/API31+. Host gates do
-not establish device readiness or an audited release. Debug signing identities
-can differ by builder. Uninstalling or losing the Keystore can lose vault
-access; retain sources and use synthetic files until device/recovery gates close.
+These are development test APKs. Use synthetic documents and retain originals.
+Uninstalling or losing the Keystore can permanently lose vault access because
+portable recovery is not implemented. Debug signing certificates may differ
+between builders. No app-store/release, model-quality or audited-security claim.
 
 ## Next concrete action
 
-1. Publish the public-API directory sync correction and
-   inspect the next Host checks run in `nikslogy/private-doc-ai`. Source
-   publishing is complete and GitHub access is already authorized;
-   do not repeat the installation blocker.
-2. Resolve actual dependency/compiler/lint/native/signature failures without
-   suppressing gates. Run `python3 scripts/stage-apks.py` and provide the real
-   APK files/checksums once it succeeds. Never rename a source archive to APK.
-3. Run the explicit-target device suites and collect non-skipped migration,
-   original-byte, authentication, lock, search/delete, parser, leakage and
-   native/16 KiB evidence. A device-less run is not a pass.
+Provision an explicitly authorized Android target and run
+ANDROID_SERIAL=<explicit-target> scripts/check-device.sh. Record non-skipped
+installation, authentication, durability, original-byte, migration, search/delete,
+lock/cancellation, parser and canary-leakage results. Include a real 16 KiB target
+and physical phone tiers before release; device absence is not a passing suite.
+Complete resolved native provenance/licence notices and traffic inspection.
+Select/verify an actual licensed model only when the earlier milestone gates
+permit it; never fabricate catalogue checksums or language-quality results.
 
-No app-store publication, deployment, Drive enablement or WhatsApp bot is
-authorized at this checkpoint.
+No app-store publication, Drive enablement or WhatsApp bot was authorized.

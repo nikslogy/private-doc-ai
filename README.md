@@ -1,10 +1,12 @@
 # Private Document Assistant
 
 Native Android development checkpoint for a local document vault and future
-on-device document assistant. **This is source code, not a verified release.**
-No APK has been built in this environment: Android SDK/Gradle downloads could
-not run through its network-access gate. See [STATUS](docs/STATUS.md) for exact
-checks, blockers and the next task.
+on-device document assistant. **Host-verified debug APKs are available;
+device verification remains pending.**
+[Download the APK bundle](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323)
+and extract private-document-assistant-offline-debug.apk for Android 12/API31+.
+The bundle expires 28 October 2026 and includes both variants, checksums and
+reports. See [STATUS](docs/STATUS.md) for the exact source commit and actual checks.
 
 The current app source connects system authentication to a Tink-encrypted object
 vault and Room/SQLCipher metadata. It provides document-picker import, native
@@ -62,8 +64,9 @@ python3 scripts/stage-apks.py
 It runs the full host gate, then verifies the exact staged APKs with the manifest/
 native checker, official `apksigner` and `zipalign`. Successful output includes
 both APKs, checksums and package/signing metadata in `artifacts/apk/`. The CI
-workflow uploads that directory after success for seven days. No CI build has
-been run or APK produced from this workspace yet. See [APK delivery](docs/APK_DELIVERY.md).
+workflow uploads that directory after success for seven days. The first
+[successful CI build](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548)
+completed on 21 October 2026. See [APK delivery](docs/APK_DELIVERY.md).
 
 ## Validation
 
@@ -78,9 +81,11 @@ python3 scripts/security-check.py
 ```
 
 `check-host.sh` additionally runs pure Kotlin tests, both platform/app flavours'
-unit tests and lint, production dependency inventory, both app assemblies,
+unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
+Core has 55 authored JVM tests; app/platform JVM unit-test tasks currently report
+NO-SOURCE. Device instrumentation is a separate suite and has not run.
 
 ```bash
 ANDROID_SERIAL=<explicit-device-serial> scripts/check-device.sh

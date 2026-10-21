@@ -1,8 +1,10 @@
 # Compatibility record
 
-As of 19 October 2026. This records pinned inputs and inspected source APIs.
-It is not evidence of a successful Android build, phone run, licence audit or
-security update review. See STATUS.md for commands actually executed.
+As of 21 October 2026. Both variants compiled, passed lint and produced verified
+debug APKs in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548)
+from source 82758e97a250d8dfca884a429146e4cfd416cdc2. This is host build/static
+evidence; phone loading, licence audit and security update review remain pending.
+See STATUS.md for commands actually executed.
 
 ## Toolchain
 
@@ -29,8 +31,8 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 
 | Dependency | Purpose | Verified source / remaining evidence |
 | --- | --- | --- |
-| `io.legere:pdfiumandroid:1.0.35` | Memory PDF parsing/rendering | Tagged Kotlin APIs inspected; AAR/ABI/16 KiB checks and phone run pending |
-| `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | Explicit M0 CPU model load probe | Tagged APIs inspected; downloaded AAR metadata, merged minSdk, bytecode/ABIs and actual model load pending |
+| `io.legere:pdfiumandroid:1.0.35` | Memory PDF parsing/rendering | Published artifact resolved/compiled; packaged ABI/64-bit static 16 KiB checks passed; phone parsing pending |
+| `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | Explicit M0 CPU model load probe | Published artifact resolved/compiled with min31 and bytecode17; arm64/x86_64 JNI static 16 KiB checks passed; actual model load pending |
 | `com.google.crypto.tink:tink-android:1.17.0` | Object Streaming AEAD and key envelopes | Official release exists; actual Android primitive probes remain device checks |
 | `androidx.room:room-runtime`, `room-ktx`, `room-compiler` and `androidx.room` plugin `2.7.2` | Encrypted metadata schema | Official release; Kotlin 2.0+/KSP2; plugin isolates per-variant schema outputs and fixes empty schema directory configuration |
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/wrong-key/native checks pending |
@@ -38,10 +40,10 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |
 
-Do not infer LiteRT-LM's published artifact metadata from its Git tag. The
-Google Maven AAR must be resolved and inspected before declaring the tuple
-compatible. Never add metadata-version bypasses or `tools:overrideLibrary` to
-make this table pass.
+Actual published artifacts resolved and compiled in CI without metadata-version
+bypasses or `tools:overrideLibrary`. Source tags alone are not published artifact
+metadata evidence. Full resolved AAR/POM provenance and native source/licence
+mapping remain required; host compilation does not establish runtime compatibility.
 
 Both app and platform now have offline/connected flavours; use flavour-qualified
 platform test/lint/instrumentation tasks. `:app:verifyProductionDependencies`
@@ -120,9 +122,10 @@ licensing does not grant model-weight rights. Complete immutable model identity,
 bytes/digest, licence terms/acceptance, tokenizer/template/runtime compatibility,
 language/task evaluation and resource profile before enabling a model.
 
-Before M0 closes: resolve dependencies; compile/lint both variants; inspect
-merged offline permissions and every native ELF/ZIP 16 KiB alignment; run the
-encrypted-memory parser, SQLCipher and crypto tests; inspect logs/disk. Before
+The host dependency/compile/lint/merged-manifest/native/signature/alignment gates
+passed for both APKs; 32-bit 16 KiB behavior remains unverified. Before M0 closes,
+run the encrypted-memory parser, SQLCipher and crypto tests on devices, inspect
+logs/disk, verify runtime 16 KiB behavior and finish provenance/notices. Before
 M4 closes: select an approved model and measure load, inference, native active
 cancel, lock release and memory on required phone tiers. No such results are
 claimed here.

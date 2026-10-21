@@ -1,10 +1,16 @@
 # Native dependency and 16 KiB evidence
 
-Checkpoint: 18 October 2026. **No actual APK or downloaded native library has
-been inspected in this workspace.** Dependency ABI coverage, 16 KiB support,
-load behavior and complete licence notices remain pending. The passing tests
-below use handcrafted standard ZIP/ELF fixtures; their hashes identify only
-synthetic test bytes.
+Checkpoint: 21 October 2026. **Both actual APKs passed static native and official
+ZIP alignment checks in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548).**
+Built source: 82758e97a250d8dfca884a429146e4cfd416cdc2. Exact original and staged
+APK hashes match; reports accompany the [download](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323).
+Each APK contains 18 native libraries: five arm64-v8a, five x86_64, four
+armeabi-v7a and four x86. All ten 64-bit libraries have PT_LOAD alignment of at
+least 16 KiB and stored payloads aligned to 16 KiB. Official zipalign passed both
+APKs. The 32-bit Pdfium libraries include 4 KiB ELF alignments and remain
+explicitly unverified for 16 KiB behavior. No runtime/device compatibility is
+claimed. Dependency source/licence mapping and complete notices remain pending.
+The synthetic tests below are separate parser verification.
 
 ## Runnable static gate
 
@@ -63,14 +69,12 @@ these are not Android installable APKs.
    dependency-tree evidence. Map every packaged `.so` hash to its source
    coordinate/version, transitive/native components and complete licence
    notice. Do not infer published metadata from a source tag.
-2. Run the manifest/native checker against the exact offline and connected
-   APKs. Retain the output and APK digests; compare the inventories and expected
-   ABI coverage. Resolve failures through compatible published dependencies or
-   a reviewed build of their actual sources, without weakening checks.
-3. Cross-check stored ZIP alignment with the official Android SDK command
-   `zipalign -c -P 16 -v 4 <apk>`. Record any distinction between APK and future
-   App Bundle delivery packaging. This Python checker is not a replacement
-   for SDK installation/signature verification.
+2. Retain the passing exact-APK manifest/native inventories and digests from
+   the CI delivery. Repeat on changed APKs; resolve failures through compatible
+   published dependencies or reviewed sources without weakening checks.
+3. Retain the passing official `zipalign -c -P 16 -v 4 <apk>` and apksigner
+   reports for both APKs. Future App Bundle delivery packaging needs separate
+   verification. Static/signature checks do not establish successful installation.
 4. Run the actual parser, SQLCipher, crypto and model probes on
    the selected supported targets, including a real 16 KiB page-size target.
    Record `adb -s <explicit-target> shell getconf PAGE_SIZE`, OS/API/ABI and

@@ -32,6 +32,10 @@ Current evidence/search checkpoint additions:
   Check all eight EXIF transforms and corrupt/truncated inputs on the device.
 - Run the native gate and the official `zipalign -c -P 16 -v 4 <apk>` against
   actual APKs, then load libraries on a real 16 KiB target. See
-  NATIVE_COMPATIBILITY.md for static-check limits. No real APK has been tested.
+  NATIVE_COMPATIBILITY.md for static-check limits. Both exact CI APKs passed
+  static/signature/alignment checks on 21 October 2026; no device run is claimed.
+- `DurableFilesInstrumentedTest` checks atomic replacement bytes and rejection
+  of a regular file by directory sync through Android's public descriptor APIs.
+  Both probes are authored and device-unrun.
 
 Keep unsupported features marked pending. Do not mark all steps passed because the instrumentation command exits zero; biometric prompts, traffic, leakage, recovery, representative OCR/model evaluation and thermal measurements need their own evidence. Never disable lint/native checks or substitute synthetic successful runtime responses to satisfy a device gate.
