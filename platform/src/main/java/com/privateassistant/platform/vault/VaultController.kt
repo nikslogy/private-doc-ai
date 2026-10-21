@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.Uri
 import android.system.Os
 import androidx.room.Room
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.crypto.tink.StreamingAead
 import com.privateassistant.core.DocumentMimeType
 import com.privateassistant.core.DocumentId
@@ -83,14 +82,7 @@ class VaultController(context: Context) {
                         .openHelperFactory(factory)
                         .addMigrations(VaultDatabase.MIGRATION_1_2)
                         .setJournalMode(androidx.room.RoomDatabase.JournalMode.TRUNCATE)
-                        .addCallback(object : androidx.room.RoomDatabase.Callback() {
-                            override fun onOpen(db: SupportSQLiteDatabase) {
-                                db.execSQL("PRAGMA cipher_memory_security = ON")
-                                db.execSQL("PRAGMA secure_delete = ON")
-                                db.execSQL("PRAGMA temp_store = MEMORY")
-                                db.execSQL("PRAGMA synchronous = FULL")
-                            }
-                        })
+                        .addCallback(VaultDatabaseSecurity)
                         .build()
                     openedDatabase = database
                     // Force SQLCipher to consume the passphrase before wiping our byte array.

@@ -37,6 +37,13 @@ The caller invokes unlock after successful system authentication. A missing Keys
 
 Unlock decrypts secrets, opens SQLCipher, applies memory security/secure deletion/in-memory temp storage/full synchronization pragmas, and validates the index before cleaning ciphertext orphans. `TRUNCATE` journal mode is selected. The controller publishes an unlocked session only after recovery succeeds. The passphrase buffer is cleared on both success and failure. Closing a failed open database is mandatory.
 
+The shared `VaultDatabaseSecurity` callback is also used by the actual SQLCipher
+and migration regression tests. `PRAGMA secure_delete = ON` returns a row in
+SQLCipher 4.9.0, so it must use a cursor query, consume the result and verify `1`.
+Using `execSQL` rejects that row and prevented the original debug APK's first
+database open. The other non-result setting statements retain `execSQL`.
+This API correction changes no key, authentication policy or envelope format.
+
 `lock()` clears the controller's active session, advances its epoch, sets the state to locked and closes SQLCipher. A concurrent unlock must match that epoch before publishing a session. Operations check the active session between buffers and before publication. Dropping Tink references is best effort memory hygiene. Locking the app does not revoke Android's remaining 30-second authentication window; UI/session rules must still require the intended unlock flow. A blocked ContentProvider read or native/parser call may continue until it returns; lock/cancellation is cooperative and cannot promise instantaneous interruption or immediate erasure of all live buffers.
 
 A process-wide mutex serializes vault open/recovery and document operations across controller instances. Without this, a second activity's recovery could remove a first activity's ciphertext between publication and metadata commit. The current application has no separate Android processing service; a future additional process requires cross-process coordination before it can use this storage.

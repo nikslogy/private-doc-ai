@@ -167,13 +167,7 @@ class VaultEvidenceMigrationInstrumentedTest {
             .openHelperFactory(SupportOpenHelperFactory(key.copyOf()))
             .addMigrations(VaultDatabase.MIGRATION_1_2)
             .setJournalMode(androidx.room.RoomDatabase.JournalMode.TRUNCATE)
-            .addCallback(object : androidx.room.RoomDatabase.Callback() {
-                override fun onOpen(db: SupportSQLiteDatabase) {
-                    db.execSQL("PRAGMA cipher_memory_security = ON")
-                    db.execSQL("PRAGMA temp_store = MEMORY")
-                    db.execSQL("PRAGMA secure_delete = ON")
-                }
-            })
+            .addCallback(VaultDatabaseSecurity)
             .allowMainThreadQueries().build()
 
     private fun assertEncrypted(directory: File, canary: String) {

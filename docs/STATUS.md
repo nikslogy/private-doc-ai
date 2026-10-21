@@ -1,5 +1,36 @@
 # Development status
 
+Checkpoint 6: first-unlock repair in progress, 21 October 2026.
+User reports both original APKs install on iQOO Neo 10 / Android 16, but first
+fingerprint unlock fails before document import. Do not treat the earlier host
+build as evidence of working unlock. Existing vault files must be preserved.
+
+Confirmed blocker: SQLCipher 4.9.0 returns a result row for PRAGMA secure_delete
+= ON; its execSQL API rejects that result. The production open policy now uses
+a cursor, consumes/verifies the enabled value and shares the exact callback with
+the encrypted database/migration tests. Other security settings, authentication,
+keys and envelope formats are retained. No automatic reset or key replacement.
+
+Android 16 emulator regressions for SQLCipher opening/reopening/wrong-key
+rejection, old-call failure reproduction, settings verification, encrypted
+migration/search, Tink and file durability are being added before APK upload.
+Actual execution results remain pending; no repaired APK is ready yet.
+
+Version 0.1.1-dev / code 2 uses separate debug IDs com.privateassistant.app.dev
+and com.privateassistant.app.connected.dev, with labels Private Vault Test and
+Private Vault Connected Test. These install alongside the original APKs because
+the original ephemeral debug signing key is unavailable. They have separate
+vaults and do not reopen/migrate the original app's private files. Do not ask
+the user to uninstall or clear data to work around signing.
+
+Current checks: source policy and nine APK delivery tests passed; shell/Python
+syntax passed. CI host and Android regression results pending. Next concrete
+task: run full host gate plus all 12 selected Android regression tests per
+platform variant, publish both repaired APKs only after success, then obtain
+physical first-unlock confirmation on the user's Android 16 phone.
+
+## Earlier build evidence — original APKs have reported unlock failure
+
 Checkpoint 5: 21 October 2026 — first successful Android build and APK delivery.
 **Both host-verified debug APKs are available. Device behavior remains unverified.**
 The earlier implementation checkpoint is preserved in

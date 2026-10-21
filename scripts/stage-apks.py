@@ -16,7 +16,7 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-FLAVORS = {"offline": "com.privateassistant.app", "connected": "com.privateassistant.app.connected"}
+FLAVORS = {"offline": "com.privateassistant.app.dev", "connected": "com.privateassistant.app.connected.dev"}
 
 
 class StagingError(Exception):

@@ -43,9 +43,9 @@ print('<manifest xmlns:android="http://schemas.android.com/apk/res/android"><use
         self.executable(tools / "aapt", f"""#!{sys.executable}
 import os, pathlib, sys
 connected = 'connected' in pathlib.Path(sys.argv[-1]).name
-package = 'com.privateassistant.app' + ('.connected' if connected else '')
+package = 'com.privateassistant.app' + ('.connected' if connected else '') + '.dev'
 if os.environ.get('TEST_WRONG_ID'): package = 'example.wrong'
-print("package: name='" + package + "' versionCode='1' versionName='0.1.0-dev'")
+print("package: name='" + package + "' versionCode='2' versionName='0.1.1-dev'")
 print("sdkVersion:'31'\\ntargetSdkVersion:'35'")
 if not os.environ.get('TEST_NOT_DEBUG'): print('application-debuggable')
 """)
