@@ -12,6 +12,8 @@ scripts/bootstrap-android.sh --check-only
 [[ -x ./gradlew ]] || { printf 'Gradle wrapper is missing. Restore the verified wrapper files; do not fetch an unverified JAR.\n' >&2; exit 1; }
 ./gradlew --no-daemon --console=plain --stacktrace \
   :core:test \
+  :platform:compileOfflineDebugAndroidTestKotlin :platform:compileConnectedDebugAndroidTestKotlin \
+  :app:compileOfflineDebugAndroidTestKotlin :app:compileConnectedDebugAndroidTestKotlin \
   :platform:testOfflineDebugUnitTest :platform:testConnectedDebugUnitTest \
   :platform:lintOfflineDebug :platform:lintConnectedDebug \
   :app:verifyProductionDependencies \

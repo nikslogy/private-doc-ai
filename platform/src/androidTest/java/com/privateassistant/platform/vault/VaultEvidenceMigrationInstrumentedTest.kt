@@ -57,7 +57,7 @@ class VaultEvidenceMigrationInstrumentedTest {
                     }).build(),
             )
             helper.use { it.writableDatabase }
-            database(context, path, key).use { db ->
+            withDatabase(context, path, key) { db ->
                 val migrated = db.documents().all().single()
                 assertEquals(document.id, migrated.id)
                 assertEquals(document.revisionId, migrated.revisionId)
@@ -78,7 +78,7 @@ class VaultEvidenceMigrationInstrumentedTest {
             val document = document()
             val text = "PRIVATE_EVIDENCE_CANARY विमा प्रीमियम १,२३४.५० Policy 00123 MH-01-AB-0007 and OR literal."
             val evidence = page(document, text)
-            database(context, path, key).use { db ->
+            withDatabase(context, path, key) { db ->
                 db.runInTransaction {
                     db.documents().insert(document)
                     VaultEvidenceStore.replace(db, document, listOf(evidence))
@@ -109,7 +109,7 @@ class VaultEvidenceMigrationInstrumentedTest {
             }
             assertEncrypted(directory, "PRIVATE_EVIDENCE_CANARY")
             assertEncrypted(directory, LiteralSearchQuery.indexTerms("PRIVATE_EVIDENCE_CANARY"))
-            database(context, path, key).use { db ->
+            withDatabase(context, path, key) { db ->
                 assertEquals(text, VaultEvidenceStore.read(db, db.documents().find(document.id)!!).single().text)
                 db.runInTransaction {
                     db.evidence().deleteSearch(document.id)
@@ -135,14 +135,14 @@ class VaultEvidenceMigrationInstrumentedTest {
             assertEquals(previous.text, merged.single().text)
             assertEquals(VaultPageState.FAILED, merged.single().state)
             assertEquals(VaultIndexState.PARTIAL, VaultEvidenceStore.indexState(merged))
-            database(context, path, key).use { db ->
+            withDatabase(context, path, key) { db ->
                 db.runInTransaction {
                     db.documents().insert(document)
                     VaultEvidenceStore.replace(db, document, merged)
                     db.documents().updateIndex(document.id, 1, VaultIndexState.INDEXING.name)
                 }
             }
-            database(context, path, key).use { db ->
+            withDatabase(context, path, key) { db ->
                 db.documents().recoverInterruptedIndexing()
                 assertEquals(VaultIndexState.FAILED.name, db.documents().find(document.id)!!.indexState)
                 assertEquals(previous.text, db.evidence().pages(document.id).single().text)
@@ -161,6 +161,15 @@ class VaultEvidenceMigrationInstrumentedTest {
 
     private fun document() = DocumentEntity(UUID.randomUUID().toString(), "PRIVATE_MIGRATION_TITLE.txt",
         "text/plain", 79, 1, "a".repeat(64), UUID.randomUUID().toString())
+
+    private fun <T> withDatabase(context: Context, path: File, key: ByteArray, block: (VaultDatabase) -> T): T {
+        val database = database(context, path, key)
+        return try {
+            block(database)
+        } finally {
+            database.close()
+        }
+    }
 
     private fun database(context: Context, path: File, key: ByteArray): VaultDatabase =
         Room.databaseBuilder(context, VaultDatabase::class.java, path.absolutePath)

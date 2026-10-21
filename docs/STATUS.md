@@ -37,6 +37,12 @@ task: run full host gate plus all 12 selected Android regression tests per
 platform variant, publish both repaired APKs only after success, then obtain
 physical first-unlock confirmation on the user's Android 16 phone.
 
+The first repair run (39645060676) passed the full host gate and booted the API36
+emulator, then exposed an old migration-test compilation error: RoomDatabase
+does not implement Closeable, so its test helper must explicitly close it in
+finally. Corrected all five uses and added both modules/variants' instrumentation
+Kotlin compilation to the host gate. No test was removed and no APK was uploaded.
+
 ## Earlier build evidence — original APKs have reported unlock failure
 
 Checkpoint 5: 21 October 2026 — first successful Android build and APK delivery.
