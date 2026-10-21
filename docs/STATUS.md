@@ -16,6 +16,14 @@ rejection, old-call failure reproduction, settings verification, encrypted
 migration/search, Tink and file durability are being added before APK upload.
 Actual execution results remain pending; no repaired APK is ready yet.
 
+A further disposable-emulator probe sets a synthetic screen-lock PIN, invokes
+Android's real credential/Gatekeeper verification and immediately runs the
+existing full controller lifecycle test for each variant within the unchanged
+30-second Keystore window. It requires one non-skipped passing result per
+variant. This does not establish physical fingerprint/UI behavior. It is being
+validated on a separate fix branch while the initial Android regression run
+continues, then will be fast-forwarded only after its real results are inspected.
+
 Version 0.1.1-dev / code 2 uses separate debug IDs com.privateassistant.app.dev
 and com.privateassistant.app.connected.dev, with labels Private Vault Test and
 Private Vault Connected Test. These install alongside the original APKs because
