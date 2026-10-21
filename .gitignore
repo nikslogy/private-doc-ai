@@ -1,0 +1,16 @@
+.gradle/
+.kotlin/
+.toolchains/
+.tooling/
+artifacts/
+**/build/
+local.properties
+*.jks
+*.keystore
+*.litertlm
+*.tflite
+*.gguf
+.env
+captures/
+__pycache__/
+*.pyc

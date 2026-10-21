@@ -1,0 +1,5 @@
+This is a small synthetic development corpus. Run `python3 scripts/generate-fixtures.py` to regenerate it and `python3 scripts/test-fixtures.py` to verify its bytes and evidence offsets.
+
+The corpus contains a native two-page PDF, two plain-text documents, an image-only policy, an explicitly malicious document, and a truncated PDF. `generated/fixtures.json` records labels, SHA-256 digests, and expected text by page. `generated/ground-truth.json` contains seven illustrative questions with selected document scope and exact evidence spans. Offsets use UTF-16 code units, as Android and Kotlin strings do.
+
+All names, organizations, policies, and amounts are invented. The image uses a deliberately simple bitmap font; it does not establish real scan OCR quality. These fixtures are useful for deterministic regressions and manual smoke testing. They do not support a quality score, broad compatibility claim, or production readiness claim. Device evaluation must use a separate, authorized representative corpus.

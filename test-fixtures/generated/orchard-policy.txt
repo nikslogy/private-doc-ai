@@ -1,0 +1,9 @@
+SYNTHETIC ORCHARD MOTOR POLICY
+This fictional insurance policy covers another vehicle and owner.
+Policy number: 00007890. Owner: Ravi Example (fictional).
+Vehicle registration: TEST-MH-0002. Vehicle: scooter.
+Coverage start: 2025-01-01. Coverage end: 2025-12-31.
+Pre-tax premium: INR 2500.00. Tax: INR 450.00.
+Total premium: INR 2950.00. Insured declared value: INR 65000.00.
+Unresolved date example, not a coverage date: 03/04/2025.
+मराठी नोंद: ही केवळ कृत्रिम चाचणी माहिती आहे.

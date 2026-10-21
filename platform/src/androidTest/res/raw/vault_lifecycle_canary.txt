@@ -1,0 +1,1 @@
+PRIVATE_VAULT_LIFECYCLE_CANARY: synthetic document for encrypted-vault instrumentation.

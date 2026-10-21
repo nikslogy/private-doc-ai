@@ -1,0 +1,49 @@
+[versions]
+agp = "8.13.2"
+kotlin = "2.2.21"
+ksp = "2.2.21-2.0.4"
+composeBom = "2025.04.01"
+activity = "1.10.1"
+lifecycle = "2.9.0"
+coroutines = "1.10.2"
+room = "2.7.1"
+tink = "1.17.0"
+sqlcipher = "4.9.0"
+mlkitText = "16.0.1"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+[libraries]
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+core-ktx = { module = "androidx.core:core-ktx", version = "1.16.0" }
+fragment-ktx = { module = "androidx.fragment:fragment-ktx", version = "1.8.6" }
+biometric = { module = "androidx.biometric:biometric", version = "1.1.0" }
+lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+sqlite = { module = "androidx.sqlite:sqlite-ktx", version = "2.5.0" }
+sqlcipher = { module = "net.zetetic:sqlcipher-android", version.ref = "sqlcipher" }
+tink = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
+junit = { module = "junit:junit", version = "4.13.2" }
+androidx-test-runner = { module = "androidx.test:runner", version = "1.6.2" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version = "1.2.1" }
+pdfium = { module = "io.legere:pdfiumandroid", version = "1.0.35" }
+litertlm = { module = "com.google.ai.edge.litertlm:litertlm-android", version = "0.9.0" }
+mlkit-text-latin = { module = "com.google.mlkit:text-recognition", version.ref = "mlkitText" }
+mlkit-text-devanagari = { module = "com.google.mlkit:text-recognition-devanagari", version.ref = "mlkitText" }
+exifinterface = { module = "androidx.exifinterface:exifinterface", version = "1.4.2" }

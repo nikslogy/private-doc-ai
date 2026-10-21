@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "runtime": {
+    "id": "litert-lm",
+    "version": "0.9.0",
+    "format": "litertlm"
+  },
+  "models": []
+}

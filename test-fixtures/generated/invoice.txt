@@ -1,0 +1,8 @@
+SYNTHETIC INVOICE
+Invoice number: TEST-0042
+Invoice date: 2026-02-03
+Supplier: Fictional Paper Company
+Subtotal: USD 1122.27
+Tax: USD 112.23
+Total: USD 1234.50
+This is synthetic test data and is not payable.

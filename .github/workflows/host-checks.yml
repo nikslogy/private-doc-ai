@@ -1,0 +1,37 @@
+name: Host checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: host-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Use runner JDK 21
+        run: |
+          test -x "$JAVA_HOME_21_X64/bin/java"
+          echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
+      - name: Set up pinned Android and Gradle tools
+        run: scripts/bootstrap-android.sh --accept-sdk-licenses
+      - name: Run host validation and stage verified development APKs
+        run: |
+          source .tooling/env.sh
+          python3 scripts/stage-apks.py
+      - name: Upload both APKs, checksums and public build reports
+        if: ${{ success() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: private-document-assistant-debug-apks-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/apk/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          include-hidden-files: false

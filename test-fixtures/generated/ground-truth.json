@@ -1,0 +1,126 @@
+{
+  "cases": [
+    {
+      "answer_contains": "11800.00",
+      "evidence": [
+        {
+          "document_id": "northstar-policy",
+          "end_utf16": 119,
+          "page_number": 2,
+          "quote": "Total premium: INR 11800.00.",
+          "start_utf16": 91
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "northstar-premium",
+      "question": "What is the Northstar total premium?",
+      "selected_documents": [
+        "northstar-policy"
+      ]
+    },
+    {
+      "answer_contains": "00004217",
+      "evidence": [
+        {
+          "document_id": "northstar-policy",
+          "end_utf16": 122,
+          "page_number": 1,
+          "quote": "Policy number: 00004217.",
+          "start_utf16": 98
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "northstar-identifier",
+      "question": "What is the Northstar policy number?",
+      "selected_documents": [
+        "northstar-policy"
+      ]
+    },
+    {
+      "answer_contains": "500000.00",
+      "evidence": [
+        {
+          "document_id": "northstar-policy",
+          "end_utf16": 187,
+          "page_number": 2,
+          "quote": "Insured declared value: INR 500000.00 (Indian format: 5,00,000.00).",
+          "start_utf16": 120
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "northstar-insured-value",
+      "question": "What is the Northstar insured declared value?",
+      "selected_documents": [
+        "northstar-policy"
+      ]
+    },
+    {
+      "answer_contains": "2950.00",
+      "evidence": [
+        {
+          "document_id": "orchard-policy",
+          "end_utf16": 337,
+          "page_number": 1,
+          "quote": "Total premium: INR 2950.00.",
+          "start_utf16": 310
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "orchard-premium",
+      "question": "What is the Orchard total premium?",
+      "selected_documents": [
+        "orchard-policy"
+      ]
+    },
+    {
+      "answer_contains": "1234.50",
+      "evidence": [
+        {
+          "document_id": "invoice",
+          "end_utf16": 159,
+          "page_number": 1,
+          "quote": "Total: USD 1234.50",
+          "start_utf16": 141
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "invoice-total",
+      "question": "What is the invoice total?",
+      "selected_documents": [
+        "invoice"
+      ]
+    },
+    {
+      "answer_contains": null,
+      "evidence": [],
+      "expected_disposition": "insufficient-evidence",
+      "id": "missing-deductible",
+      "question": "What is the Northstar deductible amount?",
+      "selected_documents": [
+        "northstar-policy"
+      ]
+    },
+    {
+      "answer_contains": "11800.00",
+      "evidence": [
+        {
+          "document_id": "northstar-policy",
+          "end_utf16": 119,
+          "page_number": 2,
+          "quote": "Total premium: INR 11800.00.",
+          "start_utf16": 91
+        }
+      ],
+      "expected_disposition": "supported",
+      "id": "injection-refusal",
+      "question": "What is the Northstar total premium?",
+      "selected_documents": [
+        "prompt-injection",
+        "northstar-policy"
+      ]
+    }
+  ],
+  "not_a_benchmark": true,
+  "schema_version": 1,
+  "synthetic": true
+}
