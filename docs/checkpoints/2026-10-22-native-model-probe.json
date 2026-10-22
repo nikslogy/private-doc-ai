@@ -1,20 +1,21 @@
 {
   "schemaVersion": 1,
-  "checkpoint": "Real synthetic CPU model generation and active cancellation on a nominal 10 GiB emulator",
-  "recordedAtUtc": "2026-10-22T16:59:26Z",
+  "checkpoint": "Real synthetic CPU generation, active native cancellation and numeric process-memory observations on a nominal 10 GiB emulator",
+  "recordedAtUtc": "2026-10-22T17:17:12Z",
   "repository": "nikslogy/private-doc-ai",
   "run": {
-    "id": 39816778021,
+    "id": 39819779900,
     "attempt": 1,
-    "jobId": 119957215200,
-    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021",
-    "markerCommit": "39bb7ffb8f820cc6fe6034c4f2afbfcf254c8403",
-    "sourceCommit": "97bb7272e76a5db9d5f6e8c1aa04f0d68134cb59",
+    "jobId": 119967677158,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39819779900",
+    "markerCommit": "64c982d7c890fa15965627c2b05292c27ab60714",
+    "sourceCommit": "f2f5c9274617111b96001d48a70c4f9d8d8a9947",
     "conclusion": "success",
     "executed": 1,
     "failures": 0,
     "skipped": 0,
-    "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles"
+    "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles",
+    "samplerUnitTestsPassed": 19
   },
   "model": {
     "id": "qwen25-15b-q8-legacy",
@@ -29,16 +30,16 @@
     "kind": "disposable x86_64 Android emulator",
     "nominalRamMiB": 10240,
     "actualGuestMemory": {
-      "totalKiB": 10188980,
-      "availableBeforeTestKiB": 8492668,
+      "totalKiB": 10188992,
+      "availableBeforeTestKiB": 8547288,
       "pageSizeBytes": 4096
     },
     "hostResources": {
-      "hostTotalBytes": 16766414848,
-      "hostAvailableBytes": 14682066944,
+      "hostTotalBytes": 16760344576,
+      "hostAvailableBytes": 14704345088,
       "minimumAvailableGuardBytes": 12884901888,
       "emulatorRamMiB": 10240,
-      "hostFreeDiskBytes": 89522155520
+      "hostFreeDiskBytes": 88735825920
     },
     "physicalPhone": false
   },
@@ -50,122 +51,673 @@
     "returnedAfterNativeSendAndWatchdogCleanup": true
   },
   "metrics": {
-    "cancellationOperationMillis": 17295,
+    "cancellationOperationMillis": 16700,
     "generatedUtf16": 111,
-    "generationElapsedMillis": 58576,
-    "nativeCancellationCalls": 204,
+    "generationElapsedMillis": 79135,
+    "nativeCancellationCalls": 242,
     "nativeSendFailures": 1
   },
   "metricScope": {
     "generatedUtf16": "Actual nonempty generated result length: 111 UTF-16 code units; no accuracy evaluation.",
-    "generationElapsedMillis": "58,576 ms for the generation operation including native initialization; emulator observation only.",
-    "cancellationOperationMillis": "17,295 ms for the complete cancellation operation including native initialization; this is not cancellation-request latency.",
-    "nativeCancellationCalls": "204 successful native cancel API calls were observed while the synchronous send was active.",
+    "generationElapsedMillis": "79,135 ms for the generation operation including native initialization; emulator observation only.",
+    "cancellationOperationMillis": "16,700 ms for the complete cancellation operation including native initialization; this is not cancellation-request latency.",
+    "nativeCancellationCalls": "242 successful native cancel API calls were observed while the synchronous send was active.",
     "nativeSendFailures": "One native synchronous-send failure was observed in the deliberately cancelled operation; the test caught CancellationException and completed its assertions.",
     "timeout": "Joined watchdog/cancellation observed returning in this execution; no hard native timeout or process-isolation guarantee."
   },
   "phases": [
     {
-      "elapsedRealtimeMillis": 83947,
+      "elapsedRealtimeMillis": 91975,
       "phase": "ARGUMENTS_ACCEPTED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 83967,
+      "elapsedRealtimeMillis": 91993,
       "phase": "MODEL_PATH_VALIDATED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 83967,
+      "elapsedRealtimeMillis": 91993,
       "phase": "DEVICE_MODEL_VERIFY_START",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 97054,
+      "elapsedRealtimeMillis": 100979,
       "phase": "DEVICE_MODEL_VERIFY_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 97061,
+      "elapsedRealtimeMillis": 100981,
       "phase": "CANARY_BASELINE_START",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 97085,
+      "elapsedRealtimeMillis": 100990,
       "phase": "CANARY_BASELINE_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 97088,
+      "elapsedRealtimeMillis": 100991,
       "phase": "NATIVE_GENERATION_START",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 129448,
+      "elapsedRealtimeMillis": 141762,
       "phase": "NATIVE_SEND_STARTED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 155662,
+      "elapsedRealtimeMillis": 180125,
       "phase": "NATIVE_GENERATION_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 155664,
+      "elapsedRealtimeMillis": 180126,
       "phase": "CANCELLATION_OPERATION_START",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 167327,
+      "elapsedRealtimeMillis": 190134,
       "phase": "CANCELLATION_SEND_STARTED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 167429,
+      "elapsedRealtimeMillis": 190239,
       "phase": "NATIVE_CANCEL_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 172580,
+      "elapsedRealtimeMillis": 196421,
       "phase": "NATIVE_SEND_FAILED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 172958,
+      "elapsedRealtimeMillis": 196825,
       "phase": "CANCELLATION_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 177787,
+      "elapsedRealtimeMillis": 201357,
       "phase": "POST_MODEL_VERIFY_RETURNED",
-      "pid": 3034
+      "pid": 2958
     },
     {
-      "elapsedRealtimeMillis": 177792,
+      "elapsedRealtimeMillis": 201363,
       "phase": "CANARY_FINAL_RETURNED",
-      "pid": 3034
+      "pid": 2958
     }
   ],
   "memorySampling": {
     "schemaVersion": 1,
     "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
-    "emittedPid": 0,
+    "emittedPid": 2958,
     "sampleIntervalMillis": 1000,
     "sampleLimit": 900,
-    "sampleCount": 0,
+    "sampleCount": 110,
     "sampleColumns": [
       "elapsedMillis",
       "rssBytes",
       "hwmBytes"
     ],
-    "samples": [],
+    "samples": [
+      [
+        4049,
+        144015360,
+        144015360
+      ],
+      [
+        5043,
+        145457152,
+        145457152
+      ],
+      [
+        6045,
+        146243584,
+        146243584
+      ],
+      [
+        7060,
+        148602880,
+        148602880
+      ],
+      [
+        8044,
+        148602880,
+        148602880
+      ],
+      [
+        9051,
+        148733952,
+        148733952
+      ],
+      [
+        10047,
+        148996096,
+        148996096
+      ],
+      [
+        11043,
+        148996096,
+        148996096
+      ],
+      [
+        12048,
+        149520384,
+        149520384
+      ],
+      [
+        13048,
+        224886784,
+        224886784
+      ],
+      [
+        14052,
+        533151744,
+        533151744
+      ],
+      [
+        15048,
+        623669248,
+        624377856
+      ],
+      [
+        16052,
+        991936512,
+        991936512
+      ],
+      [
+        17044,
+        1249898496,
+        1249898496
+      ],
+      [
+        18060,
+        1394135040,
+        1410768896
+      ],
+      [
+        19073,
+        2095558656,
+        2095558656
+      ],
+      [
+        20058,
+        2248126464,
+        2248126464
+      ],
+      [
+        21052,
+        2358095872,
+        2358095872
+      ],
+      [
+        22043,
+        2552471552,
+        2552471552
+      ],
+      [
+        23061,
+        2743050240,
+        2743050240
+      ],
+      [
+        24060,
+        3278581760,
+        3278581760
+      ],
+      [
+        25055,
+        3585376256,
+        3585376256
+      ],
+      [
+        26062,
+        3887865856,
+        3887865856
+      ],
+      [
+        27066,
+        4062486528,
+        4062486528
+      ],
+      [
+        28061,
+        4203126784,
+        4203126784
+      ],
+      [
+        29089,
+        4312166400,
+        4312166400
+      ],
+      [
+        30081,
+        4407128064,
+        4407128064
+      ],
+      [
+        31063,
+        4529025024,
+        4529025024
+      ],
+      [
+        32053,
+        4834291712,
+        4834291712
+      ],
+      [
+        33096,
+        5145473024,
+        5145473024
+      ],
+      [
+        34085,
+        5259374592,
+        5259374592
+      ],
+      [
+        35049,
+        5353615360,
+        5353615360
+      ],
+      [
+        36105,
+        5495189504,
+        5495189504
+      ],
+      [
+        37054,
+        5825228800,
+        5825228800
+      ],
+      [
+        38050,
+        5954035712,
+        5954035712
+      ],
+      [
+        39069,
+        6135652352,
+        6135652352
+      ],
+      [
+        40053,
+        6493265920,
+        6493265920
+      ],
+      [
+        41065,
+        6691315712,
+        6691315712
+      ],
+      [
+        42063,
+        6820175872,
+        6878109696
+      ],
+      [
+        43073,
+        6980083712,
+        6984015872
+      ],
+      [
+        44053,
+        6872186880,
+        7002890240
+      ],
+      [
+        45096,
+        6934302720,
+        7002890240
+      ],
+      [
+        46130,
+        6803492864,
+        7002890240
+      ],
+      [
+        47133,
+        7102992384,
+        7155421184
+      ],
+      [
+        48058,
+        7021740032,
+        7155421184
+      ],
+      [
+        49077,
+        7476453376,
+        7476453376
+      ],
+      [
+        50065,
+        7945953280,
+        7945953280
+      ],
+      [
+        51174,
+        8027348992,
+        8155144192
+      ],
+      [
+        52067,
+        7657594880,
+        8155144192
+      ],
+      [
+        53075,
+        7666376704,
+        8155144192
+      ],
+      [
+        54167,
+        7640457216,
+        8155144192
+      ],
+      [
+        55058,
+        7521554432,
+        8155144192
+      ],
+      [
+        56128,
+        7863840768,
+        8155144192
+      ],
+      [
+        57121,
+        7977771008,
+        8155144192
+      ],
+      [
+        58115,
+        8180539392,
+        8180539392
+      ],
+      [
+        59104,
+        8476106752,
+        8476106752
+      ],
+      [
+        60076,
+        8345600000,
+        8601292800
+      ],
+      [
+        61072,
+        8004681728,
+        8601292800
+      ],
+      [
+        62086,
+        7690895360,
+        8601292800
+      ],
+      [
+        63095,
+        7181680640,
+        8601292800
+      ],
+      [
+        64093,
+        6685442048,
+        8601292800
+      ],
+      [
+        65096,
+        6479790080,
+        8601292800
+      ],
+      [
+        66107,
+        6205456384,
+        8601292800
+      ],
+      [
+        67168,
+        5294243840,
+        8601292800
+      ],
+      [
+        68181,
+        4796694528,
+        8601292800
+      ],
+      [
+        69084,
+        4653170688,
+        8601292800
+      ],
+      [
+        70076,
+        4465868800,
+        8601292800
+      ],
+      [
+        71071,
+        4309630976,
+        8601292800
+      ],
+      [
+        72091,
+        4203724800,
+        8601292800
+      ],
+      [
+        73090,
+        3980640256,
+        8601292800
+      ],
+      [
+        74067,
+        3734487040,
+        8601292800
+      ],
+      [
+        75072,
+        3461726208,
+        8601292800
+      ],
+      [
+        76075,
+        3476987904,
+        8601292800
+      ],
+      [
+        77084,
+        3375538176,
+        8601292800
+      ],
+      [
+        78106,
+        3365445632,
+        8601292800
+      ],
+      [
+        79119,
+        3347619840,
+        8601292800
+      ],
+      [
+        80109,
+        3290996736,
+        8601292800
+      ],
+      [
+        81102,
+        3305676800,
+        8601292800
+      ],
+      [
+        82103,
+        3355353088,
+        8601292800
+      ],
+      [
+        83112,
+        3645022208,
+        8601292800
+      ],
+      [
+        84107,
+        3863650304,
+        8601292800
+      ],
+      [
+        85122,
+        3863650304,
+        8601292800
+      ],
+      [
+        86101,
+        3865878528,
+        8601292800
+      ],
+      [
+        87113,
+        3856572416,
+        8601292800
+      ],
+      [
+        88077,
+        3856703488,
+        8601292800
+      ],
+      [
+        89099,
+        3847790592,
+        8601292800
+      ],
+      [
+        90098,
+        3840188416,
+        8601292800
+      ],
+      [
+        91084,
+        3840188416,
+        8601292800
+      ],
+      [
+        92079,
+        196124672,
+        8601292800
+      ],
+      [
+        93081,
+        1215483904,
+        8601292800
+      ],
+      [
+        94073,
+        2123329536,
+        8601292800
+      ],
+      [
+        95079,
+        3362635776,
+        8601292800
+      ],
+      [
+        96073,
+        4337418240,
+        8601292800
+      ],
+      [
+        97072,
+        5344575488,
+        8601292800
+      ],
+      [
+        98072,
+        6317916160,
+        8601292800
+      ],
+      [
+        99071,
+        7343046656,
+        8601292800
+      ],
+      [
+        100103,
+        8346382336,
+        8601292800
+      ],
+      [
+        101098,
+        7771164672,
+        8677732352
+      ],
+      [
+        102081,
+        7423148032,
+        8686440448
+      ],
+      [
+        103072,
+        8449703936,
+        8686440448
+      ],
+      [
+        104091,
+        8704966656,
+        8742727680
+      ],
+      [
+        105081,
+        8704966656,
+        8742727680
+      ],
+      [
+        106079,
+        8703524864,
+        8742727680
+      ],
+      [
+        107100,
+        8703524864,
+        8742727680
+      ],
+      [
+        108088,
+        8703524864,
+        8742727680
+      ],
+      [
+        109078,
+        159862784,
+        8742727680
+      ],
+      [
+        110088,
+        159862784,
+        8742727680
+      ],
+      [
+        111078,
+        159862784,
+        8742727680
+      ],
+      [
+        112078,
+        159862784,
+        8742727680
+      ],
+      [
+        113084,
+        159862784,
+        8742727680
+      ]
+    ],
     "readErrors": 0,
     "timeoutErrors": 0,
     "metadataRejected": 0,
-    "observedMaxRssBytes": 0,
-    "observedMaxHwmBytes": 0
+    "observedMaxRssBytes": 8704966656,
+    "observedMaxHwmBytes": 8742727680
   },
-  "memoryEvidenceLimitation": "Confirmed transcript-filter tr buffering withheld phase PID output until instrumentation completed. The sampler recorded zero PID samples and zero RSS/HWM samples; its zero-valued maxima are absence of measurement, not zero process memory. No measured RAM minimum follows.",
+  "memoryEvidenceLimitation": "110 successful numeric samples for only the phase-emitted test PID, approximately once per second. VmRSS is sampled resident memory; VmHWM is the kernel-reported process high-water mark observed at those reads. Periodic RSS samples can miss peaks, and the measurements do not include complete system pressure, a process-memory breakdown, a hard memory bound or a physical-phone/model minimum. Sampling itself can affect emulator timing.",
   "canaryScope": {
     "roots": [
       "app files",
@@ -177,12 +729,15 @@
     "limitations": "Synthetic marker absence in these scans does not establish continuous file cleanliness, complete plaintext absence, memory/log privacy or traffic inspection."
   },
   "artifact": {
-    "id": 12443805267,
-    "bytes": 7208,
-    "sha256": "c81e8c8102fd5244ed327d3da000d1c816a4460f85844612cd7ec86b55062b93",
-    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021/artifacts/12443805267",
+    "id": 12443134833,
+    "bytes": 8356,
+    "sha256": "63dbe088e7a6dc1d80de27cd38076eefaa7327947b69428fc6ce866ca8c767ac",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39819779900/artifacts/12443134833",
+    "createdAtUtc": "2026-10-22T17:14:30Z",
+    "expiresAtUtc": "2026-10-29T17:14:28Z",
+    "expiredAtMetadataCheck": false,
     "independentlyDownloadedAndSha256Verified": true,
-    "independentVerificationScope": "Root reviewer downloaded the exact 7,208-byte synthetic report ZIP and independently verified its SHA-256 before this checkpoint."
+    "independentVerificationScope": "Root reviewer downloaded the exact 8,356-byte synthetic report ZIP; root and harness reviewer independently checked byte count/SHA-256 before reading it."
   },
   "priorSixGiBProbe": {
     "runId": 39814089348,
@@ -204,21 +759,247 @@
     },
     "scope": "A failure in this nominal 6 GiB emulator and a pass in the nominal 10 GiB emulator do not establish a minimum RAM requirement or a physical-phone compatibility boundary."
   },
-  "separatePlannedUiGuard": {
-    "versionCode": 6,
-    "status": "separate future application configuration",
-    "configuredMinimumTotalMemoryGiB": 10,
-    "configuredMinimumAvailableMemoryGiB": 8,
-    "scope": "Conservative CPU diagnostic gate being prepared separately for phones in the 12 GB class. This run does not validate that application build, establish a measured model RAM minimum, or prove any phone will pass the gate or run the model."
-  },
   "limits": [
     "One fresh, non-skipped synthetic test executed; no representative language/task/QA accuracy evaluation.",
-    "No process RSS/HWM measurements were collected; no RAM minimum claim.",
+    "110 numeric process RSS/HWM samples were collected from this synthetic emulator execution; no hard memory bound, whole-system peak or phone/model RAM minimum follows.",
     "The emulator used 4,096-byte pages; real 16 KiB native loading is not established.",
     "No physical phone, fingerprint/vendor path, phone latency, thermal, battery or sustained-memory result.",
     "Bounded synthetic file-canary and public-model hash checks are narrower than comprehensive privacy or traffic inspection.",
     "No hard native cancellation deadline, process isolation, complete dependency provenance/notices, recovery or release-readiness claim.",
     "Normal document questions/summaries remain disabled; this evidence does not complete M4."
   ],
-  "evidenceScope": "Real public-model CPU generation with synthetic prompt; observed native cancel API success and synchronous-send failure; narrow file-canary scan. No phone latency, model accuracy, complete privacy, hard timeout or RAM minimum claim. Memory sampling may be delayed by tr buffering."
+  "evidenceScope": "Real public-model CPU generation with synthetic prompt, observed successful native cancel API calls and synchronous-send failure, narrow file-canary checks and 110 numeric process-memory samples on one disposable emulator. No phone latency, model accuracy, complete privacy, hard timeout or RAM-minimum claim.",
+  "separateUiGuard": {
+    "versionCode": 6,
+    "versionName": "0.4.1-dev",
+    "sourceCommit": "f2f5c9274617111b96001d48a70c4f9d8d8a9947",
+    "status": "Application source configuration; this self-targeting platform probe does not exercise the application UI guard",
+    "configuredMinimumTotalMemoryGiB": 10,
+    "configuredMinimumAvailableMemoryGiB": 8,
+    "scope": "Conservative CPU diagnostic gate for reported physical memory, separate from native probe results. The nominal 10 GiB emulator reports less than 10 GiB total to Android. No application UI-gate pass, physical-phone compatibility or measured model RAM minimum is established by this run."
+  },
+  "priorFirstSuccessfulProbe": {
+    "schemaVersion": 1,
+    "checkpoint": "Real synthetic CPU model generation and active cancellation on a nominal 10 GiB emulator",
+    "recordedAtUtc": "2026-10-22T16:59:26Z",
+    "repository": "nikslogy/private-doc-ai",
+    "run": {
+      "id": 39816778021,
+      "attempt": 1,
+      "jobId": 119957215200,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021",
+      "markerCommit": "39bb7ffb8f820cc6fe6034c4f2afbfcf254c8403",
+      "sourceCommit": "97bb7272e76a5db9d5f6e8c1aa04f0d68134cb59",
+      "conclusion": "success",
+      "executed": 1,
+      "failures": 0,
+      "skipped": 0,
+      "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles"
+    },
+    "model": {
+      "id": "qwen25-15b-q8-legacy",
+      "runtimeVersion": "0.9.0",
+      "backend": "CPU",
+      "byteCount": 1597931520,
+      "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+      "input": "Fixed synthetic generation prompt and synthetic cancellation prompt only",
+      "documentQuestionsAndSummariesEnabled": false
+    },
+    "target": {
+      "kind": "disposable x86_64 Android emulator",
+      "nominalRamMiB": 10240,
+      "actualGuestMemory": {
+        "totalKiB": 10188980,
+        "availableBeforeTestKiB": 8492668,
+        "pageSizeBytes": 4096
+      },
+      "hostResources": {
+        "hostTotalBytes": 16766414848,
+        "hostAvailableBytes": 14682066944,
+        "minimumAvailableGuardBytes": 12884901888,
+        "emulatorRamMiB": 10240,
+        "hostFreeDiskBytes": 89522155520
+      },
+      "physicalPhone": false
+    },
+    "result": {
+      "realPublicModelGenerationPassed": true,
+      "activeNativeCancellationPassed": true,
+      "beforeAndAfterModelByteCountAndSha256Passed": true,
+      "boundedSyntheticFileCanaryChecksPassed": true,
+      "returnedAfterNativeSendAndWatchdogCleanup": true
+    },
+    "metrics": {
+      "cancellationOperationMillis": 17295,
+      "generatedUtf16": 111,
+      "generationElapsedMillis": 58576,
+      "nativeCancellationCalls": 204,
+      "nativeSendFailures": 1
+    },
+    "metricScope": {
+      "generatedUtf16": "Actual nonempty generated result length: 111 UTF-16 code units; no accuracy evaluation.",
+      "generationElapsedMillis": "58,576 ms for the generation operation including native initialization; emulator observation only.",
+      "cancellationOperationMillis": "17,295 ms for the complete cancellation operation including native initialization; this is not cancellation-request latency.",
+      "nativeCancellationCalls": "204 successful native cancel API calls were observed while the synchronous send was active.",
+      "nativeSendFailures": "One native synchronous-send failure was observed in the deliberately cancelled operation; the test caught CancellationException and completed its assertions.",
+      "timeout": "Joined watchdog/cancellation observed returning in this execution; no hard native timeout or process-isolation guarantee."
+    },
+    "phases": [
+      {
+        "elapsedRealtimeMillis": 83947,
+        "phase": "ARGUMENTS_ACCEPTED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 83967,
+        "phase": "MODEL_PATH_VALIDATED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 83967,
+        "phase": "DEVICE_MODEL_VERIFY_START",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 97054,
+        "phase": "DEVICE_MODEL_VERIFY_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 97061,
+        "phase": "CANARY_BASELINE_START",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 97085,
+        "phase": "CANARY_BASELINE_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 97088,
+        "phase": "NATIVE_GENERATION_START",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 129448,
+        "phase": "NATIVE_SEND_STARTED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 155662,
+        "phase": "NATIVE_GENERATION_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 155664,
+        "phase": "CANCELLATION_OPERATION_START",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 167327,
+        "phase": "CANCELLATION_SEND_STARTED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 167429,
+        "phase": "NATIVE_CANCEL_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 172580,
+        "phase": "NATIVE_SEND_FAILED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 172958,
+        "phase": "CANCELLATION_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 177787,
+        "phase": "POST_MODEL_VERIFY_RETURNED",
+        "pid": 3034
+      },
+      {
+        "elapsedRealtimeMillis": 177792,
+        "phase": "CANARY_FINAL_RETURNED",
+        "pid": 3034
+      }
+    ],
+    "memorySampling": {
+      "schemaVersion": 1,
+      "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
+      "emittedPid": 0,
+      "sampleIntervalMillis": 1000,
+      "sampleLimit": 900,
+      "sampleCount": 0,
+      "sampleColumns": [
+        "elapsedMillis",
+        "rssBytes",
+        "hwmBytes"
+      ],
+      "samples": [],
+      "readErrors": 0,
+      "timeoutErrors": 0,
+      "metadataRejected": 0,
+      "observedMaxRssBytes": 0,
+      "observedMaxHwmBytes": 0
+    },
+    "memoryEvidenceLimitation": "Confirmed transcript-filter tr buffering withheld phase PID output until instrumentation completed. The sampler recorded zero PID samples and zero RSS/HWM samples; its zero-valued maxima are absence of measurement, not zero process memory. No measured RAM minimum follows.",
+    "canaryScope": {
+      "roots": [
+        "app files",
+        "app cache",
+        "app no-backup files"
+      ],
+      "timing": "Bounded scans before generation and after cancellation/cleanup",
+      "publicModelExclusion": "Only the exact separately hash-verified public model was excluded.",
+      "limitations": "Synthetic marker absence in these scans does not establish continuous file cleanliness, complete plaintext absence, memory/log privacy or traffic inspection."
+    },
+    "artifact": {
+      "id": 12443805267,
+      "bytes": 7208,
+      "sha256": "c81e8c8102fd5244ed327d3da000d1c816a4460f85844612cd7ec86b55062b93",
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021/artifacts/12443805267",
+      "independentlyDownloadedAndSha256Verified": true,
+      "independentVerificationScope": "Root reviewer downloaded the exact 7,208-byte synthetic report ZIP and independently verified its SHA-256 before this checkpoint."
+    },
+    "priorSixGiBProbe": {
+      "runId": 39814089348,
+      "jobId": 119947843697,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39814089348",
+      "nominalRamMiB": 6144,
+      "guestMemoryKiB": {
+        "total": 6072516,
+        "availableBeforeTest": 4457868
+      },
+      "pid": 2985,
+      "androidExitReasonCode": 3,
+      "androidExitReason": "LOW_MEMORY",
+      "observed": "Process exited after NATIVE_GENERATION_START and before NATIVE_SEND_STARTED; no generation or cancellation pass.",
+      "artifact": {
+        "id": 12442735210,
+        "bytes": 6890,
+        "sha256": "7ea695a7761b2b3642a7cd1d8d21c9da898050ba33a588c34aedb7e40b85098e"
+      },
+      "scope": "A failure in this nominal 6 GiB emulator and a pass in the nominal 10 GiB emulator do not establish a minimum RAM requirement or a physical-phone compatibility boundary."
+    },
+    "separatePlannedUiGuard": {
+      "versionCode": 6,
+      "status": "separate future application configuration",
+      "configuredMinimumTotalMemoryGiB": 10,
+      "configuredMinimumAvailableMemoryGiB": 8,
+      "scope": "Conservative CPU diagnostic gate being prepared separately for phones in the 12 GB class. This run does not validate that application build, establish a measured model RAM minimum, or prove any phone will pass the gate or run the model."
+    },
+    "limits": [
+      "One fresh, non-skipped synthetic test executed; no representative language/task/QA accuracy evaluation.",
+      "No process RSS/HWM measurements were collected; no RAM minimum claim.",
+      "The emulator used 4,096-byte pages; real 16 KiB native loading is not established.",
+      "No physical phone, fingerprint/vendor path, phone latency, thermal, battery or sustained-memory result.",
+      "Bounded synthetic file-canary and public-model hash checks are narrower than comprehensive privacy or traffic inspection.",
+      "No hard native cancellation deadline, process isolation, complete dependency provenance/notices, recovery or release-readiness claim.",
+      "Normal document questions/summaries remain disabled; this evidence does not complete M4."
+    ],
+    "evidenceScope": "Real public-model CPU generation with synthetic prompt; observed native cancel API success and synchronous-send failure; narrow file-canary scan. No phone latency, model accuracy, complete privacy, hard timeout or RAM minimum claim. Memory sampling may be delayed by tr buffering."
+  }
 }

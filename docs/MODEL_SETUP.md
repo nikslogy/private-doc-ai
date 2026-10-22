@@ -74,7 +74,18 @@ configuration, not measured model minimums. The direct probe does not exercise
 the phone UI's separate reported-memory guard. Weights and emulator
 userdata are removed and excluded from artifacts/caches.
 
-After CI: perform explicit phone installation, import/tamper/cancel/lock/restart
+The final explicit emulator run 39819779900 passed one fresh real generation/
+cancellation test with no skips, verified unchanged model bytes and both narrow
+canary scans. Its numeric sampler collected 110 process samples; observed max
+RSS was 8,704,966,656 bytes and kernel-reported VmHWM was 8,742,727,680 bytes
+(about 8.14 GiB). This is a process observation on x86_64, not a measured minimum
+for an ARM phone. The direct runtime probe bypasses the separate UI memory guard.
+Full operations included native initialization and took 79,135 ms for generation
+and 16,700 ms for the separate cancellation operation; the latter is not native
+cancellation-request latency. Exact evidence and earlier failures are in
+[the native checkpoint](checkpoints/2026-10-22-native-model-probe.json).
+
+Next perform explicit phone installation, import/tamper/cancel/lock/restart
 and synthetic generation checks, collect exact model/APK/device identities and
 measure resource/cancellation/privacy behavior. Model-based document QA remains
 gated until real device evidence and the M5 citation/evaluation layer exist.

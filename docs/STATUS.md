@@ -2,16 +2,16 @@
 
 ## Checkpoint 10 — verified installation and real native generation probe
 
-[Download the stable-signed 0.4.0-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12441148509).
+[Download the stable-signed 0.4.1-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).
 Both APKs passed the full host gate and **66 Android test executions, none
-skipped**, in stable run 39814166314, attempt 1. This validates the new model
+skipped**, in stable run 39819743976, attempt 1. This validates the new model
 installer and its synthetic storage/privacy cases. A separate real-model probe
 also passed generation/cancellation and narrow hash/canary checks. Phone
 compatibility and document QA remain unproven. General questions/summaries
 remain disabled; the experimental model test uses only a fixed synthetic prompt.
 
 Install the offline APK as an update to **Private Vault Preview** without
-uninstalling or clearing storage. Version code 5 / 0.4.0-dev requires Android
+uninstalling or clearing storage. Version code 6 / 0.4.1-dev requires Android
 12/API31+. Connected adds the -connected version suffix. Permanent Preview IDs
 and the pinned signing identity are unchanged. Earlier Test/original apps have
 separate vaults; no automatic migration or portable recovery exists. Actual
@@ -25,30 +25,32 @@ same-key phone update preservation still needs its synthetic-data procedure.
 Assistant → Document facts retains literal labelled values, conflicts and exact
 source-page references. Assistant → Set up on-device AI adds reviewed model
 metadata, licence acknowledgement and verified file import. Consult
-[MODEL_SETUP.md](MODEL_SETUP.md) before testing. Native execution passed once on an explicit larger emulator; installation
-alone does not make document questions available. Code6 / 0.4.1-dev now tightens
-the CPU memory guard and awaits final validation/delivery. Use that update for
-phone model testing; code5's older guard admitted an insufficient memory state. OCR
-production behavior is unchanged, and tuning remains deferred by user request.
+[MODEL_SETUP.md](MODEL_SETUP.md) before testing. Native execution passed in two
+fresh explicit emulator runs; installation
+alone does not make document questions available. Code6 / 0.4.1-dev tightens
+the CPU memory guard and has passed local and signed CI validation. Use this
+update for phone model testing; code5's older guard admitted an insufficient
+memory state. OCR production behavior is unchanged, and tuning remains deferred
+by user request.
 
 ## Exact delivered build and validation
 
-- Source: 9782812a58813777d32d58aa0ac4920eac758889.
-- Built commit: eeabd74d42aa300a356b80ed2f614d3b1449a7f7.
-- [Stable run 39814166314](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314),
-  attempt 1, job 119948119338; successful final job logs at 22 October 2026 16:38:39 UTC.
-- APK artifact 12441148509: 309,735,051 bytes; expires 29 October at 16:38:34 UTC.
-- ZIP SHA-256: b2b1279bddadf2f206fc47259585b53335eff0ca729640009b68533ad19ceb90.
+- Source: f2f5c9274617111b96001d48a70c4f9d8d8a9947.
+- Built commit: 44fd595dab8bbed9bd996e88e2c99746b990e079.
+- [Stable run 39819743976](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976),
+  attempt 1, job 119967552372; completed/success at 22 October 2026 17:15:37 UTC.
+- APK artifact 12443389300: 309,771,448 bytes; expires 29 October at 17:15:28 UTC.
+- ZIP SHA-256: 0d7d03715d24711f80d50328e75aba8012d6e8188db3787f40a229c20c39de63.
 - Both v2 signatures match the existing public certificate SHA-256:
   0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467.
-- [Regression reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12442211586):
-  122,596 bytes, ZIP SHA-256 99a7bf23623fe569234d3311caab8a25404d199275154183c9038b4ad66df8ff.
+- [Regression reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443189699):
+  116,654 bytes, ZIP SHA-256 6945abf139474c41a567c4a6796bd9f43895a384872c6a12f72f980de72beb01.
 - [Machine-readable checkpoint](checkpoints/2026-10-22-model-setup-build.json).
 
 | APK | Bytes | SHA-256 |
 | --- | ---: | --- |
-| private-document-assistant-offline-debug.apk | 154770214 | b78c18ffcc7a70d6fb14412a6160b732606d9f7ba3d55f5117d47f2e1708c168 |
-| private-document-assistant-connected-debug.apk | 154770266 | d1c5c4c34cf8356dce7940a066af7a698e8cc2d6e8cf4b3113df4d091ef0bb76 |
+| private-document-assistant-offline-debug.apk | 154788418 | 99b72b755409ffbb9c92fe2907bf88ea4a6e9a00feb037b6624470c5663e1430 |
+| private-document-assistant-connected-debug.apk | 154788470 | 228ffd76e3ccf558cee90dc4f5d04eb864968481131f4fbf7a6746338a8ce0fa |
 
 APK identities/signatures are evidence from actual CI logs and GitHub metadata;
 the APK ZIP was not independently downloaded locally. The regression ZIP was
@@ -63,7 +65,7 @@ secrets; no key was regenerated or published. No temporary signing fallback exis
 | Python fixture/native/validation/Java/APK/OCR/signing checks | PASS: 97 cases |
 | Source policy | PASS |
 | :core:test | PASS task; 82 authored cases |
-| Both platform JVM tasks | PASS tasks; 16 authored cases per variant in code5 |
+| Both platform JVM tasks | PASS tasks; 24 authored cases per variant in code6 |
 | App JVM tasks | NO-SOURCE; no app JVM coverage claimed |
 | All four instrumentation Kotlin compilations | PASS |
 | Both app/platform lint, production dependencies, compilation and assemblies | PASS |
@@ -120,10 +122,10 @@ and licence sources. Gemma's checksum/licence gate remains unresolved.
 
 The alias fix preserves canonical containment, controlled filenames, symlink
 rejection, exact hashes and canary scans. Test-only phase/PID events and focused
-package exit-info/crash diagnostics are prepared for the next synthetic CI run.
+package exit-info/crash diagnostics were used in subsequent synthetic CI runs.
 Physical-target scripts do not collect these crash logs. The earlier emulator
-had 4 GiB RAM; its crash remains unattributed. The next target uses 10 GiB nominal RAM
-and requires 12 GiB measured host availability. Nominal emulator RAM differs
+had 4 GiB RAM; its crash remains unattributed. The final target used 10 GiB nominal
+RAM and required 12 GiB measured host availability. Nominal emulator RAM differs
 from Android-reported total memory. This direct runtime probe does not exercise
 the phone UI's independent capability guard. Neither setting is a measured model
 minimum or phone proof.
@@ -138,16 +140,16 @@ attempts. The mandatory Gradle pre-build hash check remains unchanged. No
 verified official alternate mirror was established and no dependency pin changed.
 The actual local GET verified all 12,848,454 bytes and the existing SHA-256.
 Twenty new synthetic tests passed, raising routine Python checks from 77 to 97.
-The fresh stable run independently verified this bootstrap and passed all 97
-Python checks plus its full host/66-case Android gate. Individual APK bytes are
-identical to the prior successful stable build; ZIP/report metadata differ.
+The code5 stable run independently verified this bootstrap and passed all 97
+Python checks plus its full host/66-case Android gate. Code6 repeated these
+gates with the stricter memory policy and a new version; its APK bytes differ.
 
 Pinned SDK/Gradle bootstrap now works locally. The first full local attempt
 failed at the missing javac in the preinstalled runtime; the next exposed the
 new JDK's missing environment CA. A published-checksum-verified Temurin JDK21
 using the existing system Java trust store resolved both without disabling TLS.
-The full current-source scripts/check-host.sh run then passed: 97 Python checks,
-114 actual JVM cases (82 core + 16 per platform variant, no failures/skips), all
+The full code6 scripts/check-host.sh run then passed: 97 Python checks,
+130 actual JVM cases (82 core + 24 per platform variant, no failures/skips), all
 four instrumentation Kotlin compilations, lint, assemblies, production dependency
 checks, manifests and native checks. The independently parsed local JVM XML and
 exact environment scope are recorded in the
@@ -161,8 +163,9 @@ Android then killed PID2985 for reason3 LOW_MEMORY before generation started.
 Actual pre-test MemTotal was 6,072,516 KiB and MemAvailable 4,457,868 KiB. This is
 an observed memory failure for this experiment, not evidence about the earlier
 4 GiB crash or a phone minimum. The scoped 6,890-byte diagnostic ZIP was downloaded
-and independently SHA-256 checked. A larger bounded target with numeric process
-memory sampling and a smaller public candidate assessment are being prepared.
+and independently SHA-256 checked. A larger bounded target subsequently passed. A smaller public candidate
+assessment is retained as [research only](decisions/0006-smaller-cpu-candidate.md);
+no additional model was registered or tested.
 
 The subsequent [10 GiB nominal probe](checkpoints/2026-10-22-native-model-probe.json)
 39816778021 passed exactly one fresh non-skipped real generation/cancellation
@@ -175,7 +178,18 @@ were unchanged and both narrow canary scans completed. Actual pre-test guest
 MemTotal was 10,188,980 KiB and MemAvailable 8,492,668 KiB. The 7,208-byte report
 ZIP was independently downloaded/hash checked. Its memory sampler captured
 zero samples because tr buffered the phase/PID stream; zero is absent evidence,
-not a measured RSS peak. A line-buffering fix is validated for the next run.
+not a measured RSS peak. The line-buffering fix was validated and repeated in
+run 39819779900, which passed one fresh real test with no skips. It generated
+111 UTF-16 units in a 79,135 ms complete operation; the separate cancellation
+operation took 16,700 ms, including its own initialization. Native cancellation
+returned successfully 242 times and synchronous send failed once as expected.
+Model hash and both narrow canary scans passed. The sampler captured 110
+numeric process samples with zero read/timeout/metadata errors: observed max
+RSS 8,704,966,656 bytes and kernel-reported VmHWM 8,742,727,680 bytes (~8.14 GiB).
+Pre-test guest MemTotal was 10,188,992 KiB and MemAvailable 8,547,288 KiB. The
+8,356-byte report was independently downloaded and SHA-256 checked. These are
+x86_64 emulator process measurements, not a physical-phone RAM minimum. The
+direct runtime probe bypasses the separate UI memory guard.
 
 Code6 source adds a reviewed-artifact/runtime-only CPU policy: at least 10 GiB
 Android-reported total memory and 8 GiB currently available, 64-bit and no low
@@ -184,16 +198,22 @@ remain binding. The UI checks before model verification and again immediately
 before native load, showing actual/required memory when denied. These are
 conservative application settings for a 12 GB class phone, not measured model
 minimums or a compatibility promise. Eight new policy cases passed per variant
-(24 platform JVM cases each); a full current-source host run is underway.
+(24 platform JVM cases each). The full code6 host run then passed all 97
+Python checks, 130 actual JVM cases (82 + 24 + 24, zero failures/skips), all
+instrumentation Kotlin compilation, lint, assembly and exact manifest/native
+checks. The stable signed CI run passed its complete host/66-case Android gate
+and published the code6 APKs. The measured-memory repeat also passed as above.
 
-Next: complete code6 host/CI/APK delivery and repeat the native probe with the
-line-buffered memory sampler. Preserve the successful generation/cancel evidence
-separately from the still-pending process-memory/phone checks. Next run the phone import/tamper/
-cancel/lock/restart and same-key update procedure in DEVICE_TESTS.md. The reported
-iQOO Neo 10 / Android 16 is reported by the user to have 12 GB physical RAM
-and 256 GB storage; it has no independently measured inference result. Only
-then proceed to M5's evaluated cited questions/summaries; installation does not
-complete M4 or enable QA. M6 tools and M7 portable encrypted backup/recovery follow.
+Next: run the phone import/tamper/cancel/lock/restart and same-key update
+procedure in DEVICE_TESTS.md, recording exact APK/model identity and actual
+memory/latency. The reported iQOO Neo 10 / Android 16 has 12 GB physical RAM
+and 256 GB storage, according to the user; it has no independently measured
+inference result. The high emulator memory observation warrants a cautious
+synthetic phone test, not a compatibility promise. M5's next implementation is
+revision-pinned cited questions/summaries with typed intent and injection
+controls; user-visible QA remains gated on device and held-out evaluation.
+Installation does not complete M4. M6 tools and M7 portable encrypted
+backup/recovery follow.
 
 Remaining gates include the full explicit-target device suite, two physical
 phone tiers, real 16 KiB loading, physical authentication/lifecycle, hard native

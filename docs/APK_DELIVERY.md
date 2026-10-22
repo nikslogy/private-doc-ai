@@ -2,11 +2,11 @@
 
 ## Current stable Preview build
 
-[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12441148509).
+[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).
 Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
 host gate, pinned signer checks and 66 non-skipped Android test executions in
-[run 39814166314](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314).
-Version 0.4.0-dev / code 5 retains permanent IDs com.privateassistant.app.preview
+[run 39819743976](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976).
+Version 0.4.1-dev / code 6 retains permanent IDs com.privateassistant.app.preview
 and com.privateassistant.app.connected.preview. The connected launcher is
 **Private Vault Connected Preview**. Install over the existing Preview apps
 without uninstalling or clearing data. Earlier Test/original apps retain separate
@@ -16,9 +16,11 @@ Open Assistant → Document facts and choose one source. Supported English label
 produce literal values, exact source quotes/page links and unresolved conflict
 warnings. OCR may change digits and unsupported layouts may not match. AI
 questions/summaries remain disabled. Set up on-device AI offers verified import
-and a fixed synthetic diagnostic; native generation has not yet passed. Consult
-MODEL_SETUP.md and STATUS.md before running it. This is experimental setup, not
-a completed AI assistant.
+and a fixed synthetic diagnostic. Real CPU generation/cancellation passed on an
+explicit emulator, with sampled process high-water memory around 8.14 GiB.
+Code6 checks total/available memory before native loading; this does not prove
+phone compatibility. Consult MODEL_SETUP.md and STATUS.md before running it.
+This is experimental setup, not a completed AI assistant.
 
 The persistent user-owned signing key is held in repository Actions secrets;
 only its public certificate is committed. Stable delivery checks the input key

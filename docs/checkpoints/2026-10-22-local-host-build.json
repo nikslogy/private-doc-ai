@@ -1,36 +1,8 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "c43190ce8ae64a6247b9af8af96beb9112352af9",
   "command": "source .tooling/env.sh; scripts/check-host.sh",
   "result": "passed",
-  "logSha256": "a0a133e326aa1f7f197101e532d56b7f16894ac5af542aee589c0e00382cb2af",
   "pythonCases": 97,
-  "jvmResults": [
-    {
-      "task": "core/build/test-results/test",
-      "files": 9,
-      "tests": 82,
-      "failures": 0,
-      "errors": 0,
-      "skipped": 0
-    },
-    {
-      "task": "platform/build/test-results/testOfflineDebugUnitTest",
-      "files": 2,
-      "tests": 16,
-      "failures": 0,
-      "errors": 0,
-      "skipped": 0
-    },
-    {
-      "task": "platform/build/test-results/testConnectedDebugUnitTest",
-      "files": 2,
-      "tests": 16,
-      "failures": 0,
-      "errors": 0,
-      "skipped": 0
-    }
-  ],
   "allFourInstrumentationKotlinCompilations": "passed",
   "lintBothAppPlatformVariants": "passed",
   "bothAssemblies": "passed",
@@ -39,6 +11,39 @@
   "localApks": "diagnostic .dev builds; not stable signed user delivery",
   "androidDeviceExecution": "not run locally; KVM absent",
   "nativeGeneration": "not established",
+  "trustStore": "existing /etc/ssl/certs/java/cacerts; TLS verification retained",
+  "earlierLocalFailures": [
+    "missing complete Java compiler in installed runtime",
+    "new JDK default trust store did not contain environment CA; corrected using existing system trust store"
+  ],
+  "sourceCommit": "f2f5c9274617111b96001d48a70c4f9d8d8a9947",
+  "versionName": "0.4.1-dev",
+  "versionCode": 6,
+  "logSha256": "dd1ca61c35caebb7012d289330a52c7508fb4a0042973aea8f995d9eb14ae07d",
+  "jvmResults": [
+    {
+      "task": "core/build/test-results/test",
+      "tests": 82,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testOfflineDebugUnitTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testConnectedDebugUnitTest",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "jvmTotalCases": 130,
   "jdk": {
     "metadataUrl": "https://api.github.com/repos/adoptium/temurin21-binaries/releases/latest",
     "release": "jdk-21.0.13+9",
@@ -46,12 +51,66 @@
     "byteCount": 207858352,
     "sha256": "d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c"
   },
-  "trustStore": "existing /etc/ssl/certs/java/cacerts; TLS verification retained",
-  "earlierLocalFailures": [
-    "missing complete Java compiler in installed runtime",
-    "new JDK default trust store did not contain environment CA; corrected using existing system trust store"
-  ],
   "gradleBuildResult": [
-    "BUILD SUCCESSFUL in 11m 17s"
+    "BUILD SUCCESSFUL in 5m 6s"
+  ],
+  "previousRuns": [
+    {
+      "schemaVersion": 1,
+      "sourceCommit": "c43190ce8ae64a6247b9af8af96beb9112352af9",
+      "command": "source .tooling/env.sh; scripts/check-host.sh",
+      "result": "passed",
+      "logSha256": "a0a133e326aa1f7f197101e532d56b7f16894ac5af542aee589c0e00382cb2af",
+      "pythonCases": 97,
+      "jvmResults": [
+        {
+          "task": "core/build/test-results/test",
+          "files": 9,
+          "tests": 82,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "task": "platform/build/test-results/testOfflineDebugUnitTest",
+          "files": 2,
+          "tests": 16,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "task": "platform/build/test-results/testConnectedDebugUnitTest",
+          "files": 2,
+          "tests": 16,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ],
+      "allFourInstrumentationKotlinCompilations": "passed",
+      "lintBothAppPlatformVariants": "passed",
+      "bothAssemblies": "passed",
+      "manifestAndStaticNativeGates": "passed",
+      "offlineInternetPermissionAbsent": true,
+      "localApks": "diagnostic .dev builds; not stable signed user delivery",
+      "androidDeviceExecution": "not run locally; KVM absent",
+      "nativeGeneration": "not established",
+      "jdk": {
+        "metadataUrl": "https://api.github.com/repos/adoptium/temurin21-binaries/releases/latest",
+        "release": "jdk-21.0.13+9",
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.13%2B9/OpenJDK21U-jdk_x64_linux_hotspot_21.0.13_9.tar.gz",
+        "byteCount": 207858352,
+        "sha256": "d7f5d5cf865a2902b70ff549b97586a7d3f234e016f041ab447ea740c7d66d1c"
+      },
+      "trustStore": "existing /etc/ssl/certs/java/cacerts; TLS verification retained",
+      "earlierLocalFailures": [
+        "missing complete Java compiler in installed runtime",
+        "new JDK default trust store did not contain environment CA; corrected using existing system trust store"
+      ],
+      "gradleBuildResult": [
+        "BUILD SUCCESSFUL in 11m 17s"
+      ]
+    }
   ]
 }

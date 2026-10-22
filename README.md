@@ -3,9 +3,9 @@
 Native Android encrypted document vault with offline OCR, local search and
 selected-source labelled document facts.
 **Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12441148509).
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).
 Unzip and install the offline APK, then open **Private Vault Preview**.
-Version 0.4.0-dev / code 5 requires Android 12/API31+. Install it as an update to
+Version 0.4.1-dev / code 6 requires Android 12/API31+. Install it as an update to
 the existing Preview app without uninstalling or clearing data. Preview IDs and
 signing identity are unchanged; actual device update-preservation testing remains
 pending. Earlier Test/original apps retain separate vaults; keep their data.
@@ -21,10 +21,12 @@ identifiers/dates and monetary precision are preserved; unsupported layouts may
 not match. AI questions/summaries, conversions, recovery and backups remain unavailable.
 
 Experimental model setup adds licence acknowledgement and exact-byte verified
-local import. Its fixed synthetic native diagnostic has not yet passed; normal
-document questions remain disabled. See [model setup](docs/MODEL_SETUP.md).
+local import. Its fixed synthetic native diagnostic passed real CPU generation
+and cancellation on an explicit emulator. Code6 adds a stricter memory guard;
+phone model execution remains unverified and normal document questions remain
+disabled. See [model setup](docs/MODEL_SETUP.md).
 
-[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314)
+[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976)
 passed the full host gate and 66 non-skipped Android 16 emulator executions.
 These include real OCR and authenticated Keystore/vault lifecycles, pinned
 revision reads, cited/conflicting fields and original preservation. Phone UI,
@@ -107,8 +109,9 @@ python3 scripts/security-check.py
 instrumentation Kotlin compilation, unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
-Core has 82 authored JVM tests; M4 adds 8 metadata cases to the existing 8
-platform validator cases per variant. App JVM tasks report NO-SOURCE. The delivered model-setup build passed 32 selected Android
+Core has 82 authored JVM tests; platform has 24 per variant, including model
+metadata and CPU memory-policy cases. The full local code6 host run executed
+all 130 JVM cases with no failures/skips. App JVM tasks report NO-SOURCE. The delivered model-setup build passed 32 selected Android
 cases and one real credential-bound lifecycle case per variant on an API36 emulator,
 with no skips: 66 executions. The full device suite and physical fingerprint/UI tests
 remain pending; see STATUS for the exact scope and earlier failures.
