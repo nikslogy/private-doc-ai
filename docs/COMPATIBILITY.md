@@ -1,9 +1,9 @@
 # Compatibility record
 
-As of 21 October 2026. Both variants compiled, passed lint and produced verified
-debug APKs in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548)
-from source 82758e97a250d8dfca884a429146e4cfd416cdc2. This is host build/static
-evidence; phone loading, licence audit and security update review remain pending.
+As of 22 October 2026. Both variants compiled, passed lint and produced verified
+debug APKs in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766)
+from source 850a87567dba8cc686539419110ca0eae7d5baad. Host/static and selected Android 16 emulator regression evidence passed;
+physical phone loading, licence audit and security update review remain pending.
 See STATUS.md for commands actually executed.
 
 ## Toolchain
@@ -35,7 +35,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | Explicit M0 CPU model load probe | Published artifact resolved/compiled with min31 and bytecode17; arm64/x86_64 JNI static 16 KiB checks passed; actual model load pending |
 | `com.google.crypto.tink:tink-android:1.17.0` | Object Streaming AEAD and key envelopes | Official release exists; actual Android primitive probes remain device checks |
 | `androidx.room:room-runtime`, `room-ktx`, `room-compiler` and `androidx.room` plugin `2.7.2` | Encrypted metadata schema | Official release; Kotlin 2.0+/KSP2; plugin isolates per-variant schema outputs and fixes empty schema directory configuration |
-| `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/wrong-key/native checks pending |
+| `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API36 x86_64; physical checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |

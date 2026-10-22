@@ -1,15 +1,38 @@
 # Development APK delivery
 
-Both offline and connected development APKs passed the real Android build and
-host gates on 21 October 2026.
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323)
-and extract private-document-assistant-offline-debug.apk for the offline app.
-GitHub sign-in may be required. This 242,842,436-byte ZIP expires 28 October 2026.
-Its SHA-256 is e95b71fc4686fff95c1629cc661bd9a22dcbdcb0a9523cbc8a01c5a323be58a6.
-Built source: 82758e97a250d8dfca884a429146e4cfd416cdc2.
-See [STATUS.md](STATUS.md) for individual APK hashes and the device checks still
-pending. These are debug test builds, with vault/search available and OCR/AI
-answers unavailable.
+The original version 0.1.0 APKs passed host checks on 21 October 2026, but the
+user reports first-fingerprint-unlock failure on iQOO Neo 10 / Android 16.
+Keep any installed original apps and their vault data; the original bundle is
+historical build evidence, not the recommended build for another unlock attempt.
+
+Version 0.1.1-dev / code 2 repairs a SQLCipher security-setting call during
+database opening. The [repair CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766)
+passed the full host gate, 12 Android 16 regression tests and one real
+credential-bound lifecycle probe per variant: 26 emulator test executions,
+none skipped. Both APKs also passed package, signature and native/alignment checks.
+[Download the repaired APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
+The bundle is 242,861,005 bytes; SHA-256 is
+`30124fc6be461d0cea9be89be39679849e6a21aa5dfb60241f24fbc8b22a067c`.
+Built source: `850a87567dba8cc686539419110ca0eae7d5baad`.
+Physical fingerprint/UI behavior on the user's phone remains unverified. See
+[STATUS.md](STATUS.md) for actual results and [DEVICE_TESTS.md](DEVICE_TESTS.md)
+for the separate physical-phone checks.
+Production OCR, AI answers and portable vault recovery remain unavailable.
+
+## Repair build identity and existing vaults
+
+| APK | Launcher label | Application ID | Version |
+| --- | --- | --- | --- |
+| private-document-assistant-offline-debug.apk | Private Vault Test | com.privateassistant.app.dev | 0.1.1-dev / code 2 |
+| private-document-assistant-connected-debug.apk | Private Vault Connected Test | com.privateassistant.app.connected.dev | 0.1.1-dev-connected / code 2 |
+
+These debug IDs differ from the original `com.privateassistant.app` and
+`com.privateassistant.app.connected`. The original ephemeral debug signing key
+was not retained, so the repair builds intentionally install alongside those
+apps. They create separate vaults and cannot open, migrate or replace the
+original apps' private files. Do not uninstall, clear data or reset keys to work
+around a signing mismatch. Preserve the old installations and original source
+documents. Test the new launcher labels with synthetic documents.
 
 ## Build and stage
 
@@ -44,8 +67,11 @@ The delivery contains no vault, model weights, signing keys or SDK binaries.
 
 ## CI downloads
 
-The checked-in Host checks workflow runs the same staging command and uploads
-`artifacts/apk/` only after success. The artifact name starts with
+The checked-in Host checks workflow runs the same staging command, then requires
+the selected non-skipped Android 16 SQLCipher/Tink/migration/durability tests
+and the real credential-bound lifecycle probe for both platform variants.
+Only after all those steps succeed does it upload `artifacts/apk/`. Host staging
+alone does not satisfy the workflow's Android regression gate. The artifact name starts with
 `private-document-assistant-debug-apks-` and includes the run ID and attempt.
 Download it from that successful workflow run's Artifacts section and unpack
 the archive. Retention is seven days; missing files fail the upload step.
@@ -68,18 +94,23 @@ Android 12/API31 or newer is required. Check hashes from the extracted directory
 sha256sum -c SHA256SUMS
 ```
 
-Offline uses application ID `com.privateassistant.app` and has no INTERNET
-permission. Connected uses `com.privateassistant.app.connected`; it can be
-installed alongside offline and still has no remote document processing.
-Use synthetic documents while the device/security gates remain open.
+Choose **Private Vault Test** for offline testing: application ID
+`com.privateassistant.app.dev`, with no INTERNET permission. **Private Vault
+Connected Test** uses `com.privateassistant.app.connected.dev` and can be
+installed alongside both offline and the original apps. Connected still has no
+remote document processing. Use synthetic documents while the device/security
+gates remain open.
 
 These APKs use development debug signing. Builder debug certificates can differ;
 inspect `APK_MANIFEST.json` before attempting an update. Uninstalling or losing
 the Keystore can permanently lose vault access because portable recovery is
 not implemented. Keep original source files outside the app.
 
-Host/signature/alignment verification does not establish successful installation,
-phone behavior, full licence review or release readiness. Run the separate
+Host/signature/alignment verification does not establish working first unlock,
+phone behavior, full licence review or release readiness. The new emulator
+tests passed real Android credential/Keystore authorization, but they do not
+verify physical fingerprint prompts or the phone vendor's authentication path.
+The full device suite remains pending. Run the separate
 explicit-target device suite from [DEVICE_TESTS.md](DEVICE_TESTS.md); absence of
 a provisioned device is not a pass. Pipeline tests in `test-apk-delivery.py`
 use synthetic ZIPs and mocked SDK output, and provide no real APK evidence.

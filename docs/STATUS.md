@@ -1,185 +1,133 @@
 # Development status
 
-Checkpoint 6: first-unlock repair in progress, 22 October 2026.
-User reports both original APKs install on iQOO Neo 10 / Android 16, but first
-fingerprint unlock fails before document import. Do not treat the earlier host
-build as evidence of working unlock. Existing vault files must be preserved.
+Checkpoint 6: 22 October 2026 — first-unlock repair built and emulator-verified.
+**Repaired development APKs are ready. Physical fingerprint/UI confirmation is pending.**
 
-Confirmed blocker: SQLCipher 4.9.0 returns a result row for PRAGMA secure_delete
-= ON; its execSQL API rejects that result. The production open policy now uses
-a cursor, consumes/verifies the enabled value and shares the exact callback with
-the encrypted database/migration tests. Other security settings, authentication,
-keys and envelope formats are retained. No automatic reset or key replacement.
+## Install the repair
 
-Android 16 emulator regressions for SQLCipher opening/reopening/wrong-key
-rejection, old-call failure reproduction, settings verification, encrypted
-migration/search, Tink and file durability are being added before APK upload.
-Actual execution results remain pending; no repaired APK is ready yet.
+[Download both repaired APKs and checksums](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
+Extract private-document-assistant-offline-debug.apk and open **Private Vault Test**.
+Android 12/API31+ is required. The connected APK launches as **Private Vault Connected Test**.
 
-A further disposable-emulator probe sets a synthetic screen-lock PIN, invokes
-Android's real credential/Gatekeeper verification and immediately runs the
-existing full controller lifecycle test for each variant within the unchanged
-30-second Keystore window. It requires one non-skipped passing result per
-variant. This does not establish physical fingerprint/UI behavior. It is being
-validated on a separate fix branch while the initial Android regression run
-continues, then will be fast-forwarded only after its real results are inspected.
+Version code 2 / 0.1.1-dev uses com.privateassistant.app.dev; connected uses
+com.privateassistant.app.connected.dev and version 0.1.1-dev-connected.
+These IDs install alongside the original apps and have separate vaults.
+The original ephemeral debug signing key was not retained. Do not uninstall,
+clear storage or reset keys to work around signing; retain original apps/data.
+The repair does not reopen or migrate another application's private files.
 
-Version 0.1.1-dev / code 2 uses separate debug IDs com.privateassistant.app.dev
-and com.privateassistant.app.connected.dev, with labels Private Vault Test and
-Private Vault Connected Test. These install alongside the original APKs because
-the original ephemeral debug signing key is unavailable. They have separate
-vaults and do not reopen/migrate the original app's private files. Do not ask
-the user to uninstall or clear data to work around signing.
+## Verified build identity
 
-Current checks: source policy and nine APK delivery tests passed; shell/Python
-syntax passed. CI host and Android regression results pending. Next concrete
-task: run full host gate plus all 12 selected Android regression tests per
-platform variant, publish both repaired APKs only after success, then obtain
-physical first-unlock confirmation on the user's Android 16 phone.
+- Built source: 850a87567dba8cc686539419110ca0eae7d5baad.
+- [Successful CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766),
+  attempt 1; job 119617073042. Completed 22 October 2026, 08:52 IST (03:22 UTC).
+- APK artifact 12399575330: private-document-assistant-debug-apks-39715674766-1.
+- ZIP: 242,861,005 bytes; expires 29 October 2026 at 08:52 IST.
+- ZIP SHA-256: 30124fc6be461d0cea9be89be39679849e6a21aa5dfb60241f24fbc8b22a067c.
+- [Android regression reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399007128):
+  XML, full credential-test transcripts and resolved emulator/image/target metadata.
+- Both APK v2 signatures verified; certificate SHA-256:
+  5ddc39e8f3e28c0db7ccd2b095f7bb62021c67ee95c0984e414727503836cc09.
 
-The first repair run (39645060676) passed the full host gate and booted the API36
-emulator, then exposed an old migration-test compilation error: RoomDatabase
-does not implement Closeable, so its test helper must explicitly close it in
-finally. Corrected all five uses and added both modules/variants' instrumentation
-Kotlin compilation to the host gate. No test was removed and no APK was uploaded.
+| APK | Bytes | SHA-256 |
+| --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | 121343048 | 3b0fd4902c159f1503d66d24c0347c801e95f33adb14727b6e5a20a6b3634bf7 |
+| private-document-assistant-connected-debug.apk | 121343104 | 92d24263fdd68338e8abbcf01e4a7f942419ace17f662ad158a19b1c0ec9afbe |
 
-Run 39646510842 passed the expanded host gate and executed 12 offline Android
-tests. Eleven passed, including production database opening/settings, encrypted
-reopen/wrong-key rejection, Tink and durability. The migration test exposed a
-redundant explicit SIMPLE tokenizer option that Room omits in generated schema
-and compares literally. The migration now uses SQLite's same default SIMPLE
-tokenizer without the redundant option; originals, schema version and search
-semantics are preserved. Both variants and real-credential probes must pass the
-next run. APK upload remained blocked on the failure.
+Both have minimum SDK 31, target SDK 35 and compile SDK 36.
+SHA256SUMS, APK_MANIFEST.json and exact-byte package/signature/native/alignment
+reports accompany the APKs. Evidence was checked through CI logs and GitHub
+artifact metadata; no independent local ZIP-byte verification is claimed.
 
-The next run also supports the observed AGP result-directory layout, rejects
-missing/ambiguous/skipped reports and prints complete synthetic failure details.
-Pinned cache restore/save covers only Gradle dependency/task and wrapper caches;
-Android user homes, SDKs and signing keys are excluded. All host/native/privacy
-checks still run. No repaired APK or passing credential probe is inferred yet.
+## Failure and corrections
 
-## Earlier build evidence — original APKs have reported unlock failure
+The user installed both original 0.1.0 APKs on iQOO Neo 10 / Android 16.
+First fingerprint authentication succeeded, then unlock failed before import.
 
-Checkpoint 5: 21 October 2026 — first successful Android build and APK delivery.
-**Both host-verified debug APKs are available. Device behavior remains unverified.**
-The earlier implementation checkpoint is preserved in
-[checkpoints/2026-10-18.md](checkpoints/2026-10-18.md).
+SQLCipher 4.9.0 returns a result row for PRAGMA secure_delete = ON, while its
+execSQL API rejects returned rows. VaultDatabaseSecurity now queries/consumes
+that row and verifies the enabled value. The exact production callback is shared
+with SQLCipher and migration tests. Encryption, authentication, keys, envelopes,
+immutable originals and other security settings are unchanged. No reset/fallback.
 
-## Download and build identity
+Real Android testing also exposed a redundant explicit default SIMPLE tokenizer
+option in migration 1→2. Room omits it and compares FTS option strings literally.
+The migration now uses the identical SQLite default without the extra option.
+It keeps version 2, document identities, ciphertext and search semantics.
+Old Room test helpers now close databases explicitly in finally.
 
-[Download both APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323).
-Extract the ZIP and install private-document-assistant-offline-debug.apk for
-the offline development app. Android 12/API31 or newer is required.
-
-- Repository: [nikslogy/private-doc-ai](https://github.com/nikslogy/private-doc-ai).
-- Built source commit: 82758e97a250d8dfca884a429146e4cfd416cdc2.
-- [Successful Host checks run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548),
-  attempt 1, job 119366471210; completed 21 October 2026 at 17:17 UTC.
-- Artifact 12364584323: private-document-assistant-debug-apks-39641658548-1.
-- ZIP: 242,842,436 bytes; expires 28 October 2026 at 17:17 UTC.
-- ZIP SHA-256: e95b71fc4686fff95c1629cc661bd9a22dcbdcb0a9523cbc8a01c5a323be58a6.
-- APK v2 signatures verified; debug certificate SHA-256:
-  4d211d949b97ce0ca966a00810966800610c6e7abfd88ff22e3fa4bb943c3e58.
-
-| APK | Application ID | Bytes | SHA-256 |
-| --- | --- | ---: | --- |
-| private-document-assistant-offline-debug.apk | com.privateassistant.app | 121343048 | b9237d5a35fca31b8e1f2113a81c4c9dcc25620c9909fa43b5a67fa1d5716e28 |
-| private-document-assistant-connected-debug.apk | com.privateassistant.app.connected | 121343092 | 926566ed2ebed8501f30c3a431e4203eb43f9bd6f4be6e8832483c81379a8c7f |
-
-Both have version code 1, minimum SDK 31 and target SDK 35. Version names are
-0.1.0-dev and 0.1.0-dev-connected. SHA256SUMS and APK_MANIFEST.json inside the
-download identify the exact APK bytes. The GitHub artifact is the delivery;
-SDKs, signing keys, models and private documents were not committed.
-See [APK_DELIVERY.md](APK_DELIVERY.md) for installation and signing limitations.
+The host gate additionally compiles instrumentation sources for both modules and
+variants. CI rejects skipped/missing/ambiguous regression results and publishes
+APKs only after all emulator checks pass. Pinned Gradle cache actions cover only
+dependency/task and wrapper caches; SDKs and Android user/signing-key homes are excluded.
 
 ## Checks actually executed
 
-GitHub's Ubuntu 24.04 runner successfully executed pinned bootstrap with JDK 21,
-then python3 scripts/stage-apks.py, which invokes the full scripts/check-host.sh.
-Gradle reported BUILD SUCCESSFUL in 4m 55s; 197 tasks, 171 executed and 26 cached.
-Staging verified the copied APK bytes again before atomic publication and upload.
+The successful Ubuntu 24.04/JDK21 runner used pinned bootstrap, then
+python3 scripts/stage-apks.py → scripts/check-host.sh, followed by a provisioned
+API36 x86_64 emulator with explicit ANDROID_SERIAL=emulator-5554.
 
 | Check | Actual result |
 | --- | --- |
-| Python fixture/native/validation/Java-environment/APK-delivery suites | PASS: 6 + 22 + 10 + 10 + 9 = 57 tests |
+| Python fixture/native/validation/Java-environment/APK-delivery suites | PASS: 57 tests |
 | Source privacy/pinning policy | PASS |
-| :core:test | PASS; 55 authored test cases |
-| Platform/app offline and connected JVM unit-test tasks | NO-SOURCE; no Android-module JVM coverage claimed |
-| Platform Kotlin compilation and Room schema generation, both variants | PASS |
-| App Kotlin/Compose compilation, both variants | PASS |
-| Platform/app lint, both variants | PASS; warnings/deprecations are not a zero-warning claim |
-| :app:verifyProductionDependencies | PASS; production inventory generated and ML Kit excluded |
-| :app:assembleOfflineDebug / :app:assembleConnectedDebug | PASS |
-| Exact original and staged merged-manifest/native checks | PASS; offline has no INTERNET permission |
-| Actual native inventory | 18 libraries per APK: 5 arm64-v8a, 5 x86_64, 4 armeabi-v7a, 4 x86 |
-| All packaged 64-bit PT_LOAD and stored ZIP alignment | PASS: at least 16 KiB; 32-bit 16 KiB behavior remains unverified |
-| Official apksigner verify and zipalign -c -P 16 -v 4, both staged APKs | PASS |
-| Artifact upload | PASS; both APKs, SHA256SUMS, manifest and reports available |
-| Instrumentation, installation, physical-device/privacy/model checks | UNRUN; no provisioned explicit target |
+| :core:test | PASS; 55 authored cases |
+| Platform/app offline/connected JVM unit-test tasks | NO-SOURCE; no JVM coverage claimed for those modules |
+| Both modules/variants' instrumentation Kotlin compilation | PASS |
+| Production Kotlin/Room/Compose compilation, lint and dependency inventory | PASS; ML Kit excluded from production |
+| Both debug assemblies and staged manifest/native/package checks | PASS; offline has no INTERNET permission |
+| Static native 64-bit PT_LOAD and stored ZIP alignment | PASS, 16 KiB; 32-bit 16 KiB behavior unverified |
+| Official apksigner and zipalign, both staged APKs | PASS |
+| SqlCipherInstrumentedTest | 3 cases × 2 variants passed, none skipped |
+| VaultEvidenceMigrationInstrumentedTest | 3 cases × 2 variants passed, none skipped |
+| StreamingCryptoInstrumentedTest | 4 cases × 2 variants passed, none skipped |
+| DurableFilesInstrumentedTest | 2 cases × 2 variants passed, none skipped |
+| Real-credential VaultLifecycleInstrumentedTest | 1 case × 2 variants passed, none skipped |
+| APK and regression-report uploads | PASS |
 
-Full host/package/signature/alignment/dependency reports accompany the APKs.
-Static native alignment does not establish successful loading on a 16 KiB phone.
-No model, OCR quality, traffic, runtime leakage or recovery result is inferred
-from compilation, source review or mocked pipeline tests.
+There are 26 Android test executions: 12 selected cases plus one authenticated
+lifecycle case for each platform variant. The latter uses Android's actual
+credential/Gatekeeper path with a synthetic PIN on the disposable emulator,
+then the unchanged 30-second Keystore policy. It verifies first vault creation,
+import/dedup, exact originals, evidence/search, lock/reopen, interrupted-publication
+cleanup, missing-object rejection, limited private-file canary scans and deletion.
+No authentication substitutes or weakened key policy were used.
 
-## Build corrections and earlier attempts
+This is an emulator regression subset, not the complete check-device.sh suite.
+Physical fingerprint prompts, activity UI, actual process death/power loss,
+OEM/16 KiB runtime behavior, comprehensive leakage/traffic/performance and
+multiple physical phone tiers remain pending. Model/production OCR/recovery
+checks remain unavailable. No release-readiness claim.
 
-The user authorized this repository for the APK build. The initial empty repo
-was populated with 127 source files, and every remote blob hash/file mode was
-compared with its local source before updating main. Scripts retained executable
-modes. GitHub access is working; do not repeat the earlier installation blocker.
+## Earlier attempts
 
-1. [First CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39640417464),
-   source 83667e96fcfac2c89aeb111e934ccee1461036a1: setup, Python/source checks
-   and core tests passed; Room KSP failed while both variants shared a schema
-   output. No APK delivery.
-2. [Second CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39641140014),
-   source 8173ded425dbb481f8bdc97d7391f8dab2229a52: Room generation passed after
-   pinning the official Room plugin/runtime/compiler to 2.7.2 and using its
-   separate per-task output directories with checked schema consolidation.
-   Compilation then found O_DIRECTORY is absent from Android's public SDK.
-   No APK delivery.
-3. Successful run above: directory sync uses public O_RDONLY/O_CLOEXEC,
-   validates the opened inode with fstat/S_ISDIR, and retains fsync and guaranteed
-   descriptor close. Two synthetic Android durability probes are authored;
-   their device execution remains pending.
+- 39645060676: host passed; instrumentation compilation found old Room .use helpers;
+  no APK upload.
+- 39646099728: superseded/cancelled; no completed validation claimed.
+- 39646510842: expanded host passed; 11/12 offline Android cases passed, FTS migration
+  failed; no APK upload.
+- The original host-only APK evidence and failure caveat are archived in
+  [2026-10-21-first-apk.md](checkpoints/2026-10-21-first-apk.md).
+  [2026-10-18.md](checkpoints/2026-10-18.md) preserves earlier milestone detail.
 
-Earlier fixes corrected nine Tink calls to the pinned associated-data APIs.
-Bootstrap/wrapper use a shared credential-free Java proxy setup and ignored
-writable tool homes. Staging always runs all host checks and publishes both APKs
-together only after exact-byte manifest/native/package/signature/alignment checks.
-No privacy, lint or native gate was disabled to obtain this build.
+Local SDK/Gradle downloads were blocked in the original workspace; successful
+Android builds/tests used the authorized GitHub runner. Do not repeat old long
+permission waits or infer a local device pass.
 
-Locally, SDK/Gradle downloads remain unavailable through the workspace proxy;
-the successful build used the authorized GitHub runner. Do not repeat earlier
-long network permission waits. No local Android build or device pass is claimed.
+## Product and next concrete task
 
-## Product and milestone state
+Vault import/export/delete, immutable originals, local native PDF/text evidence,
+literal encrypted search and automatic locking are implemented.
+Production OCR, AI answers/summaries, derivative tools and portable backup/recovery
+remain unavailable; model catalogue is empty and ML Kit is instrumentation-only.
+M0/M1 stay open for the outstanding hardware/privacy/licence gates.
 
-Implemented and now host-compiled: encrypted immutable-original vault,
-system unlock, native PDF/text evidence, encrypted literal search, page-text
-viewer, explicit export/delete, lock/cancellation boundaries and schema 1→2
-migration. Runtime correctness still needs device evidence.
+Next: the user should install the new offline APK, open Private Vault Test and
+retry fingerprint unlock on iQOO Neo 10 / Android 16. Record the actual result.
+Then run ANDROID_SERIAL=<explicit-target> scripts/check-device.sh on authorized
+physical targets and document non-skipped outcomes plus full native provenance/
+licence notices, real 16 KiB loading and connected traffic inspection.
+Use synthetic documents and keep their sources; uninstalling/losing the Keystore
+can lose access because recovery is not implemented.
 
-Production OCR, AI questions/summaries, derivative tools, portable backup and
-recovery remain unavailable. ML Kit remains synthetic instrumentation-only;
-the model catalogue is empty. No production fake or remote processing was added.
-M0/M1 remain open until their real native/crypto/device gates close.
-
-These are development test APKs. Use synthetic documents and retain originals.
-Uninstalling or losing the Keystore can permanently lose vault access because
-portable recovery is not implemented. Debug signing certificates may differ
-between builders. No app-store/release, model-quality or audited-security claim.
-
-## Next concrete action
-
-Provision an explicitly authorized Android target and run
-ANDROID_SERIAL=<explicit-target> scripts/check-device.sh. Record non-skipped
-installation, authentication, durability, original-byte, migration, search/delete,
-lock/cancellation, parser and canary-leakage results. Include a real 16 KiB target
-and physical phone tiers before release; device absence is not a passing suite.
-Complete resolved native provenance/licence notices and traffic inspection.
-Select/verify an actual licensed model only when the earlier milestone gates
-permit it; never fabricate catalogue checksums or language-quality results.
-
-No app-store publication, Drive enablement or WhatsApp bot was authorized.
+No app-store publication, live bot or cloud document processing was enabled.

@@ -1,6 +1,65 @@
 # Device verification
 
-Device checks are pending until run on an explicitly selected, authorized Android target. An emulator can exercise lifecycle/API paths; native, biometric, model, thermal and performance claims need physical hardware. Use at least two physical phone tiers before release and record model/OS/API/ABI/RAM, APK and model SHA-256, runtime/backend, available storage, thermal state, test corpus version, and date. Never use private customer documents for these development probes.
+The original version 0.1.0 APKs install on the user's iQOO Neo 10 / Android 16,
+but first fingerprint unlock reportedly fails before import. Version 0.1.1-dev /
+code 2 passed the full host gate and the selected Android 16 emulator regressions
+in the [repair run](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766).
+[Download the repaired APKs and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
+Both variants passed 12 regression tests and one real credential-bound lifecycle
+test each, with none skipped. Physical fingerprint/UI behavior and the full
+device suite remain unverified. See [STATUS.md](STATUS.md) for exact evidence.
+
+The new debug IDs are `com.privateassistant.app.dev` (**Private Vault Test**) and
+`com.privateassistant.app.connected.dev` (**Private Vault Connected Test**).
+They install alongside the original apps because the original debug signing
+key is unavailable. Their vaults are separate; they do not reopen or migrate
+the original vault. Keep the original apps/data and source documents. Do not
+uninstall, clear storage, replace keys or disable authentication to get a test
+past first unlock.
+
+Device checks require an explicitly selected, authorized Android target. An emulator can exercise lifecycle/API paths; native, biometric, model, thermal and performance claims need physical hardware. Use at least two physical phone tiers before release and record model/OS/API/ABI/RAM, APK and model SHA-256, runtime/backend, available storage, thermal state, test corpus version, and date. Never use private customer documents for these development probes.
+
+## Android 16 unlock regression gate — selected tests passed
+
+The repair CI provisions a disposable API36 emulator and requires every case in
+this selected subset to execute without failure or skip for **each** platform
+variant before publishing APKs. All 12 cases per variant passed in run
+39715674766; this is the selected regression subset, not the full device suite:
+
+| Instrumentation class | Required cases per variant | Scope |
+| --- | ---: | --- |
+| SqlCipherInstrumentedTest | 3 | Production open settings, reproduction of the rejected result-returning execSQL call, encrypted reopen/wrong-key rejection |
+| VaultEvidenceMigrationInstrumentedTest | 3 | Schema 1→2 identity/evidence preservation, encrypted literal search/rollback/deletion, failed/interrupted indexing |
+| StreamingCryptoInstrumentedTest | 4 | Real Tink keyset/original-byte round trips and wrong-key/AAD/tamper/truncation rejection |
+| DurableFilesInstrumentedTest | 2 | Atomic replacement bytes and directory-sync rejection of regular files |
+
+Run this subset on an explicitly authorized target with
+`ANDROID_SERIAL=<explicit-target> scripts/check-unlock-regression.sh`. Its XML
+verifier rejects missing, ambiguous, failed or skipped reports. It does not
+authenticate the app or establish physical fingerprint behavior.
+
+CI then uses `scripts/check-ci-authenticated-unlock.sh` only on the freshly
+provisioned disposable GitHub API36 emulator. It confirms there is no existing
+screen-lock credential before setting a public synthetic PIN, verifies that
+credential through Android's real Gatekeeper path, and immediately invokes
+`VaultLifecycleInstrumentedTest` inside the unchanged production 30-second
+Keystore authorization window. It requires exactly one non-skipped passing
+lifecycle test for each variant, covering import/dedup, original bytes,
+evidence/search, lock/reopen, interrupted publication, missing-object rejection,
+synthetic disk canaries and deletion. It never supplies a substitute vault key.
+Do not run this credential-provisioning script on a personal phone or an
+existing emulator. Both real-credential probes passed, one test per variant
+with none skipped. These results cannot prove the user's fingerprint prompt,
+vendor integration or physical device behavior.
+
+Using the repaired APK bundle above, open **Private Vault Test** on the user's
+phone and verify first fingerprint unlock reaches the document list. Repeat for
+**Private Vault Connected Test**, recording exact version/APK hash and any safe
+error code. Then test synthetic import, lock and unlock again, and process
+restart. Preserve the original app throughout. Successful installation alone
+does not satisfy these checks.
+
+## Broader device procedure
 
 1. Provision the pinned SDK/JDK, enable USB debugging, inspect `adb devices -l`, and select a target explicitly: `export ANDROID_SERIAL=<the-exact-authorized-serial>`. Scripts never choose the first available device.
 2. Run `scripts/check-host.sh` and retain the unit/lint/assembly output and APK hashes. Run `scripts/verify-artifact.sh offline <apk>` and its connected equivalent on the exact APKs under test. Check native library 16 KiB compatibility with the Android official alignment/device procedures; source inclusion alone is insufficient.
@@ -15,8 +74,9 @@ Current evidence/search checkpoint additions:
 
 - `VaultEvidenceMigrationInstrumentedTest` exercises the authored schema 1→2
   migration and encrypted FTS/spans, source quotes, Devanagari/leading-zero
-  queries, rollback, deletion, reopen and leakage canaries. These tests have not
-  run. Also run the opt-in authenticated vault lifecycle probe described in
+  queries, rollback, deletion, reopen and leakage canaries. All three migration
+  tests passed on the API36 emulator for both repaired variants. Also run the
+  opt-in authenticated vault lifecycle probe described in
   CRYPTO_DESIGN.md; default skipped execution is not validation.
 - Import the native PDF/text, search a unique phrase and open its source page.
   Check exact raw text/revision/method; lock while searching/loading/reindexing
@@ -33,9 +93,12 @@ Current evidence/search checkpoint additions:
 - Run the native gate and the official `zipalign -c -P 16 -v 4 <apk>` against
   actual APKs, then load libraries on a real 16 KiB target. See
   NATIVE_COMPATIBILITY.md for static-check limits. Both exact CI APKs passed
-  static/signature/alignment checks on 21 October 2026; no device run is claimed.
+  static/signature/alignment checks on 21 October 2026; that result concerns the
+  original APKs with the reported unlock failure. The repaired APKs passed the
+  same checks in run 39715674766; physical 16 KiB behavior remains unverified.
 - `DurableFilesInstrumentedTest` checks atomic replacement bytes and rejection
   of a regular file by directory sync through Android's public descriptor APIs.
-  Both probes are authored and device-unrun.
+  Both probes passed on the API36 emulator for both repaired variants; physical
+  storage and power-loss behavior still require separate evidence.
 
 Keep unsupported features marked pending. Do not mark all steps passed because the instrumentation command exits zero; biometric prompts, traffic, leakage, recovery, representative OCR/model evaluation and thermal measurements need their own evidence. Never disable lint/native checks or substitute synthetic successful runtime responses to satisfy a device gate.

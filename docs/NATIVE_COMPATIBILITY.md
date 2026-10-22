@@ -1,15 +1,15 @@
 # Native dependency and 16 KiB evidence
 
-Checkpoint: 21 October 2026. **Both actual APKs passed static native and official
-ZIP alignment checks in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548).**
-Built source: 82758e97a250d8dfca884a429146e4cfd416cdc2. Exact original and staged
-APK hashes match; reports accompany the [download](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323).
+Checkpoint: 22 October 2026. **Both actual APKs passed static native and official
+ZIP alignment checks in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766).**
+Built source: 850a87567dba8cc686539419110ca0eae7d5baad. Exact original and staged
+APK hashes match; reports accompany the [download](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
 Each APK contains 18 native libraries: five arm64-v8a, five x86_64, four
 armeabi-v7a and four x86. All ten 64-bit libraries have PT_LOAD alignment of at
 least 16 KiB and stored payloads aligned to 16 KiB. Official zipalign passed both
 APKs. The 32-bit Pdfium libraries include 4 KiB ELF alignments and remain
-explicitly unverified for 16 KiB behavior. No runtime/device compatibility is
-claimed. Dependency source/licence mapping and complete notices remain pending.
+explicitly unverified for 16 KiB behavior. SQLCipher loaded and passed its selected probes on API36 x86_64; physical
+phone and real 16 KiB target compatibility remain unverified. Dependency source/licence mapping and complete notices remain pending.
 The synthetic tests below are separate parser verification.
 
 ## Runnable static gate

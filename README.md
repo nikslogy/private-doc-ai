@@ -1,12 +1,22 @@
 # Private Document Assistant
 
 Native Android development checkpoint for a local document vault and future
-on-device document assistant. **Host-verified debug APKs are available;
-device verification remains pending.**
-[Download the APK bundle](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548/artifacts/12364584323)
-and extract private-document-assistant-offline-debug.apk for Android 12/API31+.
-The bundle expires 28 October 2026 and includes both variants, checksums and
-reports. See [STATUS](docs/STATUS.md) for the exact source commit and actual checks.
+on-device document assistant. **Repaired development APKs are ready to test.**
+[Download both APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
+The [repair CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766)
+passed the full host gate and 26 Android 16 emulator test executions: 12 vault
+regressions plus one real credential-bound lifecycle test per variant.
+Physical fingerprint/UI confirmation on the user's iQOO Neo 10 remains pending;
+the original APKs have a reported first-unlock failure on that phone. See
+[STATUS](docs/STATUS.md) for the exact source identity and evidence.
+
+The repair is version 0.1.1-dev / code 2. Its offline app is **Private Vault
+Test** (`com.privateassistant.app.dev`); connected is **Private Vault Connected
+Test** (`com.privateassistant.app.connected.dev`, version 0.1.1-dev-connected).
+They install alongside the original apps and use separate vaults. Keep the
+original apps and their data: the original debug signing key is unavailable,
+so these builds cannot update or reopen those apps' private vaults. No uninstall,
+data reset or automatic migration is required. Android 12/API31+ is required.
 
 The current app source connects system authentication to a Tink-encrypted object
 vault and Room/SQLCipher metadata. It provides document-picker import, native
@@ -64,9 +74,13 @@ python3 scripts/stage-apks.py
 It runs the full host gate, then verifies the exact staged APKs with the manifest/
 native checker, official `apksigner` and `zipalign`. Successful output includes
 both APKs, checksums and package/signing metadata in `artifacts/apk/`. The CI
-workflow uploads that directory after success for seven days. The first
-[successful CI build](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548)
-completed on 21 October 2026. See [APK delivery](docs/APK_DELIVERY.md).
+workflow now additionally requires Android 16 vault regressions and real
+credential-bound emulator lifecycle probes for both variants before APK upload.
+Artifacts are retained for seven days. The
+[original host build](https://github.com/nikslogy/private-doc-ai/actions/runs/39641658548)
+completed on 21 October 2026, before the phone's first-unlock failure was
+reported; that host result does not verify the repair. See
+[APK delivery](docs/APK_DELIVERY.md).
 
 ## Validation
 
@@ -81,11 +95,14 @@ python3 scripts/security-check.py
 ```
 
 `check-host.sh` additionally runs pure Kotlin tests, both platform/app flavours'
-unit-test tasks and lint, production dependency inventory, both app assemblies,
+instrumentation Kotlin compilation, unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
 Core has 55 authored JVM tests; app/platform JVM unit-test tasks currently report
-NO-SOURCE. Device instrumentation is a separate suite and has not run.
+NO-SOURCE. The repaired build passed the selected 12 Android regression tests
+and one real credential-bound lifecycle test per variant on an API36 emulator,
+with no skipped cases. The full device suite and physical fingerprint/UI tests
+remain pending; see STATUS for the exact scope and earlier failures.
 
 ```bash
 ANDROID_SERIAL=<explicit-device-serial> scripts/check-device.sh

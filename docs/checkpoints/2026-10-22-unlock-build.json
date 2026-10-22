@@ -1,0 +1,32 @@
+{
+  "sourceCommit": "850a87567dba8cc686539419110ca0eae7d5baad",
+  "runId": 39715674766,
+  "jobId": 119617073042,
+  "result": "success",
+  "apkArtifactId": 12399575330,
+  "apkArtifactBytes": 242861005,
+  "apkArtifactSha256": "30124fc6be461d0cea9be89be39679849e6a21aa5dfb60241f24fbc8b22a067c",
+  "expiresAtUtc": "2026-10-29T03:22:55Z",
+  "androidRegressionExecutions": 24,
+  "authenticatedLifecycleExecutions": 2,
+  "skippedAndroidCases": 0,
+  "physicalFingerprint": "unverified",
+  "apks": [
+    {
+      "file": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.dev",
+      "versionCode": 2,
+      "versionName": "0.1.1-dev",
+      "bytes": 121343048,
+      "sha256": "3b0fd4902c159f1503d66d24c0347c801e95f33adb14727b6e5a20a6b3634bf7"
+    },
+    {
+      "file": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.dev",
+      "versionCode": 2,
+      "versionName": "0.1.1-dev-connected",
+      "bytes": 121343104,
+      "sha256": "92d24263fdd68338e8abbcf01e4a7f942419ace17f662ad158a19b1c0ec9afbe"
+    }
+  ]
+}
