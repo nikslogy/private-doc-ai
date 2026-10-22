@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "b35642df7e7835ac7efc6229af134c6d9b80c9e8",
-  "request": "Validate corrected 0.4.0-dev model import UI and encrypted staging",
-  "requestedAtUtc": "2026-10-22T10:04:33Z"
+  "sourceCommit": "9782812a58813777d32d58aa0ac4920eac758889",
+  "request": "Validate verified dependency bootstrap, 97 host cases and model setup APKs",
+  "requestedAtUtc": "2026-10-22T16:26:54Z"
 }
