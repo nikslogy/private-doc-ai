@@ -41,6 +41,13 @@ The authorized GitHub runner will execute the full gate and actual synthetic
 OCR/vault regressions. Eight new JVM validator cases, three boundary Android
 cases and six actual OCR Android cases are authored, not yet passing evidence.
 
+Source 62613d1bdf923142b0dd5114e08df4f4c9cd69a2 is published on feat/offline-ocr.
+[Host/Android run 39720562663](https://github.com/nikslogy/private-doc-ai/actions/runs/39720562663)
+failed before Android compilation: Gradle looked for an unreliable JitPack POM
+despite the explicit AAR dependency. All 71 Python checks, source policy and
+model-asset verification passed. Repository metadata is now artifact-only;
+the mandatory exact-byte AAR verification remains. A fresh full run is required.
+
 ## Last working phone build
 
 [Repair APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330)

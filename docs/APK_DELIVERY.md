@@ -14,10 +14,13 @@ none skipped. Both APKs also passed package, signature and native/alignment chec
 The bundle is 242,861,005 bytes; SHA-256 is
 `30124fc6be461d0cea9be89be39679849e6a21aa5dfb60241f24fbc8b22a067c`.
 Built source: `850a87567dba8cc686539419110ca0eae7d5baad`.
-Physical fingerprint/UI behavior on the user's phone remains unverified. See
+The user confirms unlock/login and import on iQOO Neo 10 / Android 16. Full
+physical fingerprint/UI automation remains unverified. See
 [STATUS.md](STATUS.md) for actual results and [DEVICE_TESTS.md](DEVICE_TESTS.md)
 for the separate physical-phone checks.
-Production OCR, AI answers and portable vault recovery remain unavailable.
+This repair build predates production OCR. New source adds local Tesseract OCR;
+its build/device results and signing/install status are tracked in STATUS.
+AI answers and portable vault recovery remain unavailable.
 
 ## Repair build identity and existing vaults
 
@@ -63,12 +66,14 @@ Successful output is published together in `artifacts/apk/`:
 
 A new attempt removes the previous staged delivery before checking anything.
 Failure publishes neither APK. The source/build-output files are untouched.
-The delivery contains no vault, model weights, signing keys or SDK binaries.
+The delivery contains no private vault, signing keys or SDK installation.
+OCR builds bundle verified public tessdata_fast weights and their licences
+inside the APKs. AI assistant model weights remain absent.
 
 ## CI downloads
 
 The checked-in Host checks workflow runs the same staging command, then requires
-the selected non-skipped Android 16 SQLCipher/Tink/migration/durability tests
+the selected non-skipped Android 16 SQLCipher/Tink/migration/durability and OCR tests
 and the real credential-bound lifecycle probe for both platform variants.
 Only after all those steps succeed does it upload `artifacts/apk/`. Host staging
 alone does not satisfy the workflow's Android regression gate. The artifact name starts with

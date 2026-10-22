@@ -34,3 +34,7 @@ a separately reviewed local OCR implementation. A future download/backup
 connection must not silently enable diagnostic traffic. Actual resolved
 dependency graphs, merged manifests and connected-build traffic remain release
 gates; no APK/device result is claimed by this decision.
+
+22 October 2026: [decision 0004](0004-local-tesseract-ocr.md) selects a separately
+reviewed local Tesseract implementation for development. This does not change
+the ML Kit production prohibition or close the remaining runtime privacy gates.

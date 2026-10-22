@@ -57,7 +57,8 @@ The wrapper explicitly documents that getUTF8Text alone cannot be stopped;
 recognize through the monitored getHOCRText path first, discard its markup,
 then read bounded result-iterator text and boxes. Propagate cancellation to
 stop(), bound time, pages, decoded pixels, output characters and boxes, and
-release native state before completing lock/cancel. Clear/recycle recognition
+revoke the vault session immediately on lock and settle native work before
+recycling its image/state. Clear/recycle recognition
 and adaptive state between jobs. Native/JVM heap zeroization is not promised.
 Missing models or engine errors preserve original and existing native text.
 
