@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "7b8baef50f2ab1ca4470b4ec49b82b0e79dfee83",
-  "request": "Build boundary-reviewed 0.3.0-dev document facts Preview update",
-  "requestedAtUtc": "2026-10-22T05:24:21Z"
+  "sourceCommit": "7d9badf3f55fb0b320f5013e676b802f091a24dd",
+  "request": "Deliver document facts Preview update after deterministic AndroidX test startup isolation",
+  "requestedAtUtc": "2026-10-22T05:43:34Z"
 }
