@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "4566c8e11cd59605f95f70129f78f245a3686c56",
-  "request": "First stable preview APKs after user-confirmed repository secret setup",
-  "requestedAtUtc": "2026-10-22T04:49:00Z"
+  "sourceCommit": "d45201d3c21a0367954729fe34f4273796b9c9f7",
+  "request": "Build stable-signed 0.3.0-dev document facts update with selected revision evidence",
+  "requestedAtUtc": "2026-10-22T05:21:12Z"
 }
