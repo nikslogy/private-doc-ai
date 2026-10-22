@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "d45201d3c21a0367954729fe34f4273796b9c9f7",
-  "request": "Build stable-signed 0.3.0-dev document facts update with selected revision evidence",
-  "requestedAtUtc": "2026-10-22T05:21:12Z"
+  "sourceCommit": "7b8baef50f2ab1ca4470b4ec49b82b0e79dfee83",
+  "request": "Build boundary-reviewed 0.3.0-dev document facts Preview update",
+  "requestedAtUtc": "2026-10-22T05:24:21Z"
 }
