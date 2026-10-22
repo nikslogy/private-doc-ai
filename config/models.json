@@ -1,9 +1,22 @@
 {
   "schemaVersion": 1,
-  "runtime": {
-    "id": "litert-lm",
-    "version": "0.9.0",
-    "format": "litertlm"
-  },
-  "models": []
+  "runtime": { "id": "litert-lm", "version": "0.9.0", "format": "litertlm" },
+  "models": [{
+    "id": "qwen25-15b-q8-legacy",
+    "displayName": "Qwen 2.5 1.5B · experimental CPU test",
+    "assessment": "experimental",
+    "revision": "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+    "fileName": "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm",
+    "byteCount": 1597931520,
+    "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+    "downloadUrl": "https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/resolve/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm?download=true",
+    "license": {
+      "identifier": "Apache-2.0",
+      "termsUrl": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/2fd50615a2a9792d223eba8e0741aa90ef21a869/LICENSE",
+      "requiresAcceptance": true
+    },
+    "runtimeVersion": "0.9.0", "format": "litertlm",
+    "contextTokens": 4096, "minimumRamBytes": 6442450944,
+    "evaluatedLanguages": [], "evaluatedTasks": [], "backends": ["CPU"]
+  }]
 }

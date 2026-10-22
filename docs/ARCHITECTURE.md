@@ -90,9 +90,19 @@ retain earlier useful evidence and mark a failure. Native PDF text stays preferr
 ML Kit's real adapter remains instrumentation-only due unresolved diagnostics;
 neither production flavour includes that SDK. Its Task-lifetime probe is separate.
 
-LiteRT-LM currently has a real CPU load probe with automatic tools disabled.
-It is not a `LocalModelEngine` generation implementation. The model catalogue is
-empty. Synthetic OCR Android verification passed; physical checks remain open.
+M4 source adds a public-model installer using reviewed exact size/hash and current
+licence acknowledgement. Unknown input is staged only as Tink ciphertext under
+an ephemeral memory-only key; hash-verified public weights may then be decrypted
+and published atomically. A process mutex protects verify-to-load leases across
+native work. Document/provider names and URIs are never persisted. A legacy Qwen
+artifact is registered as experimental with no evaluated languages/tasks or QA.
+
+The real LiteRT-LM CPU adapter uses a 512-token context, no cache/tools, bounded
+input, post-allocation output checks and synchronous send with a joined native
+cancellation watchdog. Lock clears UI state and requests cancellation. Native
+initialization/hangs have no hard cancellation guarantee. UI generation uses
+only a fixed synthetic prompt; actual validation is recorded in STATUS. Synthetic
+OCR Android verification passed; physical checks remain open.
 There is no chat/QA executor, full PDF
 viewer, derivative executor, backup store or recovery flow yet. These are
 ordered future milestones, not capabilities implied by interface names.

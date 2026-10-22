@@ -36,6 +36,7 @@ internal fun DocumentFactsScreen(
     onSelectDocument: (VaultDocument) -> Unit,
     onClearDocument: () -> Unit,
     onViewSource: (Int) -> Unit,
+    onOpenModelManager: () -> Unit,
 ) {
     val source = state.factsDocument
     LazyColumn(
@@ -139,6 +140,9 @@ internal fun DocumentFactsScreen(
                         style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                     Text(stringResource(R.string.assistant_unavailable_body), style = MaterialTheme.typography.bodySmall)
                     Text(stringResource(R.string.assistant_privacy_body), style = MaterialTheme.typography.bodySmall)
+                    TextButton(onClick = onOpenModelManager, enabled = !state.busy) {
+                        Text(stringResource(R.string.models_open))
+                    }
                 }
             }
         }

@@ -1,0 +1,75 @@
+name: Explicit experimental model runtime probe
+on:
+  workflow_dispatch:
+    inputs:
+      acknowledgePublicModelExperiment:
+        description: 'Download the reviewed public Apache-2.0 model for synthetic native tests only'
+        type: boolean
+        required: true
+        default: false
+  push:
+    branches: [main]
+    paths: [config/model-probe-request.json]
+permissions:
+  contents: read
+concurrency:
+  group: experimental-model-runtime-probe
+  cancel-in-progress: false
+jobs:
+  probe:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 2
+      - name: Require an explicit public-model experiment request
+        env:
+          EXPERIMENT_ACK: ${{ inputs.acknowledgePublicModelExperiment }}
+        run: |
+          python3 - <<'PY'
+          import json, os, re, subprocess
+          if os.environ['GITHUB_EVENT_NAME'] == 'workflow_dispatch':
+              if os.environ.get('EXPERIMENT_ACK') != 'true':
+                  raise SystemExit('Explicit acknowledgement is required; no model will be downloaded')
+          else:
+              with open('config/model-probe-request.json') as f:
+                  request = json.load(f)
+              sha = request.get('sourceCommit', '')
+              parent = subprocess.check_output(['git', 'rev-parse', 'HEAD^'], text=True).strip()
+              if (request.get('schemaVersion') != 1
+                      or request.get('downloadReviewedPublicModel') is not True
+                      or request.get('licenseAcknowledgedForSyntheticProbe') is not True
+                      or not re.fullmatch('[a-f0-9]{40}', sha)
+                      or sha not in (os.environ['GITHUB_SHA'], parent)):
+                  raise SystemExit('The immutable explicit model-probe request is invalid')
+          PY
+      - name: Use runner JDK 21
+        run: |
+          test -x "$JAVA_HOME_21_X64/bin/java"
+          echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+          echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
+      - name: Set up pinned Android and Gradle tools
+        run: scripts/bootstrap-android.sh --accept-sdk-licenses
+      - name: Compile the real offline instrumentation APK
+        run: |
+          source .tooling/env.sh
+          python3 scripts/prepare-ocr-assets.py --download
+          ./gradlew --no-daemon --console=plain --stacktrace :platform:assembleOfflineDebugAndroidTest
+          ./gradlew --stop
+      - name: Enable KVM for the disposable model target
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-private-assistant-model-kvm.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify public weights and run real synthetic generation/cancellation
+        run: scripts/run-ci-model-emulator.sh --download-reviewed-model --accept-license
+      - name: Upload narrow model experiment reports only
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: experimental-model-probe-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/model-runtime-probe/
+          if-no-files-found: warn
+          retention-days: 7

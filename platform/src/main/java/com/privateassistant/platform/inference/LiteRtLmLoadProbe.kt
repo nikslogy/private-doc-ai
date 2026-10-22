@@ -11,7 +11,15 @@ import java.io.File
 import java.security.MessageDigest
 
 /** This token represents byte verification, not model quality, legal approval or device support. */
-class VerifiedModelArtifact internal constructor(internal val file: File)
+class VerifiedModelArtifact internal constructor(
+    private val verifiedFile: File,
+    private val leaseValid: () -> Boolean = { true },
+) {
+    internal val file: File get() {
+        check(leaseValid()) { "Model lease expired" }
+        return verifiedFile
+    }
+}
 
 object ModelFileVerifier {
     fun verify(

@@ -2,7 +2,10 @@
 
 Status: accepted for initial implementation.
 
-Ship an empty versioned model catalogue. No built-in answers, remote fallback,
+The initial versioned model catalogue was empty. M4 may register reviewed,
+explicitly experimental immutable artifacts for installation and synthetic
+runtime diagnostics, with evaluated tasks/languages empty and document QA
+unavailable. No built-in answers, remote fallback,
 unverified downloads or guessed model hashes are permitted. The assistant UI
 can explain that local AI is unavailable while the vault/manual features work.
 
@@ -16,7 +19,7 @@ language evaluation, inference implementation or active-cancel test.
 Before a catalogue entry is admitted, record an immutable upstream revision,
 file identity/digest/size, weight licence and acceptance terms, runtime format,
 tokenizer/template, context bound, backends, RAM profile and separately measured
-languages/tasks. A catalogue entry cannot by itself establish installed model
+languages/tasks (empty for an unassessed experimental candidate). A catalogue entry cannot by itself establish installed model
 or device availability. The future installer must publish immutable app-private
 verified files atomically and protect the verify-to-load interval from mutation.
 GGUF is not a compatible format merely because a model has the same name.

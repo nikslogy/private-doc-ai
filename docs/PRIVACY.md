@@ -1,5 +1,16 @@
 # Privacy at this checkpoint
 
+M4 model setup accepts no vault key or document context. The selected file is
+untrusted until its public catalogue size/hash match: its staging copy is Tink
+ciphertext under a fresh in-memory-only key. Only then may the verified public
+weights reach a plaintext model file. Crash/rejection cleanup needs no retained
+staging key. Model slots/receipts contain public metadata only and live under
+noBackup; source URIs/names are not persisted. Lease verification excludes model
+replacement/removal during native use. The setup screen's real-generation test
+uses only fixed synthetic input; normal document QA is disabled. Cache and tools
+are disabled; native stop is cooperative. Actual privacy/cancel/device results
+remain separate from source implementation and are tracked in STATUS.
+
 The intended local processing boundary is implemented in source, with runtime
 verification pending. Originals and sensitive metadata are encrypted under an
 app-private, no-backup directory. Document names/digests do not appear in object

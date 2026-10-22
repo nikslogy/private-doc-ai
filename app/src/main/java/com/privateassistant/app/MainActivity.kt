@@ -37,6 +37,9 @@ class MainActivity : FragmentActivity() {
         if (result.resultCode == Activity.RESULT_OK) model.receiveExport(result.data?.data)
         else model.cancelExport()
     }
+    private val pickModel = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        model.models.receiveImport(uri)
+    }
     private val screenOffReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == Intent.ACTION_SCREEN_OFF) lockVault()
@@ -83,6 +86,14 @@ class MainActivity : FragmentActivity() {
                     startActivity(Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
                         putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED, authenticators)
                     })
+                },
+                onImportModel = { id, acknowledged ->
+                    if (model.models.prepareImport(id, acknowledged)) pickModel.launch(arrayOf("*/*"))
+                },
+                onOpenModelLink = { url ->
+                    if (model.models.isReviewedLink(url)) {
+                        runCatching { startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url))) }
+                    }
                 },
             )
         }

@@ -12,11 +12,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LiteRtLmM0InstrumentedTest {
     @Test
-    fun emptyCatalogueReportsUnavailable() {
+    fun experimentalCatalogueNeverEnablesDocumentQa() {
         val json = InstrumentationRegistry.getInstrumentation().context.assets.open("models.json")
             .bufferedReader().use { it.readText() }
         val catalogue = ModelCatalogue.parse(json)
-        if (catalogue.models.isEmpty()) assertTrue(catalogue.availability() is ModelAvailability.Unavailable)
+        assertTrue(catalogue.availability() is ModelAvailability.Unavailable)
+        assertTrue(catalogue.models.all { it.experimental && it.evaluatedTasks.isEmpty() && it.evaluatedLanguages.isEmpty() })
     }
 
     @Test

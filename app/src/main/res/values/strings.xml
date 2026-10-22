@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="models_install_complete">The reviewed model was installed and verified.</string>
+    <string name="models_removed">The installed model copy was removed.</string>
+    <string name="models_test_complete">The synthetic local test completed. Document questions remain unavailable.</string>
+    <string name="models_memory_required">This experimental test requires a 64-bit app, at least 6 GiB total RAM and enough currently available memory. Close other apps and try again. This check is conservative; phone compatibility is still being evaluated.</string>
+    <string name="models_operation_failed">The model operation did not complete. Check the selected file, free space and model installation. Your vault originals are preserved.</string>
+    <string name="models_cancelling">Cancellation requested. Waiting for the current operation to return safely…</string>
+    <string name="models_cancelled">Model operation cancelled.</string>
+    <string name="models_invalid">Installed model verification failed. Remove this model copy before importing it again.</string>
     <string name="facts_total">Total (as labelled)</string>
     <string name="facts_owner">Owner (as labelled)</string>
     <string name="facts_subtotal">Subtotal (as labelled)</string>
@@ -73,7 +81,7 @@
     <string name="vault_operation_failed">The operation could not be completed. Check available storage and try again.</string>
     <string name="assistant_title">Document assistant</string>
     <string name="assistant_unavailable_title">AI questions and summaries · coming later</string>
-    <string name="assistant_unavailable_body">No AI model is installed. You can inspect labelled document values without one.</string>
+    <string name="assistant_unavailable_body">Set up on-device AI below. Document questions and summaries will follow device testing. You can inspect labelled document values now.</string>
     <string name="assistant_available_title">Ready to use today</string>
     <string name="assistant_available_body">Import original files, search indexed text, inspect extracted page evidence, export a copy, and delete files from your encrypted vault.</string>
     <string name="assistant_privacy_title">You stay in control</string>
@@ -174,4 +182,34 @@
         <item quantity="one">%d document ready in your vault.</item>
         <item quantity="other">%d documents ready in your vault.</item>
     </plurals>
+    <string name="models_open">Set up on-device AI</string>
+    <string name="models_back">Back to document facts</string>
+    <string name="models_title">On-device AI</string>
+    <string name="models_description">Install a reviewed model file to try a local runtime test on this phone.</string>
+    <string name="models_experimental_title">Experimental model setup</string>
+    <string name="models_experimental_body">Document questions and summaries are not enabled yet. Installing a model or completing this test does not establish document accuracy, language quality, or phone compatibility.</string>
+    <string name="models_download_note">Get the public model file in your browser, then return here to import it. The file can be large. This app verifies its exact size and checksum before installation. Your documents are not used for the download or test.</string>
+    <string name="models_loading">Checking model installation…</string>
+    <string name="models_working">Working on this device. Cancellation may take time while native processing returns.</string>
+    <string name="models_copy_progress">Copied %1$s of %2$s</string>
+    <string name="models_empty">No reviewed model is available in this build.</string>
+    <string name="models_get_file">Get model file</string>
+    <string name="models_import">Import model file</string>
+    <string name="models_import_title">Choose the reviewed model file</string>
+    <string name="models_import_body">Choose the exact %1$s model file. Installation needs additional free space for a verified local copy. A document or a different model file will be rejected.</string>
+    <string name="models_license_link">Read %1$s licence</string>
+    <string name="models_license_acknowledgement">I have read and acknowledge the model licence and want to install this model.</string>
+    <string name="models_choose_file">Choose file</string>
+    <string name="models_installed">Installed and verified</string>
+    <string name="models_not_installed">Not installed</string>
+    <string name="models_experimental_label">Experimental · device and document evaluation pending</string>
+    <string name="models_test">Test local model</string>
+    <string name="models_test_description">Runs a fixed synthetic prompt using the model on this device. No vault documents or questions are supplied.</string>
+    <string name="models_diagnostic_failed">The local model test did not complete. The model may be unsupported, need more memory, or have been interrupted. Document questions remain unavailable.</string>
+    <string name="models_diagnostic_output">Local model test output</string>
+    <string name="models_diagnostic_output_note">Actual generated text from the synthetic test. It is unverified model output and does not authorize any action.</string>
+    <string name="models_remove">Remove model</string>
+    <string name="models_remove_title">Remove this model?</string>
+    <string name="models_remove_body">Remove the installed copy of “%1$s” from this app? You can import it again. Vault documents and your selected source file remain unchanged.</string>
+    <string name="models_session_note">Leaving the app can lock the vault. Return and unlock before continuing. Native initialization or cancellation may take time; this build cannot force-stop a hung native call.</string>
 </resources>

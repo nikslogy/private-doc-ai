@@ -1,5 +1,34 @@
 # Development status
 
+## M4 model setup implementation in progress — 22 October 2026
+
+New source adds a model manager, verified SAF installation into no-backup storage,
+scoped immutable model leases and real CPU inference with no tools/cache, a joined
+cancellation watchdog and fixed synthetic diagnostic input. The public legacy
+Qwen artifact is registered only as experimental with empty evaluated-language/
+task lists; normal document questions/summaries remain disabled. Immutable upstream
+metadata and the pinned runtime README support this candidate; the later artifact
+has different bytes and requires a newer runtime. See decision 0005's correction.
+
+Untrusted selected bytes are staged with Tink Streaming AEAD using a fresh key
+held only in memory. Only after the approved public size/hash match are they
+authenticated/decrypted into plaintext public weights and checked again before
+atomic publication. Wrong private documents therefore cannot reach plaintext disk.
+Installation needs room for encrypted staging plus the public model copy. Model
+leases serialize verification/native work with removal. No model weights are
+bundled with the app or downloaded by routine checks. User import requires
+current licence acknowledgement; vault originals/keys/text never enter the test.
+
+Local check-host passed 77 Python/source checks, then stopped at missing pinned
+Gradle/SDK. New platform JVM metadata cases (8; 16 authored total per variant),
+10 real-filesystem installer tests and one in-flight private-canary regression
+await CI. Standard Android selection is now 32 cases plus one real-credential
+lifecycle case per variant (66 total), not yet executed for this source. A
+separate opt-in public-model download/real generation/cancellation probe is ready.
+No new model or phone result is claimed. Code 5 / 0.4.0-dev awaits validation;
+the verified downloadable build below remains code 4. The conservative 6 GiB/
+64-bit/free-memory UI check is configuration, not a measured compatibility claim.
+
 Checkpoint 9: 22 October 2026 — selected-source document facts development APKs ready.
 **Full host checks and 44 non-skipped Android test executions passed.**
 

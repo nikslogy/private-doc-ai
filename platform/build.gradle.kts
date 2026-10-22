@@ -34,6 +34,7 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     sourceSets.getByName("main").assets.srcDir(layout.buildDirectory.dir("generated/ocrAssets"))
+    sourceSets.getByName("main").assets.srcDir(layout.buildDirectory.dir("generated/modelCatalogue"))
     sourceSets.getByName("androidTest").assets.srcDirs(
         rootProject.file("test-fixtures/generated"),
         rootProject.file("config"),
@@ -58,7 +59,12 @@ val verifyTesseractBinary by tasks.registering(Exec::class) {
         commandLine("python3", "scripts/verify-ocr-dependency.py", tesseractBinary.singleFile.absolutePath)
     }
 }
-tasks.named("preBuild").configure { dependsOn(verifyOcrAssets, verifyTesseractBinary) }
+val copyModelCatalogue by tasks.registering(Copy::class) {
+    from(rootProject.file("config/models.json"))
+    into(layout.buildDirectory.dir("generated/modelCatalogue/models"))
+    rename { "catalogue.json" }
+}
+tasks.named("preBuild").configure { dependsOn(verifyOcrAssets, verifyTesseractBinary, copyModelCatalogue) }
 
 // The Room plugin isolates KSP output per variant, then verifies/copies equal schemas.
 room { schemaDirectory("$projectDir/schemas") }

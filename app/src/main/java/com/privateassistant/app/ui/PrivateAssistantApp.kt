@@ -75,11 +75,15 @@ fun PrivateAssistantApp(
     onImport: () -> Unit,
     onExport: (VaultDocument) -> Unit,
     onDeviceSecurity: () -> Unit,
+    onImportModel: (String, Boolean) -> Unit,
+    onOpenModelLink: (String) -> Unit,
 ) {
     val state by model.state.collectAsState()
+    val modelState by model.models.state.collectAsState()
     val snackbar = remember { SnackbarHostState() }
     val context = LocalContext.current
     BackHandler(enabled = state.unlocked && state.selectedDocument != null) { model.closeDocument() }
+    BackHandler(enabled = state.unlocked && state.modelManagerOpen) { model.closeModels() }
     LaunchedEffect(state.message, state.importCount) {
         val message = state.message?.let(context::getString)
             ?: state.importCount?.let { context.resources.getQuantityString(R.plurals.documents_imported, it, it) }
@@ -144,10 +148,15 @@ fun PrivateAssistantApp(
                                 onExport = { model.closeDocument(); onExport(document) },
                                 onDelete = { model.deleteDocument(document) })
                         } ?: DocumentsScreen(state, model::setQuery, onImport, model::openDocument)
-                        AppPage.ASSISTANT -> DocumentFactsScreen(state,
+                        AppPage.ASSISTANT -> if (state.modelManagerOpen) ModelManagerScreen(modelState,
+                            onBack = model::closeModels, onImport = onImportModel,
+                            onDiagnostic = model.models::diagnostic, onRemove = model.models::remove,
+                            onCancel = model.models::cancel, onRefresh = model.models::refresh,
+                            onOpenLink = onOpenModelLink)
+                        else DocumentFactsScreen(state,
                             onSelectDocument = model::chooseFactsDocument,
                             onClearDocument = model::clearFactsDocument,
-                            onViewSource = model::viewFactSource)
+                            onViewSource = model::viewFactSource, onOpenModelManager = model::openModels)
                         AppPage.PRIVACY -> PrivacyScreen(onLock)
                     }
                 }

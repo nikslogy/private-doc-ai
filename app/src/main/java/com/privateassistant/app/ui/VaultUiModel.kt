@@ -66,6 +66,7 @@ data class VaultUiState(
     val facts: DocumentFactsUi? = null,
     val factsLoading: Boolean = false,
     val factsFailed: Boolean = false,
+    val modelManagerOpen: Boolean = false,
     val indexing: Boolean = false,
     val ocrAvailable: Boolean = false,
     val page: AppPage = AppPage.DOCUMENTS,
@@ -80,6 +81,7 @@ class VaultUiModel(
     private val vault: VaultController,
     private val scope: CoroutineScope,
 ) {
+    val models = ModelManagerUiModel(context, scope)
     // Bundled capability is fixed for this installed APK. Never do asset I/O while locking.
     private val ocrAvailable = vault.ocrAvailable
     private val mutableState = MutableStateFlow(VaultUiState(ocrAvailable = ocrAvailable))
@@ -118,11 +120,13 @@ class VaultUiModel(
             requireSession(expectedSession)
             val documents = vault.documents()
             publish(expectedSession) { it.copy(unlocked = true, documents = documents, requiresDeviceSecurity = false) }
+            models.unlock()
             if (pendingImports.isNotEmpty()) importPending(expectedSession)
         }
     }
 
     fun lock() {
+        models.lock()
         session++
         operation?.cancel()
         operation = null
@@ -249,8 +253,19 @@ class VaultUiModel(
 
     fun setPage(page: AppPage) {
         if (!mutableState.value.unlocked) return
+        if (mutableState.value.modelManagerOpen) models.cancel()
         closeDocument()
-        mutableState.update { it.copy(page = page) }
+        mutableState.update { it.copy(page = page, modelManagerOpen = false) }
+    }
+
+    fun openModels() {
+        if (!mutableState.value.unlocked) return
+        mutableState.update { it.copy(modelManagerOpen = true) }
+        models.refresh()
+    }
+    fun closeModels() {
+        models.cancel()
+        mutableState.update { it.copy(modelManagerOpen = false) }
     }
 
     fun openDocument(document: VaultDocument, pageNumber: Int? = null) {

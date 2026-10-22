@@ -1,7 +1,7 @@
 name: Host checks
 on:
   push:
-    paths-ignore: [config/development-delivery.json]
+    paths-ignore: [config/development-delivery.json, config/model-probe-request.json]
   pull_request:
   workflow_dispatch:
 permissions:

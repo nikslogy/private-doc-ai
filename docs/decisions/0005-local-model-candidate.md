@@ -4,8 +4,10 @@ Research checkpoint: 22 October 2026, 05:29 UTC. This is a candidate assessment,
 not an approved catalogue entry or evidence of successful model execution.
 No model weights were downloaded, no model-provider credentials were requested or used, and
 no model load, generation, language/QA, cancellation or device benchmark was run.
-`config/models.json` remains empty. The current APK continues to report AI
-answers and summaries unavailable.
+At that initial research checkpoint config/models.json was empty. Subsequent M4
+source registers only the reviewed legacy Qwen artifact below as experimental;
+it does not enable document answers or summaries. Actual execution results
+are recorded separately in STATUS.
 
 ## Candidate for the pinned runtime
 
@@ -45,7 +47,11 @@ requirements. Review them for the actual installation/distribution path and
 record explicit acknowledgement before model use. The research did not accept
 terms on the user's behalf or establish redistribution clearance.
 
-## Public alternative requires a separate runtime change
+## Public legacy Qwen artifact is a candidate for the pinned runtime
+
+Follow-up research on 22 October 2026 corrects the initial assessment below:
+the current model card's runtime requirement applies to a later metadata update,
+not automatically to every historical artifact with the same filename.
 
 The same immutable Gallery allowlist records Qwen2.5-1.5B-Instruct:
 
@@ -59,15 +65,42 @@ The same immutable Gallery allowlist records Qwen2.5-1.5B-Instruct:
 | Upstream minimum device memory guidance | 6 GB |
 
 The [immutable file metadata](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/blob/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm)
-and its [small Git LFS pointer](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/raw/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm)
-were readable without credentials. These establish upstream metadata, not a
-hash of model bytes independently downloaded and verified by this project.
-The model page marks the licence Apache-2.0. Its
-[current model card](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/blob/main/README.md),
-as read on 22 October, explicitly requires LiteRT-LM 0.18.0 or newer for this
-`.litertlm` file. It is therefore not a compatible drop-in candidate for the
-0.9.0 pin. A runtime upgrade, dependency/native audit and actual load/inference
-tests would be a separate change. No upgrade is part of this checkpoint.
+publishes that SHA-256. The [upload commit](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/commit/19edb84c69a0212f29a6ef17ba0d6f278b6a1614),
+dated 25 November 2025, exposes the exact Git LFS pointer size and digest in its
+diff. These establish authoritative upstream metadata, not a hash of bytes
+independently downloaded and verified by this project. No weights were fetched.
+
+The [model card at the same immutable revision](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/blob/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/README.md)
+declares Apache-2.0 and contains no 0.18.0 minimum. The upstream base model's
+[licence at its introduction commit](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/2fd50615a2a9792d223eba8e0741aa90ef21a869/LICENSE)
+is Apache-2.0, with Alibaba Cloud's copyright notice. The app can require a
+licence acknowledgement as an installation control without claiming that
+Apache-2.0 imposes a Hugging Face account/acceptance gate. Review notices and the
+actual distribution path before redistributing model weights.
+
+The [pinned LiteRT-LM 0.9.0 README](https://github.com/google-ai-edge/LiteRT-LM/blob/991ef53d47fe7be53c1411120f29936f9f94602d/README.md)
+lists Qwen2.5-1.5B as a chat-ready, 8-bit, 4096-context model and links this exact
+legacy filename. This is upstream compatibility guidance for the first real
+experiment; it does not establish successful loading/generation by this app.
+
+The reason the current card differs is visible in
+[later commit 5e6e7a58d03777898b31330a15d2e0a5a9107de3](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/commit/5e6e7a58d03777898b31330a15d2e0a5a9107de3),
+whose parent is the selected revision. That commit changes the embedded metadata
+and chat template for LiteRT-LM 0.18.0 while reporting unchanged weights. It
+replaces the selected legacy file with **different bytes**:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Selected legacy revision 19edb84 | 1597931520 | faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9 |
+| Later metadata revision 5e6e7a5 | 1597922856 | c4a9b7289365ab80fe599b844b77ad253eb3c53fb0e5d963d699146a6f01255e |
+
+Consequently, never use a moving main download URL or accept the later digest
+as a substitute. The legacy artifact may be recorded for explicit experimental
+installation and synthetic runtime diagnostics on the existing 0.9.0 pin,
+with evaluated languages/tasks empty and normal document QA still disabled.
+Actual byte verification, engine load, synthetic generation, active cancellation,
+privacy/resource tests and phone capability measurements are required. No
+runtime upgrade or model execution is part of this research checkpoint.
 
 ## Runtime API and cancellation requirements
 
@@ -88,8 +121,8 @@ The current 0.9.0 tag resolves to source commit
   not cancel native work. Source notes that cancellation does not roll back
   conversation state.
 
-The future adapter must bridge explicit native cancellation to coroutine/user
-cancellation, await the native terminal callback before closing resources,
+The adapter must bridge explicit native cancellation to coroutine/user
+cancellation, wait for synchronous native send to return and join its watchdog before closing resources,
 discard cancelled conversations, and clear session/KV/engine state on vault
 lock. Use one heavy job at a time, bounded excerpts/input/output and no private
 text logs or persistent chat/cache. Active cancellation latency and native
