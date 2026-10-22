@@ -14,7 +14,7 @@ no INTERNET permission.
 
 The legacy Qwen 2.5 1.5B file is 1,597,931,520 bytes. Temporary installation needs
 at least twice that size plus 64 MiB of free app storage, separately from the
-downloaded original file. No model weights are included in source/APKs/artifacts.
+downloaded original file. No inference-model weights are included in source/APKs/artifacts.
 Only the immutable revision/hash in config/models.json is accepted; a newer file
 with the same filename has different embedded metadata and is rejected. Its
 experimental registration has no evaluated languages/tasks. Decision 0005
@@ -38,10 +38,12 @@ native load, generation and cleanup, excluding store mutation. The token expires
 on return; escaped tokens cannot access their file afterward. This protects the
 normal app path, not a compromised OS or malicious code within the same process.
 
-The real LiteRT-LM adapter uses CPU/two threads, a 512-token combined context,
+The real LiteRT-LM adapter uses CPU/two threads, a configured 512-token combined context,
 :nocache, no tools and automatic tool calling disabled. Input is at most 1,024
 UTF-16 units; output is at most 2,048, checked after native allocation. A fresh
-conversation/engine is discarded after each operation. A watchdog requests native
+conversation/engine is discarded after each operation. The configured context
+does not establish the exported model's actual KV allocation or a measured memory
+bound. A watchdog requests native
 cancellation repeatedly; the synchronous send must return and the watchdog must
 join before native handles close. Initialization has no interrupt entry point;
 a deadline cannot forcibly kill a native hang. UI lock clears model state and

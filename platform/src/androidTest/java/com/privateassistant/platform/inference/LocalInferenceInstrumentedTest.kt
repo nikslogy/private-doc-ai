@@ -1,6 +1,7 @@
 package com.privateassistant.platform.inference
 
 import android.os.Bundle
+import android.os.Process
 import android.os.SystemClock
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -28,6 +29,14 @@ class LocalInferenceInstrumentedTest {
         assumeTrue("Real model probe is opt-in; this is not a passed model check",
             args.getString("runModelGeneration") == "true")
         require(args.getString("modelLicenseAccepted") == "true")
+        fun phase(name: String) {
+            instrumentation.sendStatus(2, Bundle().apply {
+                putString("modelProbePhase", name)
+                putInt("modelProbePid", Process.myPid())
+                putLong("modelProbeElapsedRealtimeMillis", SystemClock.elapsedRealtime())
+            })
+        }
+        phase("ARGUMENTS_ACCEPTED")
         val context = instrumentation.targetContext
         val model = requireNotNull(ModelCatalogue.read(context).find(requireNotNull(args.getString("modelId"))))
         require(model.experimental && model.backends.contains("CPU"))
@@ -44,14 +53,22 @@ class LocalInferenceInstrumentedTest {
         val file = suppliedFile.canonicalFile
         require(probeRoot.isDirectory && file.parentFile == probeRoot) { "Model must be directly inside the app-owned probe directory" }
         require(file.name.matches(Regex("probe-[0-9]+-[0-9]+\\.litertlm"))) { "Unexpected controlled probe filename" }
+        phase("MODEL_PATH_VALIDATED")
+        phase("DEVICE_MODEL_VERIFY_START")
         val artifact = ModelFileVerifier.verify(file, model.byteCount, model.sha256, licenseAccepted = true)
+        phase("DEVICE_MODEL_VERIFY_RETURNED")
         val canary = "LOCALMODELPRIVATECANARY815429"
+        phase("CANARY_BASELINE_START")
         scanPrivateFiles(context.filesDir, file, canary)
         scanPrivateFiles(context.cacheDir, file, canary)
         scanPrivateFiles(context.noBackupFilesDir, file, canary)
+        phase("CANARY_BASELINE_RETURNED")
         val started = SystemClock.elapsedRealtime()
+        phase("NATIVE_GENERATION_START")
         val result = LocalInferenceRunner(maxDurationMillis = 300_000).generate(artifact,
-            LocalInferenceRunner.SYNTHETIC_PROMPT + "\nSynthetic marker: " + canary)
+            LocalInferenceRunner.SYNTHETIC_PROMPT + "\nSynthetic marker: " + canary,
+            onGenerationStarted = { phase("NATIVE_SEND_STARTED") })
+        phase("NATIVE_GENERATION_RETURNED")
         val generationMillis = SystemClock.elapsedRealtime() - started
         assertEquals(LiteRtLmLoadProbe.RUNTIME_VERSION, result.runtimeVersion)
         assertEquals("CPU", result.backend)
@@ -63,6 +80,7 @@ class LocalInferenceInstrumentedTest {
         val nativeCancellationCalls = AtomicInteger(0)
         val nativeSendFailures = AtomicInteger(0)
         val cancellationStarted = SystemClock.elapsedRealtime()
+        phase("CANCELLATION_OPERATION_START")
         try {
             LocalInferenceRunner(maxDurationMillis = 300_000).generate(artifact,
                 "Synthetic cancellation test. Write a long list of numbered blue triangles, at least 100 items. Do not use tools.",
@@ -71,23 +89,33 @@ class LocalInferenceInstrumentedTest {
                     val cancel = entered > 0 && System.nanoTime() - entered >= 100_000_000L
                     if (cancel) cancellationObserved.incrementAndGet()
                     cancel
-                }, onGenerationStarted = { generationEntered.set(System.nanoTime()) },
-                onNativeCancellationRequested = { nativeCancellationCalls.incrementAndGet() },
-                onNativeSendFailed = { nativeSendFailures.incrementAndGet() })
+                }, onGenerationStarted = {
+                    phase("CANCELLATION_SEND_STARTED")
+                    generationEntered.set(System.nanoTime())
+                },
+                onNativeCancellationRequested = {
+                    if (nativeCancellationCalls.getAndIncrement() == 0) phase("NATIVE_CANCEL_RETURNED")
+                },
+                onNativeSendFailed = {
+                    if (nativeSendFailures.getAndIncrement() == 0) phase("NATIVE_SEND_FAILED")
+                })
             fail("The actual synchronous generation window must observe the cancellation request")
         } catch (_: CancellationException) {
             assertTrue("Initialization must return before the generation-phase hook", generationEntered.get() > 0)
             assertTrue("A cancellation request must actually be observed", cancellationObserved.get() > 0)
             assertTrue("The live native cancel API must actually return", nativeCancellationCalls.get() > 0)
             assertTrue("The synchronous native send must actually reject the interrupted operation", nativeSendFailures.get() > 0)
+            phase("CANCELLATION_RETURNED")
         }
         val cancellationMillis = SystemClock.elapsedRealtime() - cancellationStarted
         // Synchronous native return + joined cancellation watchdog precede runner cleanup.
         // This is an emulator observation, not a hard native timeout or phone latency claim.
         ModelFileVerifier.verify(file, model.byteCount, model.sha256, licenseAccepted = true)
+        phase("POST_MODEL_VERIFY_RETURNED")
         scanPrivateFiles(context.filesDir, file, canary)
         scanPrivateFiles(context.cacheDir, file, canary)
         scanPrivateFiles(context.noBackupFilesDir, file, canary)
+        phase("CANARY_FINAL_RETURNED")
         instrumentation.sendStatus(2, Bundle().apply {
             putString("modelProbeScope", "REAL_SYNTHETIC_GENERATION_AND_CANCELLATION")
             putLong("generationElapsedMillis", generationMillis)

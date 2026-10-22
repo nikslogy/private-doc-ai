@@ -67,8 +67,10 @@ The same immutable Gallery allowlist records Qwen2.5-1.5B-Instruct:
 The [immutable file metadata](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/blob/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm)
 publishes that SHA-256. The [upload commit](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/commit/19edb84c69a0212f29a6ef17ba0d6f278b6a1614),
 dated 25 November 2025, exposes the exact Git LFS pointer size and digest in its
-diff. These establish authoritative upstream metadata, not a hash of bytes
-independently downloaded and verified by this project. No weights were fetched.
+diff. At the initial research checkpoint these established upstream metadata,
+without a project download. Subsequent explicitly requested M4 probes verified
+the full downloaded byte count and digest; see STATUS for those actual results
+and the distinct, still-unproven native execution checks.
 
 The [model card at the same immutable revision](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct/blob/19edb84c69a0212f29a6ef17ba0d6f278b6a1614/README.md)
 declares Apache-2.0 and contains no 0.18.0 minimum. The upstream base model's
@@ -131,18 +133,18 @@ call does not satisfy them.
 
 ## Next concrete M4 work
 
-Implement a model-installation state machine and SAF import into app-private
+The implemented M4 source adds a model-installation state machine and SAF import into app-private
 no-backup storage: bounded staging, expected size/hash verification, explicit
 licence acknowledgement, durable atomic publication, tamper/cancel cleanup and
-verification before load. Keep unsupported/unregistered models unavailable for
-normal document answers. This can be implemented and tested with tiny synthetic
-byte fixtures while the curated catalogue remains empty; it does not require a
-download, account secret or remote AI service.
+verification before load. Unsupported/unregistered models remain unavailable for
+normal document answers. Tiny synthetic byte fixtures exercise installation and
+privacy without downloading inference weights. The catalogue now contains only
+the reviewed experimental legacy Qwen candidate with no evaluated tasks/languages.
 
-Then add the real pinned-runtime inference/cancel/release adapter behind that
-verified installation boundary, with generation disabled until a reviewed
-artifact is available and actual synthetic-data load/inference/privacy tests
-pass. Offline installation uses the user's selected local model file and adds
+The real pinned-runtime inference/cancel/release adapter is implemented behind
+that verified installation boundary for a fixed synthetic diagnostic only.
+Actual synthetic-data load/inference/privacy evidence remains a separate gate;
+normal document QA is disabled. Offline installation uses the user's selected local model file and adds
 no INTERNET permission. Any later connected download needs an explicit separate
 user action and the same artifact checks.
 

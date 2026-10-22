@@ -91,6 +91,34 @@ device_model="$(adb -s "$ANDROID_SERIAL" shell run-as "$test_package" readlink -
 } > "$report_directory/target.txt"
 report="$report_directory/generation.txt"
 [[ ! -L "$report" ]] || fail 'The generation transcript must not be a symbolic link.'
+capture_ci_crash_diagnostics() {
+  # This is deliberately unavailable on physical devices or other runners.
+  [[ "${GITHUB_ACTIONS:-}" == true && "${RUNNER_ENVIRONMENT:-}" == github-hosted &&
+     "$ANDROID_SERIAL" == emulator-5554 && "$device_api" == 36 ]] || return 0
+  [[ "$(adb -s "$ANDROID_SERIAL" shell getprop ro.kernel.qemu 2>/dev/null | tr -d '\r')" == 1 ]] || return 0
+  timeout 15 adb -s "$ANDROID_SERIAL" shell dumpsys activity exit-info "$test_package" \
+    > "$report_directory/test-package-exit-info.txt" 2>&1 || true
+  timeout 15 adb -s "$ANDROID_SERIAL" shell dumpsys meminfo "$test_package" \
+    > "$report_directory/test-package-memory.txt" 2>&1 || true
+  local emitted_pid
+  emitted_pid="$(python3 - "$report" <<'PY'
+from pathlib import Path
+import re, sys
+pids = {m[1] for line in Path(sys.argv[1]).read_text().splitlines()
+        if (m := re.fullmatch(r'INSTRUMENTATION_STATUS: modelProbePid=([1-9][0-9]*)', line))}
+if len(pids) == 1:
+    print(next(iter(pids)))
+PY
+)"
+  if [[ "$emitted_pid" =~ ^[1-9][0-9]*$ ]]; then
+    # Only this synthetic test process's crash-buffer entries are read. Never global logs.
+    timeout 15 adb -s "$ANDROID_SERIAL" logcat -b crash --pid="$emitted_pid" -d -v threadtime -t 200 \
+      > "$report_directory/test-pid-crash.txt" 2>&1 || true
+  else
+    printf 'No unique synthetic test PID was emitted; crash-buffer logs were not collected.\n' \
+      > "$report_directory/test-pid-crash.txt"
+  fi
+}
 set +e
 timeout --foreground 900s adb -s "$ANDROID_SERIAL" shell am instrument -w -r \
   -e class com.privateassistant.platform.inference.LocalInferenceInstrumentedTest \
@@ -100,8 +128,13 @@ timeout --foreground 900s adb -s "$ANDROID_SERIAL" shell am instrument -w -r \
   -e runtimeVersion "${verified[4]}" "${runners[0]}" | tr -d '\r' | tee "$report"
 pipeline_status=("${PIPESTATUS[@]}")
 set -e
-for status in "${pipeline_status[@]}"; do [[ "$status" == 0 ]] || fail 'Model instrumentation failed or timed out; no model result is claimed.'; done
-python3 - "$report" <<'PY'
+for status in "${pipeline_status[@]}"; do
+  if [[ "$status" != 0 ]]; then
+    capture_ci_crash_diagnostics
+    fail 'Model instrumentation failed or timed out; no model result is claimed.'
+  fi
+done
+if python3 - "$report" <<'PY'
 from pathlib import Path
 import json, re, sys
 p = Path(sys.argv[1]); lines = p.read_text().splitlines()
@@ -129,3 +162,9 @@ if len(metrics) != 5 or any(metrics[key] <= 0 for key in ('generatedUtf16', 'nat
     'metrics': metrics, 'scope': 'Synthetic CPU generation, cancellation requested after initialization during the synchronous send window, and narrow file-canary scan. No phone latency, language/QA quality, complete privacy, traffic or hard-timeout claim.'}, indent=2) + '\n')
 print('Real-model probe PASS: one actual non-skipped test; synthetic generation and cancellation observation only')
 PY
+then
+  :
+else
+  capture_ci_crash_diagnostics
+  fail 'The real-model result verifier rejected execution; scoped CI diagnostics were retained.'
+fi

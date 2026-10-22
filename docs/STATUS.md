@@ -15,7 +15,7 @@ held only in memory. Only after the approved public size/hash match are they
 authenticated/decrypted into plaintext public weights and checked again before
 atomic publication. Wrong private documents therefore cannot reach plaintext disk.
 Installation needs room for encrypted staging plus the public model copy. Model
-leases serialize verification/native work with removal. No model weights are
+leases serialize verification/native work with removal. No inference-model weights are
 bundled with the app or downloaded by routine checks. User import requires
 current licence acknowledgement; vault originals/keys/text never enter the test.
 
@@ -24,6 +24,10 @@ brace in the provider-stream use block. No APK/reports were uploaded. All 77
 Python/source checks, :core:test and both platform production/instrumentation
 Kotlin compilations passed; new platform test execution/full host/Android suites
 were not completed. The brace is corrected and a fresh stable run is required.
+The corrected-source run 39760351605 then failed resolving the unchanged pinned
+Tesseract AAR from JitPack before Kotlin compilation. Its 77 Python/policy checks
+passed; no Android/APK result is claimed. The identical source is being retried
+without changing the mandatory AAR checksum or existing OCR implementation.
 The separate real-model probe 39759683730 compiled the offline test APK and
 independently verified all 1,597,931,520 public model bytes against the reviewed
 SHA-256. Its one test failed before native loading because a strict raw-path
@@ -31,6 +35,11 @@ equality check rejected an Android app-data alias. No generation/cancel pass is
 claimed. The test now anchors canonical containment to the context-owned probe
 directory, rejects leaf/probe symlinks and requires a controlled filename. Hash
 and canary checks are unchanged; a fresh model probe is required.
+The corrected-path probe 39760757984 again verified the exact public bytes,
+then its instrumentation process crashed after test start without a completed
+test or native metrics. Its cause is unknown; load/generation/cancellation are
+not passing results. The next probe adds test-only phase/PID events and focused
+app-specific exit/crash diagnostics on the disposable synthetic-data emulator.
 
 Local check-host passed 77 Python/source checks, then stopped at missing pinned
 Gradle/SDK. New platform JVM metadata cases (8; 16 authored total per variant),
@@ -179,15 +188,16 @@ identities, failures, fixes and actual narrower evidence.
 
 ## Next concrete task and remaining gates
 
-Implement M4's verified SAF model installer: bounded staging, reviewed expected
-size/hash, explicit licence acknowledgement, atomic publication, tamper/cancel
-cleanup and verification before load. Add the real LiteRT-LM generation/native
-cancellation/release adapter with bounded excerpts and no automatic tools. Keep
-normal document QA unavailable until an approved artifact and actual device
-inference/privacy/cancellation evidence exist. [Decision 0005](decisions/0005-local-model-candidate.md)
-records authoritative candidate research: Gemma's checksum/licence gate remains
-unresolved; the public Qwen artifact requires a separately reviewed runtime upgrade.
-No weights were downloaded and config/models.json remains empty.
+Finish M4 validation: complete the corrected stable APK's full host and 66-case
+Android suite; identify the real-model process crash with focused diagnostics,
+then establish actual generation/cancellation and narrow privacy evidence. The
+verified installer and native adapter are implemented; their execution evidence
+remains separate. Keep normal document QA disabled pending M5's citation and
+evaluation layer plus actual device inference/privacy/cancellation checks.
+[Decision 0005](decisions/0005-local-model-candidate.md) records the reviewed
+experimental legacy Qwen artifact for the existing runtime. Its public bytes
+were downloaded and verified only by the explicit model probe. Gemma's
+checksum/licence gate remains unresolved; no model weights are redistributed.
 
 Then M5 adds evaluated cited questions/summaries, M6 document tools, and M7
 portable encrypted backup/recovery. This narrow label reader does not complete

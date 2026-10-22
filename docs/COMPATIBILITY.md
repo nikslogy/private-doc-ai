@@ -37,7 +37,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | Dependency | Purpose | Verified source / remaining evidence |
 | --- | --- | --- |
 | `io.legere:pdfiumandroid:1.0.35` | Memory PDF parsing/rendering | Published artifact resolved/compiled; packaged ABI/64-bit static 16 KiB checks passed; phone parsing pending |
-| `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | Explicit M0 CPU model load probe | Published artifact resolved/compiled with min31 and bytecode17; arm64/x86_64 JNI static 16 KiB checks passed; actual model load pending |
+| `com.google.ai.edge.litertlm:litertlm-android:0.9.0` | M0 probe and experimental M4 CPU adapter | Published artifact resolved/compiled with min31 and bytecode17; arm64/x86_64 JNI static 16 KiB checks passed; actual successful model load/generation pending |
 | `com.google.crypto.tink:tink-android:1.17.0` | Object Streaming AEAD and key envelopes | Official release exists; actual Android primitive probes remain device checks |
 | `androidx.room:room-runtime`, `room-ktx`, `room-compiler` and `androidx.room` plugin `2.7.2` | Encrypted metadata schema | Official release; Kotlin 2.0+/KSP2; plugin isolates per-variant schema outputs and fixes empty schema directory configuration |
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API36 x86_64; physical checks pending |
@@ -109,13 +109,15 @@ disabled; native logging still needs canary inspection.
 [Tagged core API](https://github.com/johngray1965/PdfiumAndroidKt/blob/v1.0.35/pdfiumandroid/src/main/java/io/legere/pdfiumandroid/PdfiumCore.kt),
 [tagged page API](https://github.com/johngray1965/PdfiumAndroidKt/blob/v1.0.35/pdfiumandroid/src/main/java/io/legere/pdfiumandroid/PdfPage.kt).
 
-The runtime probe uses `EngineConfig` with CPU, a 512-token cache budget and
+The M0 runtime probe uses `EngineConfig` with CPU, a 512-token context budget and
 `:nocache`, then `initialize`, `createConversation` with automatic tool calling
 disabled, an idle `cancelProcess`, and `close`. It produces no answer. Version
-0.9.0's Flow cleanup does not itself invoke native cancellation. An eventual
-inference adapter must explicitly cancel native generation, await termination,
-discard the conversation after cancellation, and release KV/engine state on
-lock. Native initialization has no cancellation API in this pin.
+0.9.0's Flow cleanup does not itself invoke native cancellation. The M4 adapter
+uses synchronous native send and a joined watchdog that explicitly requests
+cancellation, waits for send to return, then closes the conversation/engine.
+It uses two CPU threads and only a fixed synthetic diagnostic prompt in the UI.
+Native initialization has no cancellation API in this pin; native hangs cannot
+be forcibly interrupted safely. Actual execution evidence is tracked in STATUS.
 [Engine](https://github.com/google-ai-edge/LiteRT-LM/blob/v0.9.0/kotlin/java/com/google/ai/edge/litertlm/Engine.kt),
 [configuration](https://github.com/google-ai-edge/LiteRT-LM/blob/v0.9.0/kotlin/java/com/google/ai/edge/litertlm/Config.kt),
 [conversation](https://github.com/google-ai-edge/LiteRT-LM/blob/v0.9.0/kotlin/java/com/google/ai/edge/litertlm/Conversation.kt).
@@ -135,11 +137,13 @@ This is an initial inventory, not a complete notice bundle.
 [LiteRT-LM licence](https://github.com/google-ai-edge/LiteRT-LM/blob/v0.9.0/LICENSE),
 [SQLCipher licence](https://github.com/sqlcipher/sqlcipher-android/blob/v4.9.0/LICENSE).
 
-`config/models.json` intentionally contains no model records. No hash, licence
-acceptance, language quality or download availability is invented. Runtime
-licensing does not grant model-weight rights. Complete immutable model identity,
-bytes/digest, licence terms/acceptance, tokenizer/template/runtime compatibility,
-language/task evaluation and resource profile before enabling a model.
+`config/models.json` registers one experimental legacy Qwen artifact using
+reviewed immutable metadata and licence sources. Explicit probes verified its
+downloaded bytes; native generation has not yet passed. Evaluated tasks/languages
+remain empty, and installation does not enable document QA. See decision 0005
+for its compatibility reference and the different later artifact with the same
+filename. Runtime licensing does not grant model-weight rights. Actual language/
+task evaluation and a measured resource profile remain required before QA.
 
 The host dependency/compile/lint/merged-manifest/native/signature/alignment gates
 passed for both APKs; 32-bit 16 KiB behavior remains unverified. Before M0 closes,
