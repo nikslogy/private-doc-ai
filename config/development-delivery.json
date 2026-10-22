@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "dcc363f7f843614d164d9bfc0a463034f0b810c8",
-  "request": "Build stable 0.4.0-dev model setup and encrypted-import diagnostics",
-  "requestedAtUtc": "2026-10-22T09:59:25Z"
+  "sourceCommit": "b35642df7e7835ac7efc6229af134c6d9b80c9e8",
+  "request": "Validate corrected 0.4.0-dev model import UI and encrypted staging",
+  "requestedAtUtc": "2026-10-22T10:04:33Z"
 }
