@@ -3,9 +3,9 @@
 Native Android encrypted document vault with offline OCR, local search and
 selected-source labelled document facts.
 **Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003/artifacts/12404384786).
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471716).
 Unzip and install the offline APK, then open **Private Vault Preview**.
-Version 0.3.0-dev / code 4 requires Android 12/API31+. Install it as an update to
+Version 0.4.0-dev / code 5 requires Android 12/API31+. Install it as an update to
 the existing Preview app without uninstalling or clearing data. Preview IDs and
 signing identity are unchanged; actual device update-preservation testing remains
 pending. Earlier Test/original apps retain separate vaults; keep their data.
@@ -20,8 +20,12 @@ supported English labels, exact quotes/page links and conflicting values. Raw
 identifiers/dates and monetary precision are preserved; unsupported layouts may
 not match. AI questions/summaries, conversions, recovery and backups remain unavailable.
 
-[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003)
-passed the full host gate and 44 non-skipped Android 16 emulator executions.
+Experimental model setup adds licence acknowledgement and exact-byte verified
+local import. Its fixed synthetic native diagnostic has not yet passed; normal
+document questions remain disabled. See [model setup](docs/MODEL_SETUP.md).
+
+[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605)
+passed the full host gate and 66 non-skipped Android 16 emulator executions.
 These include real OCR and authenticated Keystore/vault lifecycles, pinned
 revision reads, cited/conflicting fields and original preservation. Phone UI,
 representative accuracy, full privacy/traffic and release gates remain open.
@@ -103,10 +107,10 @@ python3 scripts/security-check.py
 instrumentation Kotlin compilation, unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
-Core has 55 authored JVM tests; platform has 8 validator cases per variant and
-app JVM tasks report NO-SOURCE. The stable OCR build passed 21 selected Android
+Core has 82 authored JVM tests; M4 adds 8 metadata cases to the existing 8
+platform validator cases per variant. App JVM tasks report NO-SOURCE. The delivered model-setup build passed 32 selected Android
 cases and one real credential-bound lifecycle case per variant on an API36 emulator,
-with no skips: 44 executions. The full device suite and physical fingerprint/UI tests
+with no skips: 66 executions. The full device suite and physical fingerprint/UI tests
 remain pending; see STATUS for the exact scope and earlier failures.
 
 ```bash
@@ -116,8 +120,11 @@ ANDROID_SERIAL=<explicit-device-serial> scripts/check-device.sh
 Device procedures are in [DEVICE_TESTS](docs/DEVICE_TESTS.md). Real Tink,
 SQLCipher/migration/search, Keystore-policy, encrypted-memory PDF/image,
 development OCR and activity tests are authored.
-An empty [model catalogue](config/models.json) deliberately prevents an invented
-model-load result. No assistant model or AI API credential is needed for host CI.
+The [model catalogue](config/models.json) registers a reviewed legacy Qwen
+artifact as experimental, with no evaluated tasks/languages. Normal document QA
+remains disabled. [Model setup](docs/MODEL_SETUP.md) offers verified local import
+and a fixed synthetic runtime diagnostic; actual validation is recorded in STATUS.
+No inference model or AI API credential is needed for routine host CI.
 Pinned public OCR weights are downloaded/verified during the build. Stable APK
 delivery additionally uses the configured user-owned signing identity.
 

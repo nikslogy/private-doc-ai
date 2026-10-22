@@ -131,6 +131,17 @@ text logs or persistent chat/cache. Active cancellation latency and native
 initialization/hang isolation remain unverified. A load probe's idle cancellation
 call does not satisfy them.
 
+The pinned [generation tasks](https://github.com/google-ai-edge/LiteRT-LM/blob/991ef53d47fe7be53c1411120f29936f9f94602d/runtime/core/tasks.cc)
+(Git blob e852c71420fd1c650495dc489196de2dba8b4ed3) reject prefill tokens at or
+above the configured limit and stop decode at that total. This supports the
+adapter's configured 512-token combined budget; it is source evidence rather
+than an actual generation result. The static
+[compiled-model executor](https://github.com/google-ai-edge/LiteRT-LM/blob/991ef53d47fe7be53c1411120f29936f9f94602d/runtime/executor/llm_litert_compiled_model_executor.cc)
+(blob fb10436db43ea4b34dbdf5efabd53de9e5aaedc9) allocates KV buffers from exported
+tensor shapes. A smaller configured budget therefore does not establish reduced
+KV allocation or a measured memory bound. CPU/no-cache resource behavior must
+be measured. The process-crash probe is not evidence of a particular cause.
+
 ## Next concrete M4 work
 
 The implemented M4 source adds a model-installation state machine and SAF import into app-private

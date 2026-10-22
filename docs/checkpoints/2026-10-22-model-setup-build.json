@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "repository": "nikslogy/private-doc-ai",
+  "workflow": "Stable development APKs",
+  "run": {
+    "id": 39760351605,
+    "attempt": 2,
+    "jobId": 119767928162,
+    "headSha": "2e5dbc2153d8c41eab147ec4b539cb87bcc5ca37",
+    "sourceSha": "b35642df7e7835ac7efc6229af134c6d9b80c9e8",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-10-22T10:16:58Z",
+    "updatedAt": "2026-10-22T10:32:03Z"
+  },
+  "host": {
+    "result": "passed",
+    "pythonExecuted": 77,
+    "pythonSuites": [
+      6,
+      22,
+      10,
+      10,
+      9,
+      14,
+      6
+    ],
+    "sourcePolicyPassed": true,
+    "tesseractReviewedBytesVerified": true,
+    "coreTestTaskPassed": true,
+    "platformUnitTasksPassed": [
+      {
+        "flavor": "offline",
+        "passed": true,
+        "authoredCases": 16
+      },
+      {
+        "flavor": "connected",
+        "passed": true,
+        "authoredCases": 16
+      }
+    ],
+    "authoredCoreCases": 82,
+    "unitCountEvidence": "Gradle task execution succeeded; authored @Test counts 82 core and 16 platform per variant are source counts. JVM XML reports were not uploaded by this workflow, so exact executed JVM case counts were not independently extracted.",
+    "appUnitTasks": "offline and connected NO-SOURCE; no app JVM cases",
+    "allFourInstrumentationKotlinTasksPassed": true,
+    "lintBothModulesBothVariantsPassed": true,
+    "assembliesBothVariantsPassed": true,
+    "productionDependencyGatePassed": true,
+    "offlineManifestNoInternet": true,
+    "mlKitProductionPolicyGatePassed": true,
+    "hostBuildDuration": "11m 3s"
+  },
+  "android": {
+    "target": "emulator-5554",
+    "api": 36,
+    "regressionPerVariant": 32,
+    "variants": 2,
+    "authenticatedLifecyclePerVariant": 1,
+    "totalExecuted": 66,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "regressionXmlIndependentlyParsed": true,
+    "modelStoreTestsPerVariant": 10,
+    "modelImportPrivacyTestsPerVariant": 1,
+    "privacyTest": "wrongModelInputNeverAppearsAsPlaintextWhileStreamingOrAfterRejection",
+    "authenticatedLifecycleEvidence": "Both direct instrumentation log runs reported OK (1 test), INSTRUMENTATION_CODE -1, and authenticated lifecycle probe passed; emulator PIN credential, not fingerprint.",
+    "notEstablished": [
+      "Physical fingerprint and device behavior",
+      "Native inference or model generation",
+      "Traffic inspection",
+      "Real document QA",
+      "Release readiness"
+    ]
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "file": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.preview",
+      "versionCode": 5,
+      "versionName": "0.4.0-dev",
+      "bytes": 154770214,
+      "sha256": "b78c18ffcc7a70d6fb14412a6160b732606d9f7ba3d55f5117d47f2e1708c168",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    },
+    {
+      "flavor": "connected",
+      "file": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "versionCode": 5,
+      "versionName": "0.4.0-dev-connected",
+      "bytes": 154770266,
+      "sha256": "d1c5c4c34cf8356dce7940a066af7a698e8cc2d6e8cf4b3113df4d091ef0bb76",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12419471716,
+      "name": "private-document-assistant-stable-apks-39760351605-2",
+      "sizeBytes": 309734836,
+      "sha256": "a3079c5eaf17be0d432dc2399f61990a497afeb5a9e49a065427fab5251d388f",
+      "expiresAt": "2026-10-29T10:31:57Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471716"
+    },
+    {
+      "id": 12419471703,
+      "name": "stable-android-regressions-39760351605-2",
+      "sizeBytes": 128295,
+      "sha256": "8c159fab6541f187e657ae3e3bd0bc0412a31a31c91d0559f029e813a9234c42",
+      "expiresAt": "2026-10-29T10:31:55Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471703"
+    }
+  ],
+  "reportDownload": {
+    "bytes": 128295,
+    "sha256IndependentlyComputed": "8c159fab6541f187e657ae3e3bd0bc0412a31a31c91d0559f029e813a9234c42",
+    "zipEntries": 94,
+    "xmlSuites": 2,
+    "xmlCases": 64,
+    "xmlFailures": 0,
+    "xmlErrors": 0,
+    "xmlSkipped": 0
+  },
+  "evidenceScope": "CI logs and GitHub artifact metadata. Regression ZIP downloaded and independently hashed/parsed locally. APK ZIP bytes were not independently downloaded or verified in this review; individual APK identities/signatures/alignment are actual CI log evidence.",
+  "checkpoint": "M4 experimental model setup build; inference validation pending",
+  "recordedAtUtc": "2026-10-22T16:20:24Z",
+  "milestoneStatus": "in_progress",
+  "modelProbes": {
+    "scope": "Separate opt-in synthetic diagnostics using reviewed public weights. None establishes successful native model loading, generation, cancellation, private-document QA or M4 completion.",
+    "first": {
+      "schemaVersion": 1,
+      "runId": 39759683730,
+      "jobId": 119760476655,
+      "headSha": "ad961b44b4f4aaf0bfb3619d8e7f63402ee90dd0",
+      "conclusion": "failure",
+      "completedAtUtc": "2026-10-22T10:04:46Z",
+      "download": {
+        "actualBytes": 1597931520,
+        "actualSha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+        "verifiedAtUtc": "2026-10-22T10:03:24Z"
+      },
+      "android": {
+        "executed": 1,
+        "failures": 1,
+        "skipped": 0,
+        "failureLocation": "LocalInferenceInstrumentedTest.kt:39",
+        "reason": "Over-strict absolute-versus-canonical path spelling guard rejected Android app-data alias before ModelFileVerifier/native load",
+        "nativeLoadPassed": false,
+        "generationPassed": false,
+        "cancellationPassed": false
+      },
+      "reports": {
+        "artifactId": 12417038973,
+        "bytes": 6311,
+        "sha256": "49623e53fd53aa0d513ddb872cdad99cd0438e3d6e458da53e0616e607888a5c",
+        "expiresAtUtc": "2026-10-29T10:04:45Z"
+      },
+      "fix": {
+        "scope": "test only",
+        "gitBlob": "230c78f9445939b1c99caa86870f8bcee1ad2b9c",
+        "checks": [
+          "reject raw model/probe-root symlinks",
+          "canonical model parent exactly context-owned canonical probeRoot",
+          "controlled probe filename",
+          "verify canonical model bytes; canary scans unchanged"
+        ]
+      }
+    },
+    "correctedPath": {
+      "schemaVersion": 1,
+      "runId": 39760757984,
+      "jobId": 119764037553,
+      "headSha": "329d656d9543ea9aba9b1acc6100da555ba44d64",
+      "conclusion": "failure",
+      "download": {
+        "actualBytes": 1597931520,
+        "actualSha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+        "verifiedAtUtc": "2026-10-22T10:11:30Z"
+      },
+      "android": {
+        "started": 1,
+        "completed": 0,
+        "observed": "INSTRUMENTATION_RESULT: shortMsg=Process crashed.; INSTRUMENTATION_CODE: 0",
+        "nativeLoadPassed": false,
+        "generationPassed": false,
+        "cancellationPassed": false,
+        "reason": "Unknown process crash; phase and app-specific crash diagnostics needed before attribution"
+      },
+      "reports": [
+        {
+          "id": 12417309969,
+          "name": "experimental-model-probe-39760757984-1",
+          "size_in_bytes": 5900,
+          "url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12417309969",
+          "archive_download_url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12417309969/zip",
+          "expired": false,
+          "created_at": "2026-10-22T10:13:30Z",
+          "expires_at": "2026-10-29T10:13:30Z",
+          "updated_at": "2026-10-22T10:13:30Z",
+          "digest": "sha256:8d0653fe09b523f788fa13bf1cb1522ddb79292e4b0cedc3e52f6a5630bd7c2b",
+          "workflow_run": {
+            "id": 39760757984,
+            "repository_id": 1425653570,
+            "head_repository_id": 1425653570,
+            "head_branch": "main",
+            "head_sha": "329d656d9543ea9aba9b1acc6100da555ba44d64"
+          }
+        }
+      ]
+    },
+    "diagnosticRetry": {
+      "runId": 39762884663,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39762884663",
+      "headSha": "fdcf9affb8f87c4d5b4be7ff1b74409acbb1f26e",
+      "attempts": [
+        {
+          "attempt": 1,
+          "jobId": 119771126239,
+          "conclusion": "failure",
+          "startedAtUtc": "2026-10-22T10:24:42Z",
+          "completedAtUtc": "2026-10-22T10:25:59Z",
+          "failedTask": ":platform:verifyTesseractBinary",
+          "dependency": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+          "artifactUrl": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar",
+          "reason": "JitPack missing-artifact/404 response for the unchanged pinned AAR; Gradle reported ModuleVersionNotFoundException.",
+          "compilationScope": "Core Kotlin compilation executed; platform/probe Kotlin compilation did not execute.",
+          "emulatorStep": "skipped",
+          "inferenceWeightDownload": "not run",
+          "androidTestsExecuted": 0,
+          "nativeLoadPassed": false,
+          "generationPassed": false,
+          "cancellationPassed": false
+        },
+        {
+          "attempt": 2,
+          "jobId": 119772894949,
+          "conclusion": "failure",
+          "startedAtUtc": "2026-10-22T10:28:58Z",
+          "completedAtUtc": "2026-10-22T10:30:42Z",
+          "failedTask": ":platform:verifyTesseractBinary",
+          "dependency": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+          "artifactUrl": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar",
+          "reason": "JitPack missing-artifact/404 response for the unchanged pinned AAR; Gradle reported ModuleVersionNotFoundException.",
+          "compilationScope": "Core Kotlin compilation executed; platform/probe Kotlin compilation did not execute.",
+          "emulatorStep": "skipped",
+          "inferenceWeightDownload": "not run",
+          "androidTestsExecuted": 0,
+          "nativeLoadPassed": false,
+          "generationPassed": false,
+          "cancellationPassed": false
+        }
+      ]
+    }
+  },
+  "currentBootstrapRepair": {
+    "status": "locally_verified_ci_pending",
+    "change": "Bounded explicit GET of the unchanged pinned public Tesseract AAR into an ignored exact-coordinate local Maven cache; publish only after the reviewed byte count/SHA-256 match; mandatory Gradle input verification retained.",
+    "coordinate": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+    "artifactUrl": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar",
+    "actualLocalBytes": 12848454,
+    "actualLocalSha256": "bce5d6413a1a5ae3d7240033fbbc851ba3217d0a08d9769400e17a077f42cb2a",
+    "byteHashEvidence": "Current cached AAR independently re-hashed locally on 2026-10-22T16:20:24Z; values match config/ocr-runtime.json.",
+    "scope": "Local GET/cache verification only. The stable successful build predates this bootstrap change. No new CI build, emulator, native inference or APK result is claimed for this repair."
+  },
+  "nextTask": "Validate the bootstrap repair in CI, then run the phase/PID diagnostic probe to identify the corrected-path instrumentation process crash before claiming native loading, generation or cancellation.",
+  "limits": [
+    "Experimental public model setup and a fixed synthetic diagnostic are implemented; normal document questions/summaries remain disabled.",
+    "Native load, synthetic generation and active cancellation have no passing model-probe result.",
+    "Physical fingerprint/vendor behavior, the complete explicit-target device suite, actual same-key update preserving a synthetic vault, and real 16 KiB native loading remain pending.",
+    "Representative OCR/model/QA accuracy, hard isolation, dependency provenance/notices, recovery and comprehensive traffic/privacy/memory checks remain pending.",
+    "This is a validated development build with incomplete M4 validation, not a completed milestone or release-readiness claim."
+  ]
+}

@@ -1,5 +1,13 @@
 # Device verification
 
+For current phone testing, use the stable **Private Vault Preview** APK linked
+in [STATUS.md](STATUS.md), with permanent ID com.privateassistant.app.preview
+(connected: com.privateassistant.app.connected.preview). Keep existing apps/data
+and install the same-key update. The unlock repair below is historical evidence;
+its Test app IDs and temporary signing identity differ from current Preview builds.
+
+## Historical first-unlock repair
+
 The original version 0.1.0 APKs install on the user's iQOO Neo 10 / Android 16,
 but first fingerprint unlock reportedly fails before import. Version 0.1.1-dev /
 code 2 passed the full host gate and the selected Android 16 emulator regressions
@@ -93,12 +101,56 @@ properties; they do not establish these Compose UI races, real layouts, phone
 biometrics or representative extraction accuracy. General AI questions and
 summaries remain unavailable until the verified local model/inference phase.
 
+### Experimental model setup (M4; phone checks pending)
+
+Use synthetic documents only. Record the exact APK/model hashes, app ID,
+phone OS/API/ABI/total and available RAM, free storage and thermal state. Consult
+STATUS before native testing; a verified download or installed model alone is
+not a successful generation/cancellation result.
+
+1. Install the same-key Preview update without uninstalling or clearing data.
+   Unlock and confirm existing synthetic originals still export byte-identically.
+   Open Assistant → Set up on-device AI. Document QA must remain unavailable.
+2. Review the exact immutable artifact and licence in MODEL_SETUP.md. Download
+   the public file using the chosen browser, then return/unlock. Acknowledge the
+   licence for this import and select the file using the system picker. Allow
+   at least twice the model size plus 64 MiB free in app storage, separately from
+   the downloaded source. Do not substitute a moving-main file with the same name.
+3. First select an unrelated small synthetic canary file;
+   installation must reject it. With authorized app-private inspection, verify
+   staging ciphertext/cleanup and absence of the canary as plaintext. Test
+   truncated/oversized/tampered input and cancellation without touching vault
+   originals or earlier verified model copies.
+4. Import the reviewed model, restart/unlock and require verified status. Test
+   deliberate tampering only on its app-owned public test copy: verification
+   must fail, generation must stay unavailable, and explicit model removal must
+   preserve the downloaded source and vault documents. Reimport the approved file.
+5. Once CI establishes native execution, use Test local model. It must use only
+   the fixed synthetic prompt and display actual output as unverified. Measure
+   cold initialization, complete generation, memory and cancellation. Test
+   cancel, screen-off, lock, leaving the setup screen and process restart; old
+   output must clear and cancelled work must not publish into a later session.
+   Native initialization/hangs have no hard interrupt guarantee in this runtime.
+6. Independently run the explicit target probe below. Record actual non-skipped
+   results and safe metrics, then inspect synthetic disk/log canaries and
+   connected traffic. An unsupported/resource-limited phone is a recorded
+   failure or unavailable result, never a fabricated answer or cloud fallback.
+
+```bash
+ANDROID_SERIAL=<explicit-authorized-target> scripts/check-model-generation.sh qwen25-15b-q8-legacy <exact-local-model-file> --accept-license
+```
+
+This opt-in probe uses test-private storage and removes its public model copy.
+Its file scan is narrow; PID/package crash diagnostics are enabled only on the
+disposable GitHub API36 emulator, never a physical target. It does not establish
+document accuracy, language quality, full privacy or phone latency targets.
+
 ### Full suite
 
 1. Provision the pinned SDK/JDK, enable USB debugging, inspect `adb devices -l`, and select a target explicitly: `export ANDROID_SERIAL=<the-exact-authorized-serial>`. Scripts never choose the first available device.
 2. Run `scripts/check-host.sh` and retain the unit/lint/assembly output and APK hashes. Run `scripts/verify-artifact.sh offline <apk>` and its connected equivalent on the exact APKs under test. Check native library 16 KiB compatibility with the Android official alignment/device procedures; source inclusion alone is insufficient.
 3. Run `scripts/check-device.sh`. It runs platform and both app flavor instrumentation suites only on the explicit target. Inspect test reports for skipped tests and record them individually. The generic suite may report model availability as unavailable and skip an optional load probe; this is not a passed model check.
-4. Review the real model catalogue record and licence. When a compatible registered artifact exists, run `ANDROID_SERIAL=<target> scripts/check-model.sh <catalog-id> <local-model-file> --accept-license`. It verifies byte count/hash before copying the model into test-private storage, requires the instrumented M0 runtime load test, and removes its test copy on exit. An empty catalogue exits unsuccessfully. This probe covers load, manual-tool conversation construction, idle cancellation call and release. Actual inference and cancellation during generation require a separate M4 harness and are currently pending.
+4. Review the real model catalogue record and licence. When a compatible registered artifact exists, run `ANDROID_SERIAL=<target> scripts/check-model.sh <catalog-id> <local-model-file> --accept-license`. It verifies byte count/hash before copying the model into test-private storage, requires the instrumented M0 runtime load test, and removes its test copy on exit. An empty catalogue exits unsuccessfully. This probe covers load, manual-tool conversation construction, idle cancellation call and release. Use the separate explicit M4 generation probe above for real inference/cancellation; consult STATUS for actual results.
 5. Test setup/unlock with real system authentication; wrong/missing authentication, lock/background timeout, screen capture exclusion, DB closure, preview invalidation, job cancellation, process death/restart, interrupted object publication and deleted revisions. Verify originals are byte-identical after import/open. Exercise wrong key/AAD/vault/ciphertext and truncation rejection. Inspect app-private files, database, caches, logs and backups using synthetic canaries for plaintext leaks.
 6. Import the synthetic native PDF, text, image and corrupt file through SAF. Test explicit source selection and page evidence, unavailable AI fallback, malformed/password/oversized files, pixel/page/memory/time bounds, cancellation and original retention when parsing/OCR fails. A successful API probe does not establish OCR quality; evaluate Latin/Devanagari and real authorized scans separately.
 7. Test derivatives with explicit page/image order, geometry/orientation and true output byte counts. Test preview then user-initiated Sharesheet, narrow read-only URI grants, lock/restart/export expiry and recipient retention disclosure. Destructive actions must require the current user's exact-item confirmation. Parser/model/document text must never authorize an action.

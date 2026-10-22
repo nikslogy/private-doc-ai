@@ -59,13 +59,15 @@ unverified model output and cannot authorize any action. No chat/KV state is sav
 Routine host/stable checks run metadata and tiny synthetic installer/privacy
 tests without downloading an inference model. The separate explicitly requested
 model-runtime-probe workflow downloads/size-hashes the exact public artifact to
-runner scratch, boots a measured-resource API36 emulator and requires a real,
+runner scratch, boots a measured-resource API36 emulator with 6 GiB RAM and requires a real,
 non-skipped generation/cancellation test. The test observes native cancel calls
 and a failing synchronous send during the cancellation experiment, rechecks the
 model hash and scans bounded app files/cache/noBackup for a synthetic canary.
 Only the independently hash-verified public model is excluded from that scan.
 It does not establish complete filesystem/log/traffic privacy, hard timeouts,
-phone cancellation latency or semantic answer quality. Weights and emulator
+phone cancellation latency or semantic answer quality. Its host must have at
+least 8 GiB currently available before emulator startup. These setup guards are
+configuration, not measured model minimums. Weights and emulator
 userdata are removed and excluded from artifacts/caches.
 
 After CI: perform explicit phone installation, import/tamper/cancel/lock/restart

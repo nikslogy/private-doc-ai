@@ -56,6 +56,7 @@ jobs:
         run: |
           source .tooling/env.sh
           python3 scripts/prepare-ocr-assets.py --download
+          python3 scripts/prepare-ocr-runtime.py --download
           ./gradlew --no-daemon --console=plain --stacktrace :platform:assembleOfflineDebugAndroidTest
           ./gradlew --stop
       - name: Enable KVM for the disposable model target

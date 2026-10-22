@@ -10,17 +10,24 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // JitPack may supply only this reviewed, byte-pinned standard OCR AAR.
+        // Explicit preparation can supply these exact bytes without Gradle's
+        // remote HEAD requests. The platform still verifies the resolved AAR.
+        val verifiedOcrRuntime = maven {
+            name = "verifiedOcrRuntime"
+            url = uri(rootDir.resolve(".tooling/verified-ocr-maven"))
+            metadataSources { artifact() }
+        }
+        val pinnedOcrOrigin = maven {
+            name = "pinnedOcrOrigin"
+            url = uri("https://jitpack.io")
+            // The published POM path is unreliable; consume only the pinned AAR.
+            metadataSources { artifact() }
+        }
+        // These repositories supply only this reviewed, byte-pinned OCR version.
         exclusiveContent {
-            forRepository {
-                maven {
-                    url = uri("https://jitpack.io")
-                    // The published POM path is unreliable; consume only the pinned AAR.
-                    metadataSources { artifact() }
-                }
-            }
+            forRepositories(verifiedOcrRuntime, pinnedOcrOrigin)
             filter {
-                includeModule("com.github.adaptech-cz.Tesseract4Android", "tesseract4android")
+                includeVersion("com.github.adaptech-cz.Tesseract4Android", "tesseract4android", "4.9.0")
             }
         }
     }

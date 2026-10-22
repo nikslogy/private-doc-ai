@@ -2,11 +2,11 @@
 
 ## Current stable Preview build
 
-[Download stable-signed document-facts APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003/artifacts/12404384786).
+[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471716).
 Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
-host gate, pinned signer checks and 44 non-skipped Android test executions in
-[run 39729671003](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003).
-Version 0.3.0-dev / code 4 retains permanent IDs com.privateassistant.app.preview
+host gate, pinned signer checks and 66 non-skipped Android test executions in
+[run 39760351605](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605).
+Version 0.4.0-dev / code 5 retains permanent IDs com.privateassistant.app.preview
 and com.privateassistant.app.connected.preview. The connected launcher is
 **Private Vault Connected Preview**. Install over the existing Preview apps
 without uninstalling or clearing data. Earlier Test/original apps retain separate
@@ -15,7 +15,10 @@ vaults. Keep their data; no automatic migration or recovery is available.
 Open Assistant → Document facts and choose one source. Supported English labels
 produce literal values, exact source quotes/page links and unresolved conflict
 warnings. OCR may change digits and unsupported layouts may not match. AI
-questions/summaries await verified on-device model installation and inference.
+questions/summaries remain disabled. Set up on-device AI offers verified import
+and a fixed synthetic diagnostic; native generation has not yet passed. Consult
+MODEL_SETUP.md and STATUS.md before running it. This is experimental setup, not
+a completed AI assistant.
 
 The persistent user-owned signing key is held in repository Actions secrets;
 only its public certificate is committed. Stable delivery checks the input key
@@ -130,15 +133,16 @@ Android 12/API31 or newer is required. Check hashes from the extracted directory
 sha256sum -c SHA256SUMS
 ```
 
-Choose **Private Vault Test** for offline testing: application ID
-`com.privateassistant.app.dev`, with no INTERNET permission. **Private Vault
-Connected Test** uses `com.privateassistant.app.connected.dev` and can be
-installed alongside both offline and the original apps. Connected still has no
+For current stable downloads choose **Private Vault Preview** for offline testing:
+application ID `com.privateassistant.app.preview`, with no INTERNET permission.
+**Private Vault Connected Preview** uses `com.privateassistant.app.connected.preview`.
+The earlier Test/original apps have separate IDs/vaults. Connected still has no
 remote document processing. Use synthetic documents while the device/security
 gates remain open.
 
-These APKs use development debug signing. Builder debug certificates can differ;
-inspect `APK_MANIFEST.json` before attempting an update. Uninstalling or losing
+Stable Preview APKs use the pinned development signing identity. Ordinary Host
+checks builds use separate diagnostic .dev IDs and temporary keys; inspect
+`APK_MANIFEST.json` before attempting an update. Uninstalling or losing
 the Keystore can permanently lose vault access because portable recovery is
 not implemented. Keep original source files outside the app.
 
