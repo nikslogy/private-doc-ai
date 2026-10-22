@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "9782812a58813777d32d58aa0ac4920eac758889",
-  "request": "Validate verified dependency bootstrap, 97 host cases and model setup APKs",
-  "requestedAtUtc": "2026-10-22T16:26:54Z"
+  "sourceCommit": "f2f5c9274617111b96001d48a70c4f9d8d8a9947",
+  "request": "Validate 0.4.1-dev CPU memory guard and stable signed APK update",
+  "requestedAtUtc": "2026-10-22T17:06:14Z"
 }
