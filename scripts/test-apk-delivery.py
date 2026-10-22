@@ -27,6 +27,9 @@ class ApkDeliveryTest(unittest.TestCase):
         (self.root / "config/toolchain.json").write_text(json.dumps({
             "sdk": {"minimum": 31, "target": 35, "buildTools": "35.0.0"}}))
         self.environment = os.environ.copy()
+        for name in ("ORG_GRADLE_PROJECT_stableDevelopment", "ANDROID_DEV_KEYSTORE_PATH",
+                     "ANDROID_DEV_STORE_PASSWORD", "ANDROID_DEV_KEYSTORE_BASE64"):
+            self.environment.pop(name, None)
         self.environment["ANDROID_SDK_ROOT"] = str(self.root / "sdk")
         self.environment["PATH"] = str(self.root / "bin") + os.pathsep + self.environment["PATH"]
         self.executable(self.root / "scripts/check-host.sh", """#!/bin/sh

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "alias": "private-assistant-dev",
+  "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467",
+  "applicationIds": {
+    "offline": "com.privateassistant.app.preview",
+    "connected": "com.privateassistant.app.connected.preview"
+  }
+}

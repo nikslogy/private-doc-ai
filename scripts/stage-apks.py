@@ -16,11 +16,26 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-FLAVORS = {"offline": "com.privateassistant.app.dev", "connected": "com.privateassistant.app.connected.dev"}
+STABLE_DEVELOPMENT = os.environ.get("ORG_GRADLE_PROJECT_stableDevelopment") == "true"
+FLAVORS = {"offline": "com.privateassistant.app" + (".preview" if STABLE_DEVELOPMENT else ".dev"),
+           "connected": "com.privateassistant.app.connected" + (".preview" if STABLE_DEVELOPMENT else ".dev")}
 
 
 class StagingError(Exception):
     pass
+
+
+def stable_signing_record() -> dict:
+    record = json.loads((ROOT / "config/development-signing.json").read_text())
+    if (not isinstance(record, dict) or set(record) != {"schemaVersion", "alias", "certificateSha256", "applicationIds"} or
+        type(record["schemaVersion"]) is not int or record["schemaVersion"] != 1 or
+        record["alias"] != "private-assistant-dev" or
+        not isinstance(record["certificateSha256"], str) or
+        not re.fullmatch(r"[0-9a-f]{64}", record["certificateSha256"]) or
+        record["applicationIds"] != {"offline": "com.privateassistant.app.preview",
+                                      "connected": "com.privateassistant.app.connected.preview"}):
+        raise StagingError("Invalid stable development public signing record")
+    return record
 
 
 def regular_file(path: Path) -> None:
@@ -65,6 +80,8 @@ def signing_metadata(text: str, flavor: str) -> dict:
     schemes = re.findall(r"^Verified using (v[\d.]+) scheme[^\n]*: true$", text, re.M)
     if not digests or not any(s in {"v2", "v3", "v3.1"} for s in schemes):
         raise StagingError(f"{flavor}: missing verified modern signature or signer certificate SHA-256")
+    if STABLE_DEVELOPMENT and {value.lower() for value in digests} != {stable_signing_record()["certificateSha256"]}:
+        raise StagingError(f"{flavor}: APK signer differs from the pinned stable development certificate")
     return {"verified": True, "schemes": sorted(set(schemes)),
             "signerCertificateSha256": sorted({value.lower() for value in digests})}
 
@@ -77,6 +94,11 @@ def git_commit() -> str | None:
 
 
 def stage() -> Path:
+    if STABLE_DEVELOPMENT:
+        stable_signing_record()
+        path = os.environ.get("ANDROID_DEV_KEYSTORE_PATH", "")
+        if not path or not Path(path).is_file() or not os.environ.get("ANDROID_DEV_STORE_PASSWORD"):
+            raise StagingError("Stable signing credentials are missing; no fallback signing is allowed")
     artifacts = ROOT / "artifacts"
     if artifacts.is_symlink():
         raise StagingError("artifacts must not be a symlink")
@@ -135,6 +157,7 @@ def stage() -> Path:
                   "gitCommit": git_commit(), "buildTools": config["sdk"]["buildTools"],
                   "hostChecks": {"command": "scripts/check-host.sh", "result": "passed"},
                   "developmentBuildOnly": True,
+                  "stableDevelopmentSigning": STABLE_DEVELOPMENT,
                   "deviceVerification": "Separate explicit-target check-device.sh run required; staging does not run it.",
                   "apks": entries}
         (staging / "APK_MANIFEST.json").write_text(json.dumps(record, indent=2) + "\n")

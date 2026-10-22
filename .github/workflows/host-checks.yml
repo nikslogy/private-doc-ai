@@ -51,6 +51,8 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-private-assistant-kvm.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Verify stable preview build configuration using a disposable identity
+        run: scripts/check-stable-signing-build.sh
       - name: Run non-skipped Android 16 vault regressions
         run: scripts/run-ci-unlock-emulator.sh
       - name: Upload synthetic Android regression reports

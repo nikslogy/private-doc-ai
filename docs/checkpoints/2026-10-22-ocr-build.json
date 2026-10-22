@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "8a5f0d39a8a6feec8cdf5d50f8b5ed9325cfb59d",
+  "workflowRunId": 39720899685,
+  "jobId": 119633835266,
+  "result": "success",
+  "completedAtUtc": "2026-10-22T04:19:59Z",
+  "host": {
+    "pythonChecks": 71,
+    "sourcePolicy": "passed",
+    "coreTest": "passed;55 authored cases",
+    "platformJvmTests": "both variants passed;8 authored validator cases per variant",
+    "appJvmTests": "NO-SOURCE",
+    "instrumentationCompilation": "both modules/variants passed",
+    "lint": "all four tasks passed",
+    "productionDependencyInventory": "passed;ML Kit excluded",
+    "assemblies": "both passed"
+  },
+  "android": {
+    "target": "explicit emulator-5554/API36/x86_64",
+    "casesPerVariant": 21,
+    "authenticatedLifecycleCasesPerVariant": 1,
+    "totalExecutions": 44,
+    "skipped": 0,
+    "actualOcrCasesPerVariant": 6,
+    "boundaryCasesPerVariant": 3,
+    "scope": "Synthetic actual recognition and limited app-file canary checks, not representative accuracy, full privacy or physical-device qualification."
+  },
+  "artifact": {
+    "id": 12401805689,
+    "bytes": 309070788,
+    "sha256": "e270532d74dd6a62900a5939d8ca016e9569c68d57ff1d83a7f9c4d29fcdafa7",
+    "expiresAtUtc": "2026-10-29T04:19:55Z"
+  },
+  "regressionReports": {
+    "id": 12401571155,
+    "bytes": 142103,
+    "sha256": "0c649092aa8f1e87607ce35a3cfab55219b3aca565468529f8a818911d9c1b04"
+  },
+  "signerCertificateSha256": "75a42b329c858fe33533594a31bb9f2a2bf7ce71b3055e0f689d41860a103406",
+  "signatureScheme": "v2",
+  "nativeLibrariesPerApk": {
+    "arm64-v8a": 9,
+    "x86_64": 9,
+    "armeabi-v7a": 8,
+    "x86": 8
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "applicationId": "com.privateassistant.app.dev",
+      "versionCode": 3,
+      "versionName": "0.2.0-dev",
+      "bytes": 154440437,
+      "sha256": "4852643354fd15cb91c9f3032a025a623377ca433f662e22b206a4b79099b833"
+    },
+    {
+      "flavor": "connected",
+      "applicationId": "com.privateassistant.app.connected.dev",
+      "versionCode": 3,
+      "versionName": "0.2.0-dev-connected",
+      "bytes": 154440485,
+      "sha256": "ce4ea56c39d0d111275722ae3f836a5eff04d367ab7f74ee9c99513b0a8d469d"
+    }
+  ],
+  "verification": "CI logs and GitHub artifact metadata; no independent local ZIP-byte verification.",
+  "installation": "Signer differs from installed repaired apps. Do not uninstall, clear data or reset keys. Stable preview signing/delivery is the next task."
+}

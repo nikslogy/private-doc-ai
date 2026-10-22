@@ -4,6 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+val stableDevelopment = providers.gradleProperty("stableDevelopment").orNull.let {
+    check(it == null || it == "true" || it == "false") { "Invalid stableDevelopment property" }
+    it == "true"
+}
+
 android {
     namespace = "com.privateassistant.app"
     compileSdk = 36
@@ -26,10 +31,24 @@ android {
         }
     }
     buildFeatures { compose = true }
+    if (stableDevelopment) {
+        signingConfigs.create("stableDevelopment") {
+            val path = providers.environmentVariable("ANDROID_DEV_KEYSTORE_PATH").orNull
+            val password = providers.environmentVariable("ANDROID_DEV_STORE_PASSWORD").orNull
+            check(!path.isNullOrBlank() && !password.isNullOrBlank()) { "Stable development signing credentials are required" }
+            storeFile = file(requireNotNull(path))
+            check(requireNotNull(storeFile).isFile) { "Stable development keystore is absent" }
+            storeType = "PKCS12"
+            storePassword = password
+            keyAlias = "private-assistant-dev"
+            keyPassword = password
+        }
+    }
     buildTypes {
         getByName("debug") {
             // Separate from the first ephemeral-signed APKs; no uninstall/data reset needed.
-            applicationIdSuffix = ".dev"
+            applicationIdSuffix = if (stableDevelopment) ".preview" else ".dev"
+            if (stableDevelopment) signingConfig = signingConfigs.getByName("stableDevelopment")
         }
     }
     compileOptions {
@@ -38,6 +57,25 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+}
+
+if (stableDevelopment) {
+    val labels = layout.buildDirectory.dir("generated/stableLabels")
+    for (flavor in listOf("offline", "connected")) {
+        android.sourceSets.maybeCreate("${flavor}Debug").res.setSrcDirs(listOf(labels.map { it.dir(flavor) }))
+    }
+    val generateStableLabels by tasks.registering {
+        outputs.dir(labels)
+        doLast {
+            for (flavor in listOf("offline", "connected")) {
+                val output = labels.get().file("$flavor/values/strings.xml").asFile
+                output.parentFile.mkdirs()
+                val name = if (flavor == "offline") "Private Vault Preview" else "Private Vault Connected Preview"
+                output.writeText("<resources><string name=\"app_name\">$name</string></resources>\n")
+            }
+        }
+    }
+    tasks.named("preBuild").configure { dependsOn(generateStableLabels) }
 }
 
 dependencies {
