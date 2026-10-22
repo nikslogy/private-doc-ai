@@ -50,6 +50,8 @@ jobs:
           test -x "$JAVA_HOME_21_X64/bin/java"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
           echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
+      - name: Validate bounded synthetic-process memory diagnostics
+        run: python3 scripts/test-model-process-memory.py
       - name: Set up pinned Android and Gradle tools
         run: scripts/bootstrap-android.sh --accept-sdk-licenses
       - name: Compile the real offline instrumentation APK

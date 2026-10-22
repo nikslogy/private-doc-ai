@@ -21,15 +21,15 @@ memory = {}
 for line in Path('/proc/meminfo').read_text().splitlines():
     key, value = line.split(':', 1)
     memory[key] = int(value.strip().split()[0]) * 1024
-# Six GiB emulator plus two GiB host headroom aligns this experiment with the
-# app's conservative supported configuration, not a measured model minimum or
-# an attribution of the earlier four GiB process crash. No Gradle process runs
-# during native inference.
-required = (6144 + 2048) * 1024**2
+# Ten GiB nominal emulator RAM plus two GiB host headroom is a diagnostic
+# setting after a six GiB LOW_MEMORY exit, not a measured phone/model minimum.
+# This direct probe does not exercise the UI's separate reported-memory guard.
+# No Gradle process runs during native inference.
+required = (10240 + 2048) * 1024**2
 free = shutil.disk_usage('.').free
 Path(sys.argv[1]).write_text(json.dumps({'hostTotalBytes': memory['MemTotal'],
     'hostAvailableBytes': memory['MemAvailable'], 'minimumAvailableGuardBytes': required,
-    'emulatorRamMiB': 6144, 'hostFreeDiskBytes': free}, indent=2) + '\n')
+    'emulatorRamMiB': 10240, 'hostFreeDiskBytes': free}, indent=2) + '\n')
 if memory['MemAvailable'] < required or free < 7 * 1024**3:
     raise SystemExit('Insufficient measured runner memory/disk; no native model result is claimed')
 PY
@@ -76,7 +76,7 @@ p.write_text('\n'.join(lines) + '\n')
 PY
 "$sdk_directory/emulator/emulator" -avd "$avd_name" -port 5554 \
   -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim \
-  -camera-back none -camera-front none -memory 6144 -cores 2 -accel on \
+  -camera-back none -camera-front none -memory 10240 -cores 2 -accel on \
   > "$report_directory/emulator.txt" 2>&1 &
 emulator_pid=$!
 boot_deadline=$((SECONDS + 360))

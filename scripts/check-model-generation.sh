@@ -69,9 +69,24 @@ done <<< "$instrumentation"
 test_package="${runners[0]%%/*}"
 relative_model="files/model-probes/probe-$$-$RANDOM.litertlm"
 adb -s "$ANDROID_SERIAL" shell run-as "$test_package" mkdir -p files/model-probes
+memory_sampler_pid=''
+stop_memory_sampler() {
+  [[ -n "$memory_sampler_pid" ]] || return 0
+  local sampler_result=0
+  kill -TERM "$memory_sampler_pid" >/dev/null 2>&1 || true
+  # The helper handles TERM, bounds every adb operation to three seconds, writes
+  # numeric-only evidence and joins its adb subprocess before returning.
+  wait "$memory_sampler_pid" || sampler_result=$?
+  memory_sampler_pid=''
+  return "$sampler_result"
+}
 cleanup() {
   cleanup_result=$?
   trap - EXIT
+  if ! stop_memory_sampler; then
+    printf 'The scoped CI memory sampler did not exit cleanly.\n' >&2
+    cleanup_result=1
+  fi
   if ! adb -s "$ANDROID_SERIAL" shell run-as "$test_package" rm -f "$relative_model" >/dev/null 2>&1; then
     printf 'Model-probe file cleanup failed; inspect the selected test target.\n' >&2
     cleanup_result=1
@@ -91,11 +106,14 @@ device_model="$(adb -s "$ANDROID_SERIAL" shell run-as "$test_package" readlink -
 } > "$report_directory/target.txt"
 report="$report_directory/generation.txt"
 [[ ! -L "$report" ]] || fail 'The generation transcript must not be a symbolic link.'
+is_ci_model_emulator() {
+  [[ "${GITHUB_ACTIONS:-}" == true && "${RUNNER_ENVIRONMENT:-}" == github-hosted &&
+     "$ANDROID_SERIAL" == emulator-5554 && "$device_api" == 36 ]] || return 1
+  [[ "$(timeout 3 adb -s "$ANDROID_SERIAL" shell getprop ro.kernel.qemu 2>/dev/null | tr -d '\r')" == 1 ]]
+}
 capture_ci_crash_diagnostics() {
   # This is deliberately unavailable on physical devices or other runners.
-  [[ "${GITHUB_ACTIONS:-}" == true && "${RUNNER_ENVIRONMENT:-}" == github-hosted &&
-     "$ANDROID_SERIAL" == emulator-5554 && "$device_api" == 36 ]] || return 0
-  [[ "$(adb -s "$ANDROID_SERIAL" shell getprop ro.kernel.qemu 2>/dev/null | tr -d '\r')" == 1 ]] || return 0
+  is_ci_model_emulator || return 0
   timeout 15 adb -s "$ANDROID_SERIAL" shell dumpsys activity exit-info "$test_package" \
     > "$report_directory/test-package-exit-info.txt" 2>&1 || true
   timeout 15 adb -s "$ANDROID_SERIAL" shell dumpsys meminfo "$test_package" \
@@ -119,6 +137,12 @@ PY
       > "$report_directory/test-pid-crash.txt"
   fi
 }
+: > "$report"
+if is_ci_model_emulator; then
+  python3 scripts/sample-model-process-memory.py --serial "$ANDROID_SERIAL" --package "$test_package" \
+    --transcript "$report" --output "$report_directory/test-process-memory-samples.json" &
+  memory_sampler_pid=$!
+fi
 set +e
 timeout --foreground 900s adb -s "$ANDROID_SERIAL" shell am instrument -w -r \
   -e class com.privateassistant.platform.inference.LocalInferenceInstrumentedTest \
@@ -128,6 +152,10 @@ timeout --foreground 900s adb -s "$ANDROID_SERIAL" shell am instrument -w -r \
   -e runtimeVersion "${verified[4]}" "${runners[0]}" | tr -d '\r' | tee "$report"
 pipeline_status=("${PIPESTATUS[@]}")
 set -e
+if ! stop_memory_sampler; then
+  capture_ci_crash_diagnostics
+  fail 'The scoped CI memory sampler failed; no model result is claimed.'
+fi
 for status in "${pipeline_status[@]}"; do
   if [[ "$status" != 0 ]]; then
     capture_ci_crash_diagnostics
