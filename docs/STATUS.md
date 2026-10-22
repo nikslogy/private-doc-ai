@@ -24,8 +24,13 @@ brace in the provider-stream use block. No APK/reports were uploaded. All 77
 Python/source checks, :core:test and both platform production/instrumentation
 Kotlin compilations passed; new platform test execution/full host/Android suites
 were not completed. The brace is corrected and a fresh stable run is required.
-The separate real-model probe compiled the offline platform test APK and advanced
-to public-weight verification; its runtime result is still pending.
+The separate real-model probe 39759683730 compiled the offline test APK and
+independently verified all 1,597,931,520 public model bytes against the reviewed
+SHA-256. Its one test failed before native loading because a strict raw-path
+equality check rejected an Android app-data alias. No generation/cancel pass is
+claimed. The test now anchors canonical containment to the context-owned probe
+directory, rejects leaf/probe symlinks and requires a controlled filename. Hash
+and canary checks are unchanged; a fresh model probe is required.
 
 Local check-host passed 77 Python/source checks, then stopped at missing pinned
 Gradle/SDK. New platform JVM metadata cases (8; 16 authored total per variant),

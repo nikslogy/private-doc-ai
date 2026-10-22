@@ -34,10 +34,16 @@ class LocalInferenceInstrumentedTest {
         require(args.getString("runtimeVersion") == LiteRtLmLoadProbe.RUNTIME_VERSION)
         require(args.getString("modelSha256") == model.sha256)
         require(args.getString("modelByteCount") == model.byteCount.toString())
-        val file = File(requireNotNull(args.getString("modelPath")))
-        val probeRoot = File(context.filesDir, "model-probes").canonicalFile
-        require(!Files.isSymbolicLink(file.toPath()) && file.canonicalFile == file.absoluteFile)
-        require(file.canonicalPath.startsWith(probeRoot.path + File.separator))
+        val suppliedFile = File(requireNotNull(args.getString("modelPath")))
+        val suppliedRoot = File(context.filesDir, "model-probes")
+        require(!Files.isSymbolicLink(suppliedFile.toPath())) { "Symbolic model file rejected" }
+        require(!Files.isSymbolicLink(suppliedRoot.toPath())) { "Symbolic probe directory rejected" }
+        // Android's shell and app namespaces may spell /data/data and /data/user aliases
+        // differently. Compare canonical objects inside this process, retaining exact containment.
+        val probeRoot = suppliedRoot.canonicalFile
+        val file = suppliedFile.canonicalFile
+        require(probeRoot.isDirectory && file.parentFile == probeRoot) { "Model must be directly inside the app-owned probe directory" }
+        require(file.name.matches(Regex("probe-[0-9]+-[0-9]+\\.litertlm"))) { "Unexpected controlled probe filename" }
         val artifact = ModelFileVerifier.verify(file, model.byteCount, model.sha256, licenseAccepted = true)
         val canary = "LOCALMODELPRIVATECANARY815429"
         scanPrivateFiles(context.filesDir, file, canary)
