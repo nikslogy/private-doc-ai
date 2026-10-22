@@ -1,23 +1,29 @@
 # Private Document Assistant
 
-Native Android encrypted document vault with offline OCR and local search.
+Native Android encrypted document vault with offline OCR, local search and
+selected-source labelled document facts.
 **Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402717830).
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003/artifacts/12404384786).
 Unzip and install the offline APK, then open **Private Vault Preview**.
-Android 12/API31+ is required. It installs alongside existing apps with a separate
-vault: keep all existing apps/data. Future Preview builds retain the same signing
-identity; actual device update-preservation testing remains pending.
+Version 0.3.0-dev / code 4 requires Android 12/API31+. Install it as an update to
+the existing Preview app without uninstalling or clearing data. Preview IDs and
+signing identity are unchanged; actual device update-preservation testing remains
+pending. Earlier Test/original apps retain separate vaults; keep their data.
 
 Import PDF/JPEG/PNG/UTF-8 text, open page evidence and choose English or
 Hindi/Marathi OCR for scans/photos. Native PDF text stays preferred. Originals
 remain immutable; page text, coordinates and literal search persist in SQLCipher.
 Tink-encrypted objects, system authentication, explicit original export/delete
 and automatic locking are implemented. Review OCR against originals for important
-values. AI questions/summaries, conversions, recovery and backups remain unavailable.
+values. In Assistant → Document facts, explicitly choose a source to inspect
+supported English labels, exact quotes/page links and conflicting values. Raw
+identifiers/dates and monetary precision are preserved; unsupported layouts may
+not match. AI questions/summaries, conversions, recovery and backups remain unavailable.
 
-[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904)
+[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003)
 passed the full host gate and 44 non-skipped Android 16 emulator executions.
-These include real OCR and authenticated Keystore/vault lifecycles. Phone OCR,
+These include real OCR and authenticated Keystore/vault lifecycles, pinned
+revision reads, cited/conflicting fields and original preservation. Phone UI,
 representative accuracy, full privacy/traffic and release gates remain open.
 See [STATUS](docs/STATUS.md) for exact source/artifact identities and limits.
 No cloud OCR, inference, document backend or telemetry was added.

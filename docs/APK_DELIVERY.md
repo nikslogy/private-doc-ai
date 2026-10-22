@@ -2,14 +2,20 @@
 
 ## Current stable Preview build
 
-[Download stable-signed OCR APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402717830).
+[Download stable-signed document-facts APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003/artifacts/12404384786).
 Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
 host gate, pinned signer checks and 44 non-skipped Android test executions in
-[run 39724441904](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904).
-Version 0.2.0-dev / code 3 uses permanent IDs com.privateassistant.app.preview
+[run 39729671003](https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003).
+Version 0.3.0-dev / code 4 retains permanent IDs com.privateassistant.app.preview
 and com.privateassistant.app.connected.preview. The connected launcher is
-**Private Vault Connected Preview**. They install alongside existing apps with
-separate vaults. Keep existing apps/data; no automatic migration or recovery.
+**Private Vault Connected Preview**. Install over the existing Preview apps
+without uninstalling or clearing data. Earlier Test/original apps retain separate
+vaults. Keep their data; no automatic migration or recovery is available.
+
+Open Assistant → Document facts and choose one source. Supported English labels
+produce literal values, exact source quotes/page links and unresolved conflict
+warnings. OCR may change digits and unsupported layouts may not match. AI
+questions/summaries await verified on-device model installation and inference.
 
 The persistent user-owned signing key is held in repository Actions secrets;
 only its public certificate is committed. Stable delivery checks the input key

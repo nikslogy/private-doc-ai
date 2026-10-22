@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "M3 selected-source document facts",
+  "recordedAtUtc": "2026-10-22T05:53:22Z",
+  "sourceCommit": "7d9badf3f55fb0b320f5013e676b802f091a24dd",
+  "builtCommit": "3089d1e7d0011abba93275b650be87e419f238c0",
+  "run": {
+    "id": 39729671003,
+    "attempt": 1,
+    "jobId": 119661577642,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39729671003",
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 12404384786,
+    "name": "private-document-assistant-stable-apks-39729671003-1",
+    "size_in_bytes": 309301513,
+    "url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12404384786",
+    "archive_download_url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12404384786/zip",
+    "expired": false,
+    "created_at": "2026-10-22T05:53:19Z",
+    "expires_at": "2026-10-29T05:53:17Z",
+    "updated_at": "2026-10-22T05:53:19Z",
+    "digest": "sha256:0b46a1eedee4d1c30625985b965cc34d61eb277db9148fc325345f124c77b467",
+    "workflow_run": {
+      "id": 39729671003,
+      "repository_id": 1425653570,
+      "head_repository_id": 1425653570,
+      "head_branch": "main",
+      "head_sha": "3089d1e7d0011abba93275b650be87e419f238c0"
+    }
+  },
+  "reports": {
+    "id": 12405321545,
+    "name": "stable-android-regressions-39729671003-1",
+    "size_in_bytes": 118320,
+    "url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12405321545",
+    "archive_download_url": "https://api.github.com/repos/nikslogy/private-doc-ai/actions/artifacts/12405321545/zip",
+    "expired": false,
+    "created_at": "2026-10-22T05:53:16Z",
+    "expires_at": "2026-10-29T05:53:15Z",
+    "updated_at": "2026-10-22T05:53:16Z",
+    "digest": "sha256:a626f0ef49446ac08fd0ee4e1997a7125820217977de93eec6ec9117d5cfe186",
+    "workflow_run": {
+      "id": 39729671003,
+      "repository_id": 1425653570,
+      "head_repository_id": 1425653570,
+      "head_branch": "main",
+      "head_sha": "3089d1e7d0011abba93275b650be87e419f238c0"
+    }
+  },
+  "apks": [
+    {
+      "fileName": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.preview",
+      "launcher": "Private Vault Preview",
+      "versionCode": 4,
+      "versionName": "0.3.0-dev",
+      "bytes": 154555112,
+      "sha256": "53d09cf0807c1e97c638cec190f50824de6ac535efe43bc5d0d7977cdd8ec3fb"
+    },
+    {
+      "fileName": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "launcher": "Private Vault Connected Preview",
+      "versionCode": 4,
+      "versionName": "0.3.0-dev-connected",
+      "bytes": 154555164,
+      "sha256": "9b92d8ca96764210b391175e7dfb387e3dc9e5a71de4da17ab58c3ac5659eeae"
+    }
+  ],
+  "signerCertificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467",
+  "validation": {
+    "pythonCases": 77,
+    "sourcePolicy": "pass",
+    "coreJvmTask": "pass",
+    "coreAuthoredCases": 82,
+    "newFactsAuthoredCases": 27,
+    "platformJvmTasks": "both pass; 8 authored cases per variant",
+    "appJvmTasks": "NO-SOURCE",
+    "instrumentationCompilation": "both modules and variants pass",
+    "lintAssemblyDependencyInventory": "pass; ML Kit excluded from production",
+    "mergedApkVerification": "both pass; offline has no INTERNET",
+    "signatureZipAlignmentCertificatePin": "both pass",
+    "nativeLibrariesPerApk": 34,
+    "native64BitStatic16KiBPassedPerApk": 18,
+    "native32Bit16KiBUnverifiedPerApk": 16,
+    "minimumSdk": 31,
+    "targetSdk": 35,
+    "compileSdk": 36,
+    "androidTarget": "explicit API36 x86_64 emulator-5554",
+    "androidSelectedCasesPerVariant": 21,
+    "androidAuthenticatedLifecycleCasesPerVariant": 1,
+    "androidExecutedTotal": 44,
+    "androidSkipped": 0,
+    "androidFailures": 0,
+    "includes": [
+      "real Tesseract synthetic recognition and exact offsets/boxes",
+      "installed test manifest excludes only delayed ProfileInstallerInitializer startup",
+      "all original file-canary/hash assertions retained",
+      "revision-pinned read; wrong revision and locked rejection",
+      "labelled fields, conflicting premiums, raw identifiers/dates, validated source spans",
+      "unchanged original ciphertext and source bytes; encrypted reopen consistency"
+    ]
+  },
+  "earlierAttempts": [
+    {
+      "runId": 39727560530,
+      "headSha": "9d3c908daf16b4143b83d084f04d1bf42f902565",
+      "conclusion": "success",
+      "scope": "initial M3 full host and 44 Android executions; superseded by numeric-boundary fix"
+    },
+    {
+      "runId": 39727845022,
+      "headSha": "2a94e19296ebef145b062d3259ba46a178357e73",
+      "conclusion": "failure",
+      "host": "pass",
+      "androidExecuted": 21,
+      "androidFailures": 1,
+      "androidSkipped": 0,
+      "laterSuites": "not run",
+      "apkPublished": false,
+      "reason": "Unrelated AndroidX delayed startup created files/profileInstalled during OCR file snapshot; pinned models unchanged",
+      "reportsArtifactId": 12404182778,
+      "fix": "Selective test-only initializer metadata removal plus installed-manifest assertion; production startup and every canary/hash scan unchanged"
+    }
+  ],
+  "limits": [
+    "CI logs and GitHub metadata verified; no independent local ZIP-byte download",
+    "App JVM tasks have no source; no Compose UI race/phone suite claimed",
+    "Actual same-key APK update preserving a synthetic vault remains pending",
+    "Physical fingerprint/vendor path, full explicit-target device suite and real 16 KiB loading remain pending",
+    "Representative extraction/OCR/model/QA accuracy, active native cancellation, hard isolation, complete native provenance/notices and comprehensive privacy/traffic/memory checks remain pending",
+    "No model weights installed; config/models.json empty; AI questions/summaries unavailable",
+    "No full M3 milestone, release readiness, recovery or backup claim"
+  ]
+}
