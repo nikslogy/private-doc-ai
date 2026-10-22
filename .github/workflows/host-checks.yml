@@ -19,12 +19,32 @@ jobs:
           test -x "$JAVA_HOME_21_X64/bin/java"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
           echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
+      - name: Restore Gradle dependency and task caches
+        id: gradle-cache
+        uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            .tooling/gradle-user-home/caches
+            .tooling/gradle-user-home/wrapper
+          key: gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'app/build.gradle.kts', 'core/build.gradle.kts', 'platform/build.gradle.kts', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'config/toolchain.json') }}-${{ github.sha }}
+          restore-keys: |
+            gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'app/build.gradle.kts', 'core/build.gradle.kts', 'platform/build.gradle.kts', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'config/toolchain.json') }}-
       - name: Set up pinned Android and Gradle tools
+        # Dependency/task caches exclude Android user homes and all signing keys.
+        # The two narrow paths are restored by the preceding pinned cache action.
         run: scripts/bootstrap-android.sh --accept-sdk-licenses
       - name: Run host validation and stage verified development APKs
         run: |
           source .tooling/env.sh
           python3 scripts/stage-apks.py
+      - name: Save verified host Gradle caches
+        if: ${{ success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix/android16-vault-unlock') && steps.gradle-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            .tooling/gradle-user-home/caches
+            .tooling/gradle-user-home/wrapper
+          key: ${{ steps.gradle-cache.outputs.cache-primary-key }}
       - name: Enable KVM for the ephemeral Android regression target
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-private-assistant-kvm.rules

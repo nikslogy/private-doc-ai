@@ -1,6 +1,6 @@
 # Development status
 
-Checkpoint 6: first-unlock repair in progress, 21 October 2026.
+Checkpoint 6: first-unlock repair in progress, 22 October 2026.
 User reports both original APKs install on iQOO Neo 10 / Android 16, but first
 fingerprint unlock fails before document import. Do not treat the earlier host
 build as evidence of working unlock. Existing vault files must be preserved.
@@ -42,6 +42,21 @@ emulator, then exposed an old migration-test compilation error: RoomDatabase
 does not implement Closeable, so its test helper must explicitly close it in
 finally. Corrected all five uses and added both modules/variants' instrumentation
 Kotlin compilation to the host gate. No test was removed and no APK was uploaded.
+
+Run 39646510842 passed the expanded host gate and executed 12 offline Android
+tests. Eleven passed, including production database opening/settings, encrypted
+reopen/wrong-key rejection, Tink and durability. The migration test exposed a
+redundant explicit SIMPLE tokenizer option that Room omits in generated schema
+and compares literally. The migration now uses SQLite's same default SIMPLE
+tokenizer without the redundant option; originals, schema version and search
+semantics are preserved. Both variants and real-credential probes must pass the
+next run. APK upload remained blocked on the failure.
+
+The next run also supports the observed AGP result-directory layout, rejects
+missing/ambiguous/skipped reports and prints complete synthetic failure details.
+Pinned cache restore/save covers only Gradle dependency/task and wrapper caches;
+Android user homes, SDKs and signing keys are excluded. All host/native/privacy
+checks still run. No repaired APK or passing credential probe is inferred yet.
 
 ## Earlier build evidence — original APKs have reported unlock failure
 

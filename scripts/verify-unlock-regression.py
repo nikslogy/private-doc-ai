@@ -14,8 +14,26 @@ EXPECTED = {
 }
 
 
+def result_roots(variant: str) -> tuple[Path, Path]:
+    base = ROOT / "platform/build/outputs/androidTest-results/connected"
+    flavor = {"offlineDebug": "offline", "connectedDebug": "connected"}[variant]
+    return base / variant, base / "debug/flavors" / flavor
+
+
+def select_result_root(variant: str) -> Path:
+    populated = []
+    for directory in result_roots(variant):
+        if directory.is_symlink():
+            raise ValueError("Android regression result directory must not be a symlink")
+        if any(directory.rglob("TEST-*.xml")):
+            populated.append(directory)
+    if len(populated) != 1:
+        raise ValueError("Missing or ambiguous Android regression results for the required variant")
+    return populated[0]
+
+
 def verify(directory: Path) -> int:
-    files = sorted(directory.rglob("*.xml"))
+    files = sorted(directory.rglob("TEST-*.xml"))
     if not files:
         raise ValueError("No Android regression XML results were produced")
     observed: dict[str, set[str]] = {name: set() for name in EXPECTED}
@@ -45,13 +63,56 @@ def verify(directory: Path) -> int:
     return count
 
 
+def diagnose() -> None:
+    """Print complete failures from this synthetic-only test subset without declaring a pass."""
+    for variant in ("offlineDebug", "connectedDebug"):
+        print(f"Android regression diagnostics: {variant}", flush=True)
+        found = False
+        for directory in result_roots(variant):
+            if directory.is_symlink():
+                print("Result directory symlink rejected", flush=True)
+                continue
+            for path in sorted(directory.rglob("TEST-*.xml")):
+                found = True
+                if path.is_symlink() or path.stat().st_size > 8 * 1024 * 1024:
+                    print("Unexpected regression report file rejected", flush=True)
+                    continue
+                print(f"Report: {path.relative_to(ROOT)}", flush=True)
+                try:
+                    root = ET.parse(path).getroot()
+                except ET.ParseError:
+                    print("Malformed XML report", flush=True)
+                    continue
+                for suite in root.iter("testsuite"):
+                    print("Suite counts: " + ", ".join(
+                        f"{name}={suite.get(name, '0')}"
+                        for name in ("tests", "failures", "errors", "skipped", "disabled")
+                    ), flush=True)
+                for case in root.iter("testcase"):
+                    for tag in ("failure", "error", "skipped"):
+                        for failure in case.findall(tag):
+                            print(f"{case.get('classname', '')}#{case.get('name', '')}: {tag}", flush=True)
+                            if failure.get("message"):
+                                print(failure.get("message"), flush=True)
+                            print("".join(failure.itertext()), flush=True)
+        if not found:
+            print("No XML report produced for this variant", flush=True)
+
+
 def main() -> int:
+    if sys.argv[1:] == ["--diagnose"]:
+        try:
+            diagnose()
+        except (OSError, ValueError):
+            print("Could not read Android regression diagnostics", file=sys.stderr)
+        return 1  # Diagnostics never satisfy the verification gate.
     if len(sys.argv) != 1:
-        print("Usage: python3 scripts/verify-unlock-regression.py", file=sys.stderr)
+        print("Usage: python3 scripts/verify-unlock-regression.py [--diagnose]", file=sys.stderr)
         return 2
     try:
         for variant in ("offlineDebug", "connectedDebug"):
-            verify(ROOT / "platform/build/outputs/androidTest-results/connected" / variant)
+            count = verify(select_result_root(variant))
+            print(f"{variant}: {count} verified non-skipped Android cases", flush=True)
     except (ValueError, OSError, ET.ParseError) as failure:
         print(f"Vault regression result verification FAILED: {failure}", file=sys.stderr)
         return 1

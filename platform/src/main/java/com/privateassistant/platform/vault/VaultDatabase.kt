@@ -169,7 +169,9 @@ internal abstract class VaultDatabase : RoomDatabase() {
                     "startUtf16 INTEGER NOT NULL, endUtf16 INTEGER NOT NULL, kind TEXT NOT NULL, " +
                     "`left` REAL, top REAL, `right` REAL, bottom REAL, PRIMARY KEY(pageId, ordinal), " +
                     "FOREIGN KEY(pageId) REFERENCES page_evidence(rowid) ON UPDATE NO ACTION ON DELETE CASCADE)")
-                db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS page_search USING FTS4(searchTerms TEXT NOT NULL, tokenize=simple)")
+                // Room omits the default SIMPLE tokenizer option; its schema validator compares
+                // FTS option strings, so explicitly adding the equivalent default fails migration.
+                db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS page_search USING FTS4(searchTerms TEXT NOT NULL)")
             }
         }
     }
