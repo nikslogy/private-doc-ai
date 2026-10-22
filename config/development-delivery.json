@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "7d9badf3f55fb0b320f5013e676b802f091a24dd",
-  "request": "Deliver document facts Preview update after deterministic AndroidX test startup isolation",
-  "requestedAtUtc": "2026-10-22T05:43:34Z"
+  "sourceCommit": "dcc363f7f843614d164d9bfc0a463034f0b810c8",
+  "request": "Build stable 0.4.0-dev model setup and encrypted-import diagnostics",
+  "requestedAtUtc": "2026-10-22T09:59:25Z"
 }
