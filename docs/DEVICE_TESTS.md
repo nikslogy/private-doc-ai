@@ -61,6 +61,40 @@ does not satisfy these checks.
 
 ## Broader device procedure
 
+### Selected-source document facts (code 4 / 0.3.0-dev)
+
+Use only synthetic documents in the stable **Private Vault Preview** app. The
+working OCR report is a manual user report; the following checks remain pending
+until their exact APK/device/results are recorded.
+
+1. Install the same-key update over the existing Preview app without uninstalling
+   or clearing data. Check that an existing synthetic vault, originals, search
+   and system unlock remain available. Compare exported original bytes/digests.
+2. Open Assistant → Document facts. No source should be selected after unlock.
+   Choose one policy, inspect leading-zero identifiers, distinct premium/tax/
+   insured-value labels and the unchanged printed date. Open a cited page, then
+   return to Assistant; the explicit selection must remain the same revision.
+3. Choose a different synthetic policy with a different owner/total. Results
+   must come only from the chosen source. Import time must not imply "current".
+   Repeat rapid selections while loading; old results must never replace the
+   newer selection. Interrupt with lock/background/screen-off and unlock again;
+   no private selection, value or quote may remain from the old session.
+4. Use two different total-premium lines in one document. Both candidates and
+   exact quotes/page links must appear with a conflict warning. Generic owner,
+   total and subtotal labels must stay generic. Unsupported/absent labels and
+   unread pages must not produce an invented value; check empty/partial states.
+5. Reindex the selected document or retry OCR, including an unsuccessful retry;
+   prior facts must be invalidated and incomplete extraction disclosed. Delete
+   only a deliberately chosen synthetic source through the explicit confirmation
+   and verify that its selected facts clear. Check original byte identity again.
+
+Core tests and the authenticated controller lifecycle regression cover narrower
+properties; they do not establish these Compose UI races, real layouts, phone
+biometrics or representative extraction accuracy. General AI questions and
+summaries remain unavailable until the verified local model/inference phase.
+
+### Full suite
+
 1. Provision the pinned SDK/JDK, enable USB debugging, inspect `adb devices -l`, and select a target explicitly: `export ANDROID_SERIAL=<the-exact-authorized-serial>`. Scripts never choose the first available device.
 2. Run `scripts/check-host.sh` and retain the unit/lint/assembly output and APK hashes. Run `scripts/verify-artifact.sh offline <apk>` and its connected equivalent on the exact APKs under test. Check native library 16 KiB compatibility with the Android official alignment/device procedures; source inclusion alone is insufficient.
 3. Run `scripts/check-device.sh`. It runs platform and both app flavor instrumentation suites only on the explicit target. Inspect test reports for skipped tests and record them individually. The generic suite may report model availability as unavailable and skip an optional load probe; this is not a passed model check.
@@ -105,5 +139,12 @@ Current evidence/search checkpoint additions:
   of a regular file by directory sync through Android's public descriptor APIs.
   Both probes passed on the API36 emulator for both repaired variants; physical
   storage and power-loss behavior still require separate evidence.
+
+The instrumentation APK disables only AndroidX ProfileInstallerInitializer
+automatic startup, following the upstream manifest opt-out. The OCR file-canary
+test asserts that the installed merged startup metadata omits that initializer
+before its baseline/pixels. This isolates a delayed unrelated profileInstalled
+marker write; it does not exclude any files from scanning or change production
+startup. The full production startup/filesystem/traffic audit remains pending.
 
 Keep unsupported features marked pending. Do not mark all steps passed because the instrumentation command exits zero; biometric prompts, traffic, leakage, recovery, representative OCR/model evaluation and thermal measurements need their own evidence. Never disable lint/native checks or substitute synthetic successful runtime responses to satisfy a device gate.

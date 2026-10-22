@@ -1,6 +1,7 @@
 package com.privateassistant.platform.documents
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -30,6 +31,12 @@ class TesseractOcrInstrumentedTest {
     fun englishRecognitionReturnsExactLineOffsetsAndOrientedSourceBoxes() = runBlocking {
         withContext(Dispatchers.IO) {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
+            @Suppress("DEPRECATION")
+            val startup = context.packageManager.resolveContentProvider(
+                "${context.packageName}.androidx-startup", PackageManager.GET_META_DATA,
+            )
+            assertFalse("The installed synthetic test manifest must disable delayed profile writes",
+                startup?.metaData?.containsKey("androidx.profileinstaller.ProfileInstallerInitializer") == true)
             val store = models()
             store.directory()
             val canary = "VAULTCANARY729451".toByteArray(Charsets.US_ASCII)

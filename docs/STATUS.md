@@ -17,6 +17,18 @@ then failed at absent pinned Gradle/Android SDK prerequisites. New Kotlin tests,
 UI compilation/lint and augmented real-credential Android lifecycle checks await
 the GitHub runner. No local Android result is claimed.
 
+M3 source d45201d3c21a0367954729fe34f4273796b9c9f7 passed full host and 44 Android
+executions in run 39727560530. A review fix then added safe rejection of oversized
+grouped monetary tokens and a 27th facts test (82 core cases total). Its run
+39727845022 passed host/unit/lint/assembly and exact package/signature checks,
+but failed the offline OCR file snapshot: unrelated AndroidX startup asynchronously
+created files/profileInstalled between snapshots. Model hashes were unchanged;
+21 offline tests ran with one failure, no skips; later suites did not run and no
+APK artifact was uploaded. The next test APK removes only the documented
+ProfileInstallerInitializer startup metadata and asserts its actual installed
+absence before supplying synthetic pixels. All file/canary/hash assertions and
+production startup remain unchanged. A fresh full stable run is required.
+
 Checkpoint 8: 22 October 2026 — stable-signed offline OCR development APKs ready.
 **Full host checks and 44 Android test executions passed. New Preview apps install
 alongside existing apps and start separate vaults. Keep the existing apps/data.**
