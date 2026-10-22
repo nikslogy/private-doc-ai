@@ -1,5 +1,11 @@
 # One-time development APK signing setup
 
+Completed 22 October 2026: the user saved both repository secrets and the
+[actual stable-key build](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904)
+passed. Both final Preview APKs match the public pin. The setup instructions
+below are retained for recovery/maintenance; do not generate a replacement key
+for routine updates. Physical same-key update preservation is still pending.
+
 OCR passed the full host gate and 44 Android test executions in run 39720899685.
 Its temporary debug signer differs from the installed repair's signer. Keep
 the installed apps and their data; do not uninstall or reset them.

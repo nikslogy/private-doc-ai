@@ -1,15 +1,17 @@
 # Native dependency and 16 KiB evidence
 
-Checkpoint: 22 October 2026. **Both actual APKs passed static native and official
-ZIP alignment checks in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766).**
-Built source: 850a87567dba8cc686539419110ca0eae7d5baad. Exact original and staged
-APK hashes match; reports accompany the [download](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330).
-Each APK contains 18 native libraries: five arm64-v8a, five x86_64, four
-armeabi-v7a and four x86. All ten 64-bit libraries have PT_LOAD alignment of at
+Checkpoint: 22 October 2026. **Both stable Preview OCR APKs passed static native
+and official ZIP alignment checks in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904).**
+Built source: 2420baface2aa061d0e22ff25fcbae404965a311. Exact assembled and staged
+APK hashes match; reports accompany the [download](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402717830).
+Each APK contains 34 native libraries: nine arm64-v8a, nine x86_64, eight
+armeabi-v7a and eight x86. All 18 64-bit libraries have PT_LOAD alignment of at
 least 16 KiB and stored payloads aligned to 16 KiB. Official zipalign passed both
-APKs. The 32-bit Pdfium libraries include 4 KiB ELF alignments and remain
-explicitly unverified for 16 KiB behavior. SQLCipher loaded and passed its selected probes on API36 x86_64; physical
-phone and real 16 KiB target compatibility remain unverified. Dependency source/licence mapping and complete notices remain pending.
+APKs. The 32-bit Pdfium and OCR libraries include 4 KiB ELF alignments and remain
+explicitly unverified for 16 KiB behavior. Real PDF/Tesseract/SQLCipher/Tink probes
+passed on API36 x86_64; physical phone and actual 16 KiB loading remain pending.
+The OCR input digest/native inventory and bundled source licences are recorded;
+full application source-to-binary provenance and complete notices remain open.
 The synthetic tests below are separate parser verification.
 
 ## Runnable static gate

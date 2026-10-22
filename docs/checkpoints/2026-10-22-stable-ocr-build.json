@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "2420baface2aa061d0e22ff25fcbae404965a311",
+  "workflowRunId": 39724441904,
+  "jobId": 119645033677,
+  "result": "success",
+  "completedAtUtc": "2026-10-22T04:57:52Z",
+  "attempt": 1,
+  "host": {
+    "command": "scripts/check-host.sh via stage-apks.py",
+    "pythonChecks": 77,
+    "sourcePolicy": "passed",
+    "coreTest": "passed;55 authored cases",
+    "platformJvmTests": "both passed;8 authored cases per variant",
+    "appJvmTests": "NO-SOURCE",
+    "instrumentationCompilation": "both modules/variants passed",
+    "lint": "all four tasks passed",
+    "productionDependencyInventory": "passed;ML Kit excluded",
+    "assemblies": "both passed"
+  },
+  "android": {
+    "target": "explicit emulator-5554/API36/x86_64",
+    "casesPerVariant": 21,
+    "authenticatedLifecycleCasesPerVariant": 1,
+    "totalExecutions": 44,
+    "skipped": 0,
+    "scope": "Selected synthetic OCR/vault regressions plus real credential/Gatekeeper Keystore lifecycle; not the full check-device.sh suite or physical-device evidence."
+  },
+  "stableSigning": {
+    "alias": "private-assistant-dev",
+    "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467",
+    "verifiedInputKeytool": true,
+    "verifiedApkSigners": true,
+    "scheme": "v2",
+    "idsAndLabelsVerified": true,
+    "setup": "User confirmed both repository Actions secrets saved; runner verified actual key and final APK identities.",
+    "keyHandling": "Runner temporary key, exit-trap cleanup, no key/password cached or uploaded. Only public pin committed."
+  },
+  "artifact": {
+    "id": 12402717830,
+    "name": "private-document-assistant-stable-apks-39724441904-1",
+    "bytes": 309071567,
+    "sha256": "4a0cb276ed4be6ae5189207e7a0943e20e2307e6a78056af05be0440918ab8dc",
+    "expiresAtUtc": "2026-10-29T04:57:47Z"
+  },
+  "regressionReports": {
+    "id": 12402882499,
+    "bytes": 115941,
+    "sha256": "d78554d5f3fbccab04beb2d2caa5f4c8ab335e87d33a7fe8ce434c980fa6a323"
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "applicationId": "com.privateassistant.app.preview",
+      "launcher": "Private Vault Preview",
+      "versionCode": 3,
+      "versionName": "0.2.0-dev",
+      "bytes": 154440449,
+      "sha256": "0d83672e44869b17c8d6abc820b38f28ecb155648c4b73e7c6cd28c827adaa30"
+    },
+    {
+      "flavor": "connected",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "launcher": "Private Vault Connected Preview",
+      "versionCode": 3,
+      "versionName": "0.2.0-dev-connected",
+      "bytes": 154440497,
+      "sha256": "f3bf3e773a64e290adda0d4321f48e8ece404a27d8ff64054a86d55b66493481"
+    }
+  ],
+  "artifactChecks": "Exact staged copies: offline/connected manifests,34 native libraries each (18 64-bit static16KiB pass,16 32-bit unverified),SDK/package/debug identity,apksigner v2 and zipalign16K pass.",
+  "verification": "CI logs and GitHub artifact metadata; no independent local ZIP-byte verification.",
+  "pending": [
+    "Physical phone OCR/scan accuracy and memory/thermal behavior",
+    "Actual same-key APK update preserving a synthetic vault",
+    "Full device/UI/fingerprint suite",
+    "Native active cancellation/hard isolation",
+    "Comprehensive filesystem/log/connected traffic canaries",
+    "Actual16KiB loading",
+    "Complete application native provenance/notices audit",
+    "Encrypted thumbnails,AI generation,derivative tools,portable backup/recovery"
+  ],
+  "relatedValidation": {
+    "sourceCommit": "7ae7c285fa9ee85a9b6f84a185cb14f6a96be984",
+    "workflowRunId": 39723881468,
+    "result": "success;77Python checks/full host/44Android tests plus actual preview-mode assembly with disposable signer and rejection by delivery pin"
+  }
+}

@@ -1,5 +1,30 @@
 # Development APK delivery
 
+## Current stable Preview build
+
+[Download stable-signed OCR APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402717830).
+Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
+host gate, pinned signer checks and 44 non-skipped Android test executions in
+[run 39724441904](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904).
+Version 0.2.0-dev / code 3 uses permanent IDs com.privateassistant.app.preview
+and com.privateassistant.app.connected.preview. The connected launcher is
+**Private Vault Connected Preview**. They install alongside existing apps with
+separate vaults. Keep existing apps/data; no automatic migration or recovery.
+
+The persistent user-owned signing key is held in repository Actions secrets;
+only its public certificate is committed. Stable delivery checks the input key
+and both final APKs against that pin and has no temporary-signing fallback.
+The main-only **Stable development APKs** workflow publishes artifacts only after
+all checks pass. Default Host checks .dev APKs remain diagnostic builds; use the
+stable Preview artifact for phone testing. The disposable-key build test never
+publishes its synthetic Preview APKs.
+
+Exact APK hashes, ZIP hash, expiry and remaining physical/privacy checks are in
+[STATUS.md](STATUS.md). Actual same-key update-preservation testing remains
+pending. AI questions/summaries and portable recovery remain unavailable.
+
+## Historical repair build
+
 The original version 0.1.0 APKs passed host checks on 21 October 2026, but the
 user reports first-fingerprint-unlock failure on iQOO Neo 10 / Android 16.
 Keep any installed original apps and their vault data; the original bundle is

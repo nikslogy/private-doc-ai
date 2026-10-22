@@ -83,7 +83,8 @@ neither production flavour includes that SDK. Its Task-lifetime probe is separat
 
 LiteRT-LM currently has a real CPU load probe with automatic tools disabled.
 It is not a `LocalModelEngine` generation implementation. The model catalogue is
-empty. OCR Android verification is pending. There is no chat/QA executor, full PDF
+empty. Synthetic OCR Android verification passed; physical checks remain open.
+There is no chat/QA executor, full PDF
 viewer, derivative executor, backup store or recovery flow yet. These are
 ordered future milestones, not capabilities implied by interface names.
 

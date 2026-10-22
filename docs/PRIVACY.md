@@ -32,8 +32,8 @@ Images are supplied as bounded memory bitmaps. The adapter disables supported
 debug/output options before private pixels, creates a fresh native engine per
 page and stores recognized evidence only in SQLCipher through the existing vault
 transaction. A cooperative stop/deadline does not safely kill a hung native call.
-Synthetic file-canary checks, recognition and Android compilation must pass
-before distributing this change. These do not establish complete native privacy,
+Synthetic file-canary checks, actual recognition and Android compilation passed
+in the stable development build. These do not establish complete native privacy,
 traffic, memory or real-document accuracy. See the OCR decision and status for
 actual evidence and pending device checks.
 

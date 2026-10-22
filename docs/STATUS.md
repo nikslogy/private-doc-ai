@@ -1,116 +1,121 @@
 # Development status
 
-Checkpoint 7: 22 October 2026 — offline OCR built and Android-verified.
-**English and Devanagari synthetic OCR tests pass. Both APKs are built, but their
-temporary signer cannot update the user's installed repair. Keep existing apps/data.**
-Stable preview signing support is being validated; actual stable delivery needs
-one-time repository secrets. AI questions/summaries remain unavailable.
+Checkpoint 8: 22 October 2026 — stable-signed offline OCR development APKs ready.
+**Full host checks and 44 Android test executions passed. New Preview apps install
+alongside existing apps and start separate vaults. Keep the existing apps/data.**
 
-## What changed
+## Install and use OCR
 
-- Added a separate Tesseract4Android 4.9.0 adapter for memory-only bitmap OCR.
-  ML Kit remains instrumentation-only and excluded from both production graphs.
-- Bundled English, Hindi and Marathi tessdata_fast assets are downloaded only
-  during builds, with immutable revision, exact sizes and actual SHA-256 pins.
-  No weights are committed. The app verifies installed public model bytes before
-  native initialization; no document or vault key enters the model store.
-- Explicit English or Hindi/Marathi recognition actions handle missing PDF text
-  and images. Existing native PDF text stays preferred. Recognized lines carry
-  exact UTF-16 offsets and source coordinates into the encrypted evidence/search
-  index. Originals remain immutable.
-- Added result validation, bounded spans, per-page failure, cancellation
-  propagation and retention of prior useful OCR after failed/empty retries.
-- A fresh native engine per page checks supported debug/output suppression before
-  private pixels. Cooperative stop/deadline does not forcibly terminate hung
-  native initialization/segmentation; process isolation remains pending.
+[Download both stable-signed APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402717830).
+Extract private-document-assistant-offline-debug.apk and open **Private Vault
+Preview**. Android 12/API31+ is required. After importing a PDF/photo, open its
+page evidence and choose **OCR · English** or **OCR · Hindi / Marathi**.
+Native PDF text remains preferred; only missing text is recognized. Review OCR
+before relying on important values. Search uses the encrypted recognized text.
 
-## Evidence actually obtained
+| Variant | Permanent preview ID | Launcher |
+| --- | --- | --- |
+| Offline | com.privateassistant.app.preview | Private Vault Preview |
+| Connected | com.privateassistant.app.connected.preview | Private Vault Connected Preview |
 
-[Public-input probe](https://github.com/nikslogy/private-doc-ai/actions/runs/39718922514),
-job 119627600961, succeeded from 3b75dc1dce24d838e858f236162e93cfa4cbb14c.
-Actual AAR/model bytes, manifest, dependency metadata and native inventory are
-recorded in [the provenance report](checkpoints/2026-10-22-ocr-input-provenance.json).
-The AAR is now consumed without POM/transitive dependencies, through a narrow
-repository rule and a mandatory exact-byte pre-build check. Its source JAR was
-unavailable; reproducible native-build provenance is not claimed. The 64-bit
-OCR ELF libraries have 16 KiB alignment; 32-bit ones have 4 KiB alignment.
+Version code 3 / 0.2.0-dev (connected suffix -connected). These IDs use a persistent
+user-owned signing identity, verified against a committed public certificate pin.
+They have separate vaults from the earlier .dev and original apps. There is no
+automatic migration. Do not uninstall, clear data or reset any existing vault.
+Future builds retain the preview IDs/key; an actual update-preserves-vault device
+check remains pending. Keep source documents because recovery is unavailable.
 
-[Successful OCR host/Android run 39720899685](https://github.com/nikslogy/private-doc-ai/actions/runs/39720899685)
-built source 8a5f0d39a8a6feec8cdf5d50f8b5ed9325cfb59d, job 119633835266.
-Completed 22 October 2026 at 09:49 IST (04:19 UTC). Full host checks passed:
-71 Python checks, source policy, core tests, both platform JVM tasks (8 authored
-validator cases each), all instrumentation compilation, lint, dependency inventory
-and both assemblies. App JVM tasks remain NO-SOURCE. Both APKs passed exact
-manifest/native/signature/alignment checks; offline has no INTERNET permission.
+## Verified build identity
 
-The explicit API36 x86_64 emulator ran 21 non-skipped cases plus one real-credential
-lifecycle case per variant: **44 Android test executions passed**. These include
-six actual OCR cases and three boundary cases per variant, plus SQLCipher,
-migrations, Tink and durable files. Real English identifiers/premium, a synthetic
-Devanagari word, mixed native/raster PDF, blank-state reset, pre-start cancellation,
-model tampering, and limited unchanged app-private-file canaries passed. This is
-not a representative OCR score, full physical suite, active-cancel latency or
-complete log/filesystem/traffic privacy proof. OCR has not been tried on the user's phone.
+- Source: 2420baface2aa061d0e22ff25fcbae404965a311 on main.
+- [Stable delivery run 39724441904](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904),
+  attempt 1; job 119645033677. Completed 22 October 2026 at 10:27 IST (04:57 UTC).
+- APK artifact 12402717830: 309,071,567 bytes; expires 29 October at 10:27 IST.
+- ZIP SHA-256: 4a0cb276ed4be6ae5189207e7a0943e20e2307e6a78056af05be0440918ab8dc.
+- Both APK v2 signatures match public certificate SHA-256:
+  0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467.
+- [Android reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904/artifacts/12402882499)
+  retain XML, real-credential test transcripts and resolved emulator/target metadata.
+- [Full build record](checkpoints/2026-10-22-stable-ocr-build.json) contains exact hashes and scope.
 
-[OCR APK build evidence](https://github.com/nikslogy/private-doc-ai/actions/runs/39720899685/artifacts/12401805689)
-and [Android reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39720899685/artifacts/12401571155)
-are retained for seven days. The ZIP is 309,070,788 bytes, SHA-256
-e270532d74dd6a62900a5939d8ca016e9569c68d57ff1d83a7f9c4d29fcdafa7.
-Version 0.2.0-dev / code 3 keeps the .dev IDs but has a different signer from the
-installed repair. Do not try to resolve the conflict by uninstalling or clearing data.
-Exact APK hashes/certificate and gate evidence are in
-[the build record](checkpoints/2026-10-22-ocr-build.json). Evidence was verified
-through logs/metadata, not an independent local ZIP download. 64-bit static
-16 KiB checks passed for 18 libraries; 16 additional 32-bit libraries remain
-runtime/16 KiB unverified.
+| APK | Bytes | SHA-256 |
+| --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | 154440449 | 0d83672e44869b17c8d6abc820b38f28ecb155648c4b73e7c6cd28c827adaa30 |
+| private-document-assistant-connected-debug.apk | 154440497 | f3bf3e773a64e290adda0d4321f48e8ece404a27d8ff64054a86d55b66493481 |
 
-Local scripts/check-host.sh passed its Python/source checks, then stopped at
-missing pinned Gradle/SDK prerequisites; Android verification used GitHub.
-The first source attempt 39720562663 failed at unreliable JitPack POM lookup.
-Artifact-only metadata plus the mandatory actual-AAR hash gate fixed it.
+Evidence was verified through CI logs and GitHub metadata, not an independent
+local ZIP-byte download. SHA256SUMS, APK_MANIFEST.json and exact-byte inspection
+reports accompany the APKs. Stable delivery has no temporary-signing fallback.
+The user saved both GitHub secrets; the runner verified the real input key with
+keytool and each final APK signer. Private signing files are excluded from Git,
+source packages, caches and uploaded artifacts. Keep the user's protected backup.
 
-Stable signing support now uses a pinned public certificate and separate
-.preview app IDs/launcher names, with no temporary-key fallback. Six new
-synthetic signing tests pass locally, and the actual PKCS12 public identity
-was verified locally without printing secrets. A disposable-key CI build check
-has passed for source 7ae7c285fa9ee85a9b6f84a185cb14f6a96be984 in
-[run 39723881468](https://github.com/nikslogy/private-doc-ai/actions/runs/39723881468),
-alongside the full host gate (77 Python cases). Its Android regression step is
-still running. The user confirms both GitHub signing secrets are saved; the
-main-only actual stable-key delivery run is next.
-No actual stable-key APK or update-preserves-vault result is claimed yet.
-See [the one-time setup](DEVELOPMENT_SIGNING.md). Private key/password files
-exist only in the ignored private workspace; only the public fingerprint is committed.
+## Changes and actual validation
 
-## Last working phone build
+Tesseract4Android 4.9.0 now handles bounded memory bitmaps with exact-byte-pinned
+English/Hindi/Marathi tessdata_fast files. Downloads occur during builds, not
+in the app. Models are public; document pixels/text never go through the model
+store. Each page gets a fresh engine, supported output/debug suppression checked
+before pixels, a cooperative stop/deadline, exact line offsets and source boxes.
+The indexer validates identity/script/geometry/limits before encrypted persistence.
+Failed/empty retries retain previous useful OCR; originals remain immutable.
+ML Kit stays instrumentation-only and absent from both production graphs.
 
-[Repair APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766/artifacts/12399575330)
-from source 850a87567dba8cc686539419110ca0eae7d5baad (version 0.1.1-dev, code 2).
-The user confirms unlock/login and document import on iQOO Neo 10 / Android 16.
-This is a manual report, not the complete physical-device suite. All host gates
-and 26 selected Android test executions passed for that build. Full evidence,
-checksums and failure history are in [the repair checkpoint](checkpoints/2026-10-22-first-unlock-repair.md).
+| Check | Actual result |
+| --- | --- |
+| Python fixture/native/validation/Java/APK/OCR/signing checks | PASS: 77 cases |
+| Source privacy/pinning policy | PASS |
+| :core:test | PASS; 55 authored cases |
+| Platform JVM tasks, both variants | PASS; 8 authored validator cases each |
+| App JVM tasks | NO-SOURCE; no app JVM coverage claimed |
+| Both modules/variants instrumentation Kotlin compilation | PASS |
+| Production compilation, Room, lint and dependency inventory | PASS; ML Kit excluded |
+| Both assemblies and exact staged manifest/package/native checks | PASS; offline has no INTERNET |
+| Native static 16 KiB/alignment | PASS for 18 64-bit libraries/APK; 16 32-bit libraries remain unverified |
+| Official apksigner/zipalign and fixed certificate pin | PASS for both APKs |
+| SQLCipher3 + migration3 + Tink4 + durability2 per variant | PASS: 24 Android executions, none skipped |
+| OCR boundary3 + actual Tesseract6 per variant | PASS: 18 Android executions, none skipped |
+| Real-credential Keystore full vault lifecycle1 per variant | PASS: 2 Android executions, none skipped |
+| APK/report uploads | PASS |
 
-Keep installed apps and documents. CI debug signing keys are ephemeral and
-excluded from caches; the next generated APK cannot be assumed to update the
-installed copy. Stable signing and safe install delivery remain an explicit
-follow-up; do not uninstall/clear data/reset keys to fix a signature mismatch.
-Recovery is not implemented, so retain source documents and use synthetic data.
+These 44 Android executions used explicit API36 x86_64 emulator-5554. Synthetic
+English identifiers/premium, a Devanagari word, mixed native/raster PDF, blank
+reset, pre-start cancellation, model tampering and limited unchanged app-private
+file canaries passed. They are not representative language accuracy, full privacy,
+physical fingerprint/UI or complete check-device.sh evidence. Native init/hangs
+cannot be forcibly terminated safely; hard isolation remains pending.
+
+The separate [source validation run 39723881468](https://github.com/nikslogy/private-doc-ai/actions/runs/39723881468)
+also passed 77 Python/full host/44 Android checks and actual preview-mode assembly
+with a disposable signing identity, verifying IDs/labels and rejection of its
+unpinned signer. Those synthetic preview APKs were not published.
+Local check-host passed 77 Python/source checks then stopped at absent pinned
+Gradle/SDK prerequisites. No local Android execution is claimed.
+
+## Earlier evidence
+
+The user confirms the previous repair opens/unlocks and imports on iQOO Neo 10 /
+Android 16. That report concerns the .dev repair, not this new Preview OCR build.
+[Repair checkpoint](checkpoints/2026-10-22-first-unlock-repair.md) preserves its
+26 Android executions and hashes. [OCR debug build record](checkpoints/2026-10-22-ocr-build.json)
+preserves successful OCR validation before stable signing. The first OCR attempt
+failed at JitPack POM lookup; artifact-only lookup with mandatory actual-AAR hash
+verification fixed it. [OCR provenance](checkpoints/2026-10-22-ocr-input-provenance.json)
+and [decision 0004](decisions/0004-local-tesseract-ocr.md) record actual public input
+bytes/licences and source-to-binary provenance limits.
 
 ## Next concrete task
 
-Complete the remaining source-validation Android regressions and trigger the
-main-only actual stable delivery workflow using the user-confirmed repository secrets.
-verify both signers against the public pin, run all host/Android gates, and test
-that a subsequent same-key update preserves a synthetic vault. Deliver the
-preview APKs with separate app IDs; preserve the user's existing apps/data.
-Then measure physical OCR quality, active cancellation, memory, logs/files/traffic
-and actual 16 KiB loading.
+Test Preview OCR/import/search/export/locking on the user's phone with synthetic
+scans. Run the full explicit-target device suite and a subsequent same-key APK
+update preserving a synthetic vault. Record actual outcomes; absence of a device
+is never a pass. Measure representative English/Hindi/Marathi accuracy, active
+cancellation, memory/thermal behavior, log/filesystem/connected traffic canaries
+and actual 16 KiB loading. Finish complete native provenance/notices and M0/M1
+hardware/privacy gates; encrypted thumbnails and remaining M2 validation are open.
 
-M0/M1 remain open for hardware, provenance/notices and security checks. M2 now
-has an actual candidate local OCR implementation; encrypted thumbnails and full
-runtime validation remain. AI answers/summaries are unavailable: config/models.json
-is empty and no generation engine is shipped. Next product steps remain M3
-retrieval/fields/selection, M4 verified local model management/inference, M5 cited
-questions/summaries, M6 file tools and M7 encrypted backup/recovery. No remote
-processing, telemetry, app-store publication or cloud fallback was enabled.
+AI answers/summaries remain unavailable: config/models.json is empty and no
+on-device generation engine is shipped. Next product steps are M3 fields/source
+selection/retrieval, M4 verified local model management/inference, M5 cited Q&A
+and summaries, M6 document tools and M7 encrypted backup/recovery. No remote
+processing, telemetry, cloud fallback or app-store release was enabled.

@@ -1,6 +1,11 @@
 # Compatibility record
 
-As of 22 October 2026. Both variants compiled, passed lint and produced verified
+As of 22 October 2026. The stable Preview OCR APKs passed full host checks and
+44 Android executions in [run 39724441904](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904),
+source 2420baface2aa061d0e22ff25fcbae404965a311. Both APK signers match the fixed
+public development certificate; IDs end in .preview. Exact identities and
+physical/privacy/provenance limits are in STATUS.md. Earlier repair evidence:
+both variants compiled, passed lint and produced verified
 debug APKs in [CI](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766)
 from source 850a87567dba8cc686539419110ca0eae7d5baad. Host/static and selected Android 16 emulator regression evidence passed;
 physical phone loading, licence audit and security update review remain pending.
@@ -38,7 +43,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API36 x86_64; physical checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
-| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR candidate | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; API36 runtime tests pending |
+| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; actual synthetic recognition passed on API36 x86_64; physical quality/privacy pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |
 
 Actual published artifacts resolved and compiled in CI without metadata-version
