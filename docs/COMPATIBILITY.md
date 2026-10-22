@@ -1,8 +1,9 @@
 # Compatibility record
 
-As of 22 October 2026. The stable Preview OCR APKs passed full host checks and
-44 Android executions in [run 39724441904](https://github.com/nikslogy/private-doc-ai/actions/runs/39724441904),
-source 2420baface2aa061d0e22ff25fcbae404965a311. Both APK signers match the fixed
+As of 22 October 2026. The stable Preview model-setup APKs passed full host checks and
+66 Android executions in [run 39760351605](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605),
+source b35642df7e7835ac7efc6229af134c6d9b80c9e8. This excludes native inference.
+Both APK signers match the fixed
 public development certificate; IDs end in .preview. Exact identities and
 physical/privacy/provenance limits are in STATUS.md. Earlier repair evidence:
 both variants compiled, passed lint and produced verified
@@ -84,7 +85,12 @@ Gradle and Android user caches. It never copies proxy credentials into JVM
 arguments or the generated environment file. Unsupported authenticated proxy
 URLs or unrepresentable NO_PROXY settings stop setup with a safe error rather
 than silently changing routing. Tests use synthetic hosts/fake tools; the
-actual session proxy remains unreachable and downloads are not verified.
+initial session proxy was unreachable. Current network access now permits the
+verified SDK/Gradle bootstrap and exact OCR AAR GET. A complete Temurin JDK21
+was downloaded at an immutable release URL and checked against its published
+GitHub asset digest; it uses the existing system Java trust store for this
+environment's CA. No certificate verification was disabled. Current full local
+host results and distinct CI/model checks are recorded in STATUS.
 
 ## Exact spike APIs
 

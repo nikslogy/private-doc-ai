@@ -6,7 +6,7 @@ cd "$project_root"
 fail() { printf '%s\n' "$1" >&2; exit 1; }
 [[ $# == 3 && "$3" == --accept-license ]] || fail 'Usage: ANDROID_SERIAL=<explicit-target> scripts/check-model-generation.sh <catalog-model-id> <local-model-file> --accept-license'
 [[ -n "${ANDROID_SERIAL:-}" ]] || fail 'Set ANDROID_SERIAL to the explicit authorized model-probe target.'
-for command in adb timeout python3 tee tr; do command -v "$command" >/dev/null || fail "Required command unavailable: $command"; done
+for command in adb timeout python3 tee tr stdbuf; do command -v "$command" >/dev/null || fail "Required command unavailable: $command"; done
 [[ "$(adb -s "$ANDROID_SERIAL" get-state)" == device ]] || fail 'The explicit model-probe target is unavailable.'
 device_api="$(adb -s "$ANDROID_SERIAL" shell getprop ro.build.version.sdk | tr -d '\r')"
 [[ "$device_api" =~ ^[0-9]+$ && "$device_api" -ge 31 ]] || fail 'An API31+ explicit target is required.'
@@ -149,7 +149,7 @@ timeout --foreground 900s adb -s "$ANDROID_SERIAL" shell am instrument -w -r \
   -e runModelGeneration true -e modelLicenseAccepted true \
   -e modelId "${verified[1]}" -e modelPath "$device_model" \
   -e modelSha256 "${verified[2]}" -e modelByteCount "${verified[3]}" \
-  -e runtimeVersion "${verified[4]}" "${runners[0]}" | tr -d '\r' | tee "$report"
+  -e runtimeVersion "${verified[4]}" "${runners[0]}" | stdbuf -oL tr -d '\r' | tee "$report"
 pipeline_status=("${PIPESTATUS[@]}")
 set -e
 if ! stop_memory_sampler; then

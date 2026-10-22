@@ -2,10 +2,10 @@
 
 ## Current stable Preview build
 
-[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471716).
+[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12441148509).
 Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
 host gate, pinned signer checks and 66 non-skipped Android test executions in
-[run 39760351605](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605).
+[run 39814166314](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314).
 Version 0.4.0-dev / code 5 retains permanent IDs com.privateassistant.app.preview
 and com.privateassistant.app.connected.preview. The connected launcher is
 **Private Vault Connected Preview**. Install over the existing Preview apps

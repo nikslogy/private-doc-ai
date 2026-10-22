@@ -49,8 +49,11 @@ join before native handles close. Initialization has no interrupt entry point;
 a deadline cannot forcibly kill a native hang. UI lock clears model state and
 revokes work immediately, while safe native cleanup may return later.
 
-The phone UI applies a conservative 64-bit/6 GiB total-memory/free-headroom guard.
-It reads actual Android memory state. This is application configuration and does
+Code6 applies a conservative 64-bit CPU guard for the reviewed artifact/runtime:
+at least 10 GiB Android-reported total memory, 8 GiB currently available and
+no Android low-memory state. Stricter catalogue requirements also apply; unknown
+profiles are unavailable. The UI checks before verification and again before
+native load, and displays actual/required memory on rejection. These are application settings and do
 not establish a tested model minimum or support on the reported iQOO Neo 10.
 The test uses a fixed synthetic prompt only; it receives no vault key, source
 document, extracted evidence or user question. Its displayed text is actual
@@ -59,15 +62,16 @@ unverified model output and cannot authorize any action. No chat/KV state is sav
 Routine host/stable checks run metadata and tiny synthetic installer/privacy
 tests without downloading an inference model. The separate explicitly requested
 model-runtime-probe workflow downloads/size-hashes the exact public artifact to
-runner scratch, boots a measured-resource API36 emulator with 6 GiB RAM and requires a real,
+runner scratch, boots a measured-resource API36 emulator with 10 GiB nominal RAM and requires a real,
 non-skipped generation/cancellation test. The test observes native cancel calls
 and a failing synchronous send during the cancellation experiment, rechecks the
 model hash and scans bounded app files/cache/noBackup for a synthetic canary.
 Only the independently hash-verified public model is excluded from that scan.
 It does not establish complete filesystem/log/traffic privacy, hard timeouts,
 phone cancellation latency or semantic answer quality. Its host must have at
-least 8 GiB currently available before emulator startup. These setup guards are
-configuration, not measured model minimums. Weights and emulator
+least 12 GiB currently available before emulator startup. These setup guards are
+configuration, not measured model minimums. The direct probe does not exercise
+the phone UI's separate reported-memory guard. Weights and emulator
 userdata are removed and excluded from artifacts/caches.
 
 After CI: perform explicit phone installation, import/tamper/cancel/lock/restart

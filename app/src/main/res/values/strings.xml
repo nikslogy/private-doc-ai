@@ -3,7 +3,11 @@
     <string name="models_install_complete">The reviewed model was installed and verified.</string>
     <string name="models_removed">The installed model copy was removed.</string>
     <string name="models_test_complete">The synthetic local test completed. Document questions remain unavailable.</string>
-    <string name="models_memory_required">This experimental test requires a 64-bit app, at least 6 GiB total RAM and enough currently available memory. Close other apps and try again. This check is conservative; phone compatibility is still being evaluated.</string>
+    <string name="models_memory_required">This experimental CPU test needs a 64-bit app and sufficient memory. Close other apps and try again.</string>
+    <string name="models_memory_total">Total memory: %1$s. This test requires %2$s.</string>
+    <string name="models_memory_available">Available memory: %1$s. This test requires %2$s now.</string>
+    <string name="models_memory_profile_note">These limits use memory reported by Android and are conservative settings. Phone compatibility is still being evaluated.</string>
+    <string name="models_memory_profile_unavailable">A conservative CPU memory profile is not available for this model and runtime. The local test is unavailable.</string>
     <string name="models_operation_failed">The model operation did not complete. Check the selected file, free space and model installation. Your vault originals are preserved.</string>
     <string name="models_cancelling">Cancellation requested. Waiting for the current operation to return safely…</string>
     <string name="models_cancelled">Model operation cancelled.</string>

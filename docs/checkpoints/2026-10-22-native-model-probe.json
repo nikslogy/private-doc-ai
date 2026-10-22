@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "Real synthetic CPU model generation and active cancellation on a nominal 10 GiB emulator",
+  "recordedAtUtc": "2026-10-22T16:59:26Z",
+  "repository": "nikslogy/private-doc-ai",
+  "run": {
+    "id": 39816778021,
+    "attempt": 1,
+    "jobId": 119957215200,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021",
+    "markerCommit": "39bb7ffb8f820cc6fe6034c4f2afbfcf254c8403",
+    "sourceCommit": "97bb7272e76a5db9d5f6e8c1aa04f0d68134cb59",
+    "conclusion": "success",
+    "executed": 1,
+    "failures": 0,
+    "skipped": 0,
+    "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles"
+  },
+  "model": {
+    "id": "qwen25-15b-q8-legacy",
+    "runtimeVersion": "0.9.0",
+    "backend": "CPU",
+    "byteCount": 1597931520,
+    "sha256": "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+    "input": "Fixed synthetic generation prompt and synthetic cancellation prompt only",
+    "documentQuestionsAndSummariesEnabled": false
+  },
+  "target": {
+    "kind": "disposable x86_64 Android emulator",
+    "nominalRamMiB": 10240,
+    "actualGuestMemory": {
+      "totalKiB": 10188980,
+      "availableBeforeTestKiB": 8492668,
+      "pageSizeBytes": 4096
+    },
+    "hostResources": {
+      "hostTotalBytes": 16766414848,
+      "hostAvailableBytes": 14682066944,
+      "minimumAvailableGuardBytes": 12884901888,
+      "emulatorRamMiB": 10240,
+      "hostFreeDiskBytes": 89522155520
+    },
+    "physicalPhone": false
+  },
+  "result": {
+    "realPublicModelGenerationPassed": true,
+    "activeNativeCancellationPassed": true,
+    "beforeAndAfterModelByteCountAndSha256Passed": true,
+    "boundedSyntheticFileCanaryChecksPassed": true,
+    "returnedAfterNativeSendAndWatchdogCleanup": true
+  },
+  "metrics": {
+    "cancellationOperationMillis": 17295,
+    "generatedUtf16": 111,
+    "generationElapsedMillis": 58576,
+    "nativeCancellationCalls": 204,
+    "nativeSendFailures": 1
+  },
+  "metricScope": {
+    "generatedUtf16": "Actual nonempty generated result length: 111 UTF-16 code units; no accuracy evaluation.",
+    "generationElapsedMillis": "58,576 ms for the generation operation including native initialization; emulator observation only.",
+    "cancellationOperationMillis": "17,295 ms for the complete cancellation operation including native initialization; this is not cancellation-request latency.",
+    "nativeCancellationCalls": "204 successful native cancel API calls were observed while the synchronous send was active.",
+    "nativeSendFailures": "One native synchronous-send failure was observed in the deliberately cancelled operation; the test caught CancellationException and completed its assertions.",
+    "timeout": "Joined watchdog/cancellation observed returning in this execution; no hard native timeout or process-isolation guarantee."
+  },
+  "phases": [
+    {
+      "elapsedRealtimeMillis": 83947,
+      "phase": "ARGUMENTS_ACCEPTED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 83967,
+      "phase": "MODEL_PATH_VALIDATED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 83967,
+      "phase": "DEVICE_MODEL_VERIFY_START",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 97054,
+      "phase": "DEVICE_MODEL_VERIFY_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 97061,
+      "phase": "CANARY_BASELINE_START",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 97085,
+      "phase": "CANARY_BASELINE_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 97088,
+      "phase": "NATIVE_GENERATION_START",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 129448,
+      "phase": "NATIVE_SEND_STARTED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 155662,
+      "phase": "NATIVE_GENERATION_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 155664,
+      "phase": "CANCELLATION_OPERATION_START",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 167327,
+      "phase": "CANCELLATION_SEND_STARTED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 167429,
+      "phase": "NATIVE_CANCEL_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 172580,
+      "phase": "NATIVE_SEND_FAILED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 172958,
+      "phase": "CANCELLATION_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 177787,
+      "phase": "POST_MODEL_VERIFY_RETURNED",
+      "pid": 3034
+    },
+    {
+      "elapsedRealtimeMillis": 177792,
+      "phase": "CANARY_FINAL_RETURNED",
+      "pid": 3034
+    }
+  ],
+  "memorySampling": {
+    "schemaVersion": 1,
+    "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
+    "emittedPid": 0,
+    "sampleIntervalMillis": 1000,
+    "sampleLimit": 900,
+    "sampleCount": 0,
+    "sampleColumns": [
+      "elapsedMillis",
+      "rssBytes",
+      "hwmBytes"
+    ],
+    "samples": [],
+    "readErrors": 0,
+    "timeoutErrors": 0,
+    "metadataRejected": 0,
+    "observedMaxRssBytes": 0,
+    "observedMaxHwmBytes": 0
+  },
+  "memoryEvidenceLimitation": "Confirmed transcript-filter tr buffering withheld phase PID output until instrumentation completed. The sampler recorded zero PID samples and zero RSS/HWM samples; its zero-valued maxima are absence of measurement, not zero process memory. No measured RAM minimum follows.",
+  "canaryScope": {
+    "roots": [
+      "app files",
+      "app cache",
+      "app no-backup files"
+    ],
+    "timing": "Bounded scans before generation and after cancellation/cleanup",
+    "publicModelExclusion": "Only the exact separately hash-verified public model was excluded.",
+    "limitations": "Synthetic marker absence in these scans does not establish continuous file cleanliness, complete plaintext absence, memory/log privacy or traffic inspection."
+  },
+  "artifact": {
+    "id": 12443805267,
+    "bytes": 7208,
+    "sha256": "c81e8c8102fd5244ed327d3da000d1c816a4460f85844612cd7ec86b55062b93",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39816778021/artifacts/12443805267",
+    "independentlyDownloadedAndSha256Verified": true,
+    "independentVerificationScope": "Root reviewer downloaded the exact 7,208-byte synthetic report ZIP and independently verified its SHA-256 before this checkpoint."
+  },
+  "priorSixGiBProbe": {
+    "runId": 39814089348,
+    "jobId": 119947843697,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/39814089348",
+    "nominalRamMiB": 6144,
+    "guestMemoryKiB": {
+      "total": 6072516,
+      "availableBeforeTest": 4457868
+    },
+    "pid": 2985,
+    "androidExitReasonCode": 3,
+    "androidExitReason": "LOW_MEMORY",
+    "observed": "Process exited after NATIVE_GENERATION_START and before NATIVE_SEND_STARTED; no generation or cancellation pass.",
+    "artifact": {
+      "id": 12442735210,
+      "bytes": 6890,
+      "sha256": "7ea695a7761b2b3642a7cd1d8d21c9da898050ba33a588c34aedb7e40b85098e"
+    },
+    "scope": "A failure in this nominal 6 GiB emulator and a pass in the nominal 10 GiB emulator do not establish a minimum RAM requirement or a physical-phone compatibility boundary."
+  },
+  "separatePlannedUiGuard": {
+    "versionCode": 6,
+    "status": "separate future application configuration",
+    "configuredMinimumTotalMemoryGiB": 10,
+    "configuredMinimumAvailableMemoryGiB": 8,
+    "scope": "Conservative CPU diagnostic gate being prepared separately for phones in the 12 GB class. This run does not validate that application build, establish a measured model RAM minimum, or prove any phone will pass the gate or run the model."
+  },
+  "limits": [
+    "One fresh, non-skipped synthetic test executed; no representative language/task/QA accuracy evaluation.",
+    "No process RSS/HWM measurements were collected; no RAM minimum claim.",
+    "The emulator used 4,096-byte pages; real 16 KiB native loading is not established.",
+    "No physical phone, fingerprint/vendor path, phone latency, thermal, battery or sustained-memory result.",
+    "Bounded synthetic file-canary and public-model hash checks are narrower than comprehensive privacy or traffic inspection.",
+    "No hard native cancellation deadline, process isolation, complete dependency provenance/notices, recovery or release-readiness claim.",
+    "Normal document questions/summaries remain disabled; this evidence does not complete M4."
+  ],
+  "evidenceScope": "Real public-model CPU generation with synthetic prompt; observed native cancel API success and synchronous-send failure; narrow file-canary scan. No phone latency, model accuracy, complete privacy, hard timeout or RAM minimum claim. Memory sampling may be delayed by tr buffering."
+}

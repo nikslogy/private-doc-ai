@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Process
 import androidx.annotation.StringRes
 import com.privateassistant.app.R
+import com.privateassistant.platform.inference.CpuModelDiagnosticPolicy
 import com.privateassistant.platform.inference.InstalledModelStatus
 import com.privateassistant.platform.inference.InstalledModelStore
 import com.privateassistant.platform.inference.LocalInferenceRunner
@@ -26,10 +27,13 @@ import kotlinx.coroutines.withContext
 data class ModelEntryUi(val id: String, val displayName: String, val byteCount: Long,
     val licenseIdentifier: String, val licenseTermsUrl: String, val downloadUrl: String,
     val installed: Boolean, val sha256: String, val experimental: Boolean, val invalid: Boolean = false)
+data class ModelMemoryUi(val totalBytes: Long, val availableBytes: Long,
+    val minimumTotalBytes: Long, val minimumAvailableBytes: Long)
 data class ModelManagerUiState(val entries: List<ModelEntryUi> = emptyList(), val loading: Boolean = false,
     val busy: Boolean = false, val progressBytes: Long? = null, val progressTotal: Long? = null,
     val diagnosticText: String? = null, val diagnosticFailed: Boolean = false,
-    @StringRes val message: Int? = null, val activeModelId: String? = null)
+    @StringRes val message: Int? = null, val activeModelId: String? = null,
+    val memoryCheck: ModelMemoryUi? = null)
 
 /** Only public model metadata and fixed synthetic diagnostic input reach this component. */
 class ModelManagerUiModel(private val context: Context, private val scope: CoroutineScope) {
@@ -93,17 +97,35 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
         if (revoked.get() || mutableState.value.busy || mutableState.value.loading) return
         val entry = catalogue?.find(id) ?: return
         launch(modelId = id, diagnostic = true) { token ->
-            val memory = ActivityManager.MemoryInfo()
-            context.getSystemService(ActivityManager::class.java).getMemoryInfo(memory)
-            if (!Process.is64Bit() || memory.totalMem < entry.minimumRamBytes ||
-                memory.availMem < entry.byteCount + 512L * 1024 * 1024 || memory.lowMemory) {
-                if (!token.get()) mutableState.update { it.copy(message = R.string.models_memory_required, diagnosticFailed = true) }
+            val requirements = CpuModelDiagnosticPolicy.requirements(entry)
+            if (requirements == null) {
+                if (!token.get()) mutableState.update { it.copy(
+                    message = R.string.models_memory_profile_unavailable, diagnosticFailed = true) }
                 return@launch
             }
+            fun hasMemoryHeadroom(): Boolean {
+                if (token.get()) return false
+                val memory = ActivityManager.MemoryInfo()
+                context.getSystemService(ActivityManager::class.java).getMemoryInfo(memory)
+                if (CpuModelDiagnosticPolicy.permits(entry, totalBytes = memory.totalMem,
+                        availableBytes = memory.availMem, is64Bit = Process.is64Bit(), lowMemory = memory.lowMemory)) {
+                    return true
+                }
+                if (!token.get()) mutableState.update { it.copy(
+                    message = R.string.models_memory_required, diagnosticFailed = true,
+                    memoryCheck = ModelMemoryUi(memory.totalMem, memory.availMem,
+                        requirements.minimumTotalBytes, requirements.minimumAvailableBytes)) }
+                return false
+            }
+            if (!hasMemoryHeadroom()) return@launch
             val result = requireNotNull(store).withVerifiedModel(id, token::get) { _, artifact ->
+                // Full model verification can take time; use a fresh snapshot before native load.
+                if (!hasMemoryHeadroom()) return@withVerifiedModel null
                 LocalInferenceRunner().generate(artifact, LocalInferenceRunner.SYNTHETIC_PROMPT, token::get)
             }
-            if (!token.get()) mutableState.update { it.copy(diagnosticText = result.text, message = R.string.models_test_complete) }
+            if (result != null && !token.get()) {
+                mutableState.update { it.copy(diagnosticText = result.text, message = R.string.models_test_complete) }
+            }
         }
     }
     fun cancel() {
@@ -135,7 +157,8 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
         if (revoked.get() || mutableState.value.busy || mutableState.value.loading) return
         val token = revoked
         mutableState.update { it.copy(busy = !loading, loading = loading, activeModelId = modelId,
-            message = null, progressBytes = null, progressTotal = null, diagnosticText = null, diagnosticFailed = false) }
+            message = null, progressBytes = null, progressTotal = null, diagnosticText = null, diagnosticFailed = false,
+            memoryCheck = null) }
         operation = scope.launch {
             try { block(token) }
             catch (cancelled: CancellationException) {

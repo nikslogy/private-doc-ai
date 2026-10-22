@@ -3,7 +3,7 @@
 Native Android encrypted document vault with offline OCR, local search and
 selected-source labelled document facts.
 **Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605/artifacts/12419471716).
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314/artifacts/12441148509).
 Unzip and install the offline APK, then open **Private Vault Preview**.
 Version 0.4.0-dev / code 5 requires Android 12/API31+. Install it as an update to
 the existing Preview app without uninstalling or clearing data. Preview IDs and
@@ -24,7 +24,7 @@ Experimental model setup adds licence acknowledgement and exact-byte verified
 local import. Its fixed synthetic native diagnostic has not yet passed; normal
 document questions remain disabled. See [model setup](docs/MODEL_SETUP.md).
 
-[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39760351605)
+[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/39814166314)
 passed the full host gate and 66 non-skipped Android 16 emulator executions.
 These include real OCR and authenticated Keystore/vault lifecycles, pinned
 revision reads, cited/conflicting fields and original preservation. Phone UI,

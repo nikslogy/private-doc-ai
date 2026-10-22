@@ -76,6 +76,22 @@ internal fun ModelManagerScreen(
         state.message?.let { message -> item {
             Text(stringResource(message), style = MaterialTheme.typography.bodyMedium)
         } }
+        state.memoryCheck?.let { memory -> item {
+            Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+                Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.models_memory_total,
+                        Formatter.formatShortFileSize(context, memory.totalBytes),
+                        Formatter.formatShortFileSize(context, memory.minimumTotalBytes)),
+                        style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.models_memory_available,
+                        Formatter.formatShortFileSize(context, memory.availableBytes),
+                        Formatter.formatShortFileSize(context, memory.minimumAvailableBytes)),
+                        style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.models_memory_profile_note),
+                        style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        } }
         if (state.loading || state.busy) item {
             LinearProgressIndicator(Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
