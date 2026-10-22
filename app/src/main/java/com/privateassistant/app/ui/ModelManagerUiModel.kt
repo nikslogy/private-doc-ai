@@ -74,7 +74,8 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
                                 lastUpdate = now
                                 mutableState.update { it.copy(progressBytes = bytes, progressTotal = total) }
                             }
-                        }) ?: throw ModelInstallException(ModelInstallFailure.STORAGE)
+                        })
+                } ?: throw ModelInstallException(ModelInstallFailure.STORAGE)
             }
             loadEntries(token)
             if (!token.get()) mutableState.update { it.copy(message = R.string.models_install_complete) }

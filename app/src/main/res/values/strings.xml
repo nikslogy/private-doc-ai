@@ -196,7 +196,7 @@
     <string name="models_get_file">Get model file</string>
     <string name="models_import">Import model file</string>
     <string name="models_import_title">Choose the reviewed model file</string>
-    <string name="models_import_body">Choose the exact %1$s model file. Installation needs additional free space for a verified local copy. A document or a different model file will be rejected.</string>
+    <string name="models_import_body">Choose the exact %1$s model file. Installation temporarily needs at least twice the model size in free app storage, in addition to your downloaded file. A document or a different model file will be rejected.</string>
     <string name="models_license_link">Read %1$s licence</string>
     <string name="models_license_acknowledgement">I have read and acknowledge the model licence and want to install this model.</string>
     <string name="models_choose_file">Choose file</string>

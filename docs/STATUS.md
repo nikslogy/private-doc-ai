@@ -19,6 +19,14 @@ leases serialize verification/native work with removal. No model weights are
 bundled with the app or downloaded by routine checks. User import requires
 current licence acknowledgement; vault originals/keys/text never enter the test.
 
+First M4 stable run 39759673652 failed app Kotlin compilation at a missing closing
+brace in the provider-stream use block. No APK/reports were uploaded. All 77
+Python/source checks, :core:test and both platform production/instrumentation
+Kotlin compilations passed; new platform test execution/full host/Android suites
+were not completed. The brace is corrected and a fresh stable run is required.
+The separate real-model probe compiled the offline platform test APK and advanced
+to public-weight verification; its runtime result is still pending.
+
 Local check-host passed 77 Python/source checks, then stopped at missing pinned
 Gradle/SDK. New platform JVM metadata cases (8; 16 authored total per variant),
 10 real-filesystem installer tests and one in-flight private-canary regression
