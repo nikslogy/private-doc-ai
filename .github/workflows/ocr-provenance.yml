@@ -1,0 +1,26 @@
+name: OCR dependency provenance
+on:
+  push:
+    branches: [probe/offline-ocr]
+    paths:
+      - .github/workflows/ocr-provenance.yml
+      - scripts/probe-ocr-dependency.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-public-inputs:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Inspect public OCR runtime and language data
+        run: python3 scripts/probe-ocr-dependency.py
+      - name: Retain public-input provenance reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ocr-provenance-${{ github.run_id }}
+          path: artifacts/ocr-provenance/*.json
+          if-no-files-found: error
+          retention-days: 7
