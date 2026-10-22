@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.privateassistant.app.R
+import com.privateassistant.platform.documents.OcrScript
 import com.privateassistant.platform.vault.VaultDocument
 import java.text.DateFormat
 import java.util.Date
@@ -49,6 +50,7 @@ internal fun DocumentEvidenceScreen(
     onBack: () -> Unit,
     onRetry: () -> Unit,
     onRead: () -> Unit,
+    onOcr: (OcrScript) -> Unit,
     onCancelRead: () -> Unit,
     onExport: () -> Unit,
     onDelete: () -> Unit,
@@ -58,6 +60,7 @@ internal fun DocumentEvidenceScreen(
     var deleteDialog by remember(document.revisionId) { mutableStateOf(false) }
     val evidence = state.evidence
     val supportsNativeText = document.mimeType == "application/pdf" || document.mimeType == "text/plain"
+    val supportsOcr = document.mimeType in setOf("application/pdf", "image/jpeg", "image/png")
     LaunchedEffect(document.revisionId, evidence, state.selectedPage) {
         val pageIndex = evidence?.pages?.indexOfFirst { it.pageNumber == state.selectedPage } ?: -1
         if (pageIndex >= 0) listState.scrollToItem(pageIndex + 1)
@@ -92,13 +95,32 @@ internal fun DocumentEvidenceScreen(
                     Text(stringResource(R.string.indexing_in_progress), style = MaterialTheme.typography.bodyMedium)
                     TextButton(onClick = onCancelRead) { Text(stringResource(R.string.cancel_reading)) }
                 } else {
-                    Button(onClick = onRead, enabled = !state.busy && supportsNativeText, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(if (supportsNativeText) R.string.read_native_text else R.string.ocr_image_unavailable))
+                    if (supportsNativeText) {
+                        Button(onClick = onRead, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.read_native_text))
+                        }
+                    }
+                    if (supportsOcr && state.ocrAvailable) {
+                        Text(stringResource(R.string.ocr_language_prompt), style = MaterialTheme.typography.titleSmall)
+                        FilledTonalButton(onClick = { onOcr(OcrScript.LATIN) }, enabled = !state.busy,
+                            modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.read_ocr_english))
+                        }
+                        FilledTonalButton(onClick = { onOcr(OcrScript.DEVANAGARI) }, enabled = !state.busy,
+                            modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.read_ocr_devanagari))
+                        }
                     }
                 }
-                Text(stringResource(if (supportsNativeText) R.string.native_text_description else R.string.ocr_unavailable),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (supportsNativeText) {
+                    Text(stringResource(R.string.native_text_description), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                if (supportsOcr) {
+                    Text(stringResource(if (state.ocrAvailable) R.string.ocr_description else R.string.ocr_unavailable),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
                 Text(stringResource(R.string.ocr_accuracy_note), style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
                 FilledTonalButton(onClick = onExport, enabled = !state.busy, modifier = Modifier.fillMaxWidth()) {

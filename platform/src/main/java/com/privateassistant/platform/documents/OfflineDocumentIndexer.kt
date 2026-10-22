@@ -1,5 +1,6 @@
 package com.privateassistant.platform.documents
 
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ class OfflineDocumentIndexer(
         ensureActive()
         val pages = mutableListOf<IndexedPage>()
         var totalChars = 0
+        var totalSpans = 0
         for (page in parsed.pages) {
             ensureActive()
             val geometry = parsed.geometry.firstOrNull { it.pageNumber == page.pageNumber }
@@ -36,7 +38,7 @@ class OfflineDocumentIndexer(
                 failedPage(page.pageNumber, geometry, script, "OCR_UNAVAILABLE")
             } else {
                 try {
-                    when (type) {
+                    val recognized = when (type) {
                         "application/pdf" -> parser.withRenderedPdfPage(bytes, page.pageNumber) { bitmap ->
                             ocrEngine.recognize(bitmap, page.pageNumber, requireNotNull(geometry), script)
                         }
@@ -45,6 +47,10 @@ class OfflineDocumentIndexer(
                         }
                         else -> error("Unsupported OCR source")
                     }
+                    OcrResultValidator.validated(recognized, page.pageNumber, requireNotNull(geometry), script)
+                        ?: failedPage(page.pageNumber, geometry, script, "OCR_INVALID_RESULT")
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
                 } catch (failure: DocumentParseException) {
                     failedPage(page.pageNumber, geometry, script, "OCR_${failure.failure.name}")
                 } catch (_: OcrRecognitionException) {
@@ -54,11 +60,17 @@ class OfflineDocumentIndexer(
                 }
             }
             ensureActive()
-            if (indexed.text.length > MemoryDocumentParser.MAX_TEXT_CHARS - totalChars) {
+            val limitFailure = when {
+                indexed.text.length > MemoryDocumentParser.MAX_TEXT_CHARS - totalChars -> "INDEX_TEXT_LIMIT"
+                indexed.spans.size > DocumentIndexLimits.MAX_SPANS_PER_DOCUMENT - totalSpans -> "INDEX_SPAN_LIMIT"
+                else -> null
+            }
+            if (limitFailure != null) {
                 pages += IndexedPage(page.pageNumber, "", geometry, indexed.method, indexed.extractorVersion,
-                    state = PageIndexState.FAILED, errorCode = "INDEX_TEXT_LIMIT")
+                    state = PageIndexState.FAILED, errorCode = limitFailure)
             } else {
                 totalChars += indexed.text.length
+                totalSpans += indexed.spans.size
                 pages += indexed
             }
         }

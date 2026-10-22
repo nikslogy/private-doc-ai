@@ -29,6 +29,7 @@ jobs:
           key: gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'app/build.gradle.kts', 'core/build.gradle.kts', 'platform/build.gradle.kts', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'config/toolchain.json') }}-${{ github.sha }}
           restore-keys: |
             gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-${{ hashFiles('build.gradle.kts', 'settings.gradle.kts', 'app/build.gradle.kts', 'core/build.gradle.kts', 'platform/build.gradle.kts', 'gradle/libs.versions.toml', 'gradle/wrapper/gradle-wrapper.properties', 'gradle.properties', 'config/toolchain.json') }}-
+            gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-
       - name: Set up pinned Android and Gradle tools
         # Dependency/task caches exclude Android user homes and all signing keys.
         # The two narrow paths are restored by the preceding pinned cache action.
@@ -38,7 +39,7 @@ jobs:
           source .tooling/env.sh
           python3 scripts/stage-apks.py
       - name: Save verified host Gradle caches
-        if: ${{ success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix/android16-vault-unlock') && steps.gradle-cache.outputs.cache-hit != 'true' }}
+        if: ${{ success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/fix/android16-vault-unlock' || github.ref == 'refs/heads/feat/offline-ocr') && steps.gradle-cache.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
           path: |

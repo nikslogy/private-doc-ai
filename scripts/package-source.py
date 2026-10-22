@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DIRECTORIES = ("app", "core", "platform", "config", "docs", "gradle", "scripts", "test-fixtures", ".github")
 ROOT_FILES = ("README.md", "AGENTS.md", ".gitignore", "settings.gradle.kts", "build.gradle.kts", "gradle.properties", "gradlew")
 EXCLUDED_DIRECTORIES = {"build", ".gradle", ".kotlin", "__pycache__", ".tooling", ".toolchains"}
-EXCLUDED_SUFFIXES = {".pyc", ".jks", ".keystore", ".litertlm", ".tflite", ".gguf", ".apk", ".aar"}
+EXCLUDED_SUFFIXES = {".pyc", ".jks", ".keystore", ".litertlm", ".traineddata", ".tflite", ".gguf", ".apk", ".aar"}
 
 
 def package(output: Path, verification: dict | None) -> None:

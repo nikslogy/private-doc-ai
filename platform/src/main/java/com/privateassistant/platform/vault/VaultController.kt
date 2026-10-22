@@ -19,12 +19,15 @@ import com.privateassistant.platform.documents.DocumentParseException
 import com.privateassistant.platform.documents.MemoryDocumentParser
 import com.privateassistant.platform.documents.OfflineDocumentIndexer
 import com.privateassistant.platform.documents.OcrScript
+import com.privateassistant.platform.documents.ReviewedOcrModels
+import com.privateassistant.platform.documents.TesseractOcrEngine
 import com.privateassistant.platform.documents.ParseFailure
 import com.privateassistant.platform.documents.ParsedDocument
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -40,6 +43,7 @@ import java.io.OutputStream
 import java.security.GeneralSecurityException
 import java.security.MessageDigest
 import java.util.UUID
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -48,6 +52,9 @@ import kotlin.coroutines.CoroutineContext
  */
 class VaultController(context: Context) {
     private val applicationContext = context.applicationContext
+    private val ocrModels = ReviewedOcrModels(applicationContext)
+    /** Public model assets are bundled; recognition still verifies every installed byte. */
+    val ocrAvailable: Boolean get() = ocrModels.available
     private val directory = File(applicationContext.noBackupFilesDir, "private-vault-v1")
     private val objectDirectory = File(directory, "objects")
     private val stagingDirectory = File(directory, "staging")
@@ -61,7 +68,9 @@ class VaultController(context: Context) {
         val database: VaultDatabase,
         val streamingAead: StreamingAead,
         val vaultId: String,
-    )
+    ) {
+        val revoked = AtomicBoolean(false)
+    }
 
     suspend fun unlock() = withContext(Dispatchers.IO) {
         operations.withLock {
@@ -133,6 +142,7 @@ class VaultController(context: Context) {
         val previous = synchronized(sessionMonitor) {
             epoch += 1
             val old = session
+            old?.revoked?.set(true)
             session = null
             mutableState.value = VaultState.Locked
             old
@@ -193,7 +203,7 @@ class VaultController(context: Context) {
 
     /**
      * Called only from an explicit current user indexing action. A null script refreshes native
-     * extraction without OCR; a chosen script requests bundled recognition. Originals never change.
+     * extraction without OCR; a chosen script requests local recognition. Originals never change.
      */
     suspend fun indexDocument(documentId: String, script: OcrScript? = null) = withContext(Dispatchers.IO) {
         operations.withLock {
@@ -209,7 +219,14 @@ class VaultController(context: Context) {
                 }
                 val bytes = readOriginal(active, document)
                 plaintext = bytes
-                val result = OfflineDocumentIndexer().index(document.mimeType, bytes, script)
+                val indexingContext = currentCoroutineContext()
+                // Supply only a revocation token; never capture the keyed Session in the engine.
+                val revoked = active.revoked
+                val engine = if (script == null) null else TesseractOcrEngine(
+                    modelDirectory = ocrModels::directory,
+                    cancellationRequested = { !indexingContext.isActive || revoked.get() },
+                )
+                val result = OfflineDocumentIndexer(ocrEngine = engine).index(document.mimeType, bytes, script)
                 currentCoroutineContext().ensureActive()
                 ensureSession(active)
                 val pages = VaultEvidenceStore.indexed(document, result, previous)

@@ -25,6 +25,18 @@ queues. See [the decision record](decisions/0003-probe-only-bundled-ocr.md).
 The host gate checks direct source dependencies and the resolved production
 runtime graph, once tooling is available, for accidental SDK inclusion.
 
+The next development build uses a separate local Tesseract adapter with pinned
+public English/Hindi/Marathi language files. Model downloads happen on the build
+runner and are verified before packaging; the app does not download them.
+Images are supplied as bounded memory bitmaps. The adapter disables supported
+debug/output options before private pixels, creates a fresh native engine per
+page and stores recognized evidence only in SQLCipher through the existing vault
+transaction. A cooperative stop/deadline does not safely kill a hung native call.
+Synthetic file-canary checks, recognition and Android compilation must pass
+before distributing this change. These do not establish complete native privacy,
+traffic, memory or real-document accuracy. See the OCR decision and status for
+actual evidence and pending device checks.
+
 Export is a direct user action through the system file picker. The output is an
 unencrypted external copy, possibly in a cloud provider selected by the user.
 The provider or recipient may retain it. Failed/cancelled exports attempt to

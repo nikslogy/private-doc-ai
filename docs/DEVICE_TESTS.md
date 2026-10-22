@@ -82,8 +82,13 @@ Current evidence/search checkpoint additions:
   Check exact raw text/revision/method; lock while searching/loading/reindexing
   and confirm no stale UI state or index commit. Older schema-1 documents must
   remain exportable before explicitly extracting their text.
-- Production OCR is unavailable. ML Kit's real recognizer is instrumentation
-  only, because diagnostics collection is unresolved. Real SDK probes require
+- The Tesseract candidate has six synthetic actual-engine cases and three
+  boundary cases selected for both emulator variants. Verify exact non-skipped
+  results; inspect recognized text, line boxes, model tampering, blank pages and
+  unchanged app-file canaries. These do not replace representative language,
+  active cancellation, logs, traffic, memory or physical-device tests.
+  ML Kit's real recognizer remains instrumentation-only because diagnostics
+  collection is unresolved. Its separate SDK probes require
   an INTERNET-denied target and synthetic files; audit any SDK caches/logs and
   record skipped cases. They do not qualify production OCR or language quality.
 - `OfflineIndexInstrumentedTest` covers native UTF-16 extraction, sampled image

@@ -6,8 +6,8 @@ on-device document assistant. **Repaired development APKs are ready to test.**
 The [repair CI run](https://github.com/nikslogy/private-doc-ai/actions/runs/39715674766)
 passed the full host gate and 26 Android 16 emulator test executions: 12 vault
 regressions plus one real credential-bound lifecycle test per variant.
-Physical fingerprint/UI confirmation on the user's iQOO Neo 10 remains pending;
-the original APKs have a reported first-unlock failure on that phone. See
+The user confirms unlock/login and document import on iQOO Neo 10 / Android 16;
+the original APKs had a first-unlock failure on that phone. See
 [STATUS](docs/STATUS.md) for the exact source identity and evidence.
 
 The repair is version 0.1.1-dev / code 2. Its offline app is **Private Vault
@@ -21,9 +21,12 @@ data reset or automatic migration is required. Android 12/API31+ is required.
 The current app source connects system authentication to a Tink-encrypted object
 vault and Room/SQLCipher metadata. It provides document-picker import, native
 PDF/text extraction, encrypted local content search, a page-text evidence viewer,
-original export, explicit deletion and automatic locking. Questions, production
-OCR, summaries, conversions, recovery and backups are unavailable. There are no
-demo answers or cloud inference calls.
+original export, explicit deletion and automatic locking. New source adds local
+Tesseract OCR with verified bundled English/Hindi/Marathi weights and explicit
+language actions; Android verification is pending. The linked repair APK predates
+OCR. Questions, summaries, conversions, recovery and backups remain unavailable.
+There are no demo answers or cloud inference calls. See STATUS before installing
+new builds: ephemeral debug signing does not support reliable app updates.
 
 ## Build
 
@@ -124,9 +127,10 @@ model-load result. No model weights or AI API credentials are needed for host CI
 - PDF/text validation runs in bounded input memory. Images get framing/PNG CRC,
   bounded sampled pixel decode and EXIF orientation handling. These checks do
   not establish parser isolation or successful decoding of every possible image.
-- Production OCR is unavailable because ML Kit documents diagnostics collection.
-  Its real adapter is test-only; neither production flavour depends on that SDK.
-  See the [decision record](docs/decisions/0003-probe-only-bundled-ocr.md).
+- ML Kit remains test-only because its diagnostics collection is unresolved.
+  The new OCR implementation uses a separate local Tesseract engine, exact-byte
+  library/model checks and memory bitmaps; compilation and device checks are
+  pending. See STATUS and the OCR decisions.
 - No plaintext vault originals or metadata are intentionally written to disk.
   Authorized exports are ordinary external files; recipients/providers can keep
   them. Runtime disk/log leakage has not been checked on a device.

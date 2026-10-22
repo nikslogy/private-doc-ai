@@ -8,6 +8,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import com.privateassistant.app.R
 import com.privateassistant.platform.documents.ExtractionMethod
+import com.privateassistant.platform.documents.OcrScript
 import com.privateassistant.platform.vault.VaultAuthenticationRequiredException
 import com.privateassistant.platform.vault.VaultController
 import com.privateassistant.platform.vault.VaultDocument
@@ -54,6 +55,7 @@ data class VaultUiState(
     val evidenceLoading: Boolean = false,
     val evidenceFailed: Boolean = false,
     val indexing: Boolean = false,
+    val ocrAvailable: Boolean = false,
     val page: AppPage = AppPage.DOCUMENTS,
     @StringRes val message: Int? = null,
     val importCount: Int? = null,
@@ -66,7 +68,9 @@ class VaultUiModel(
     private val vault: VaultController,
     private val scope: CoroutineScope,
 ) {
-    private val mutableState = MutableStateFlow(VaultUiState())
+    // Bundled capability is fixed for this installed APK. Never do asset I/O while locking.
+    private val ocrAvailable = vault.ocrAvailable
+    private val mutableState = MutableStateFlow(VaultUiState(ocrAvailable = ocrAvailable))
     val state = mutableState.asStateFlow()
     private var operation: Job? = null
     private var searchJob: Job? = null
@@ -118,7 +122,7 @@ class VaultUiModel(
         // SAF URIs may be retained briefly for an import requested before the background timeout.
         // No document contents or metadata are retained in the locked UI.
         // Clear metadata/evidence before a database close can wait for an in-flight native call.
-        mutableState.value = VaultUiState()
+        mutableState.value = VaultUiState(ocrAvailable = ocrAvailable)
         vault.lock()
     }
 
@@ -246,12 +250,16 @@ class VaultUiModel(
             evidence = null, evidenceLoading = false, evidenceFailed = false) }
     }
 
-    fun readDocument(document: VaultDocument) {
-        if (!isCurrentDocument(document) || document.mimeType !in setOf("application/pdf", "text/plain")) return
+    /** An OCR script is supplied only by a current user language selection. */
+    fun readDocument(document: VaultDocument, script: OcrScript? = null) {
+        if (!isCurrentDocument(document)) return
+        if (script == null && document.mimeType !in setOf("application/pdf", "text/plain")) return
+        if (script != null && (!mutableState.value.ocrAvailable ||
+            document.mimeType !in setOf("application/pdf", "image/jpeg", "image/png"))) return
         runOperation { expectedSession ->
             publish(expectedSession) { it.copy(indexing = true) }
             try {
-                vault.indexDocument(document.id)
+                vault.indexDocument(document.id, script)
                 publish(expectedSession) { it.copy(message = R.string.indexing_finished) }
             } finally {
                 // Failure can publish a failed/partial status while retaining earlier source text.

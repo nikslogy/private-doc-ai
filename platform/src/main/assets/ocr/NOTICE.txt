@@ -1,0 +1,26 @@
+Offline OCR development integration
+
+Tesseract4Android 4.9.0: Copyright 2019 Adaptech s.r.o., Robert Pösel.
+Apache License 2.0. Upstream Java/JNI derives from tess-two and Tesseract Tools
+for Android; upstream source copyright notices remain applicable.
+Reviewed upstream revision: 15c534717b1cb58261b58d4e4c1200c7f81f668c.
+https://github.com/adaptech-cz/Tesseract4Android/tree/15c534717b1cb58261b58d4e4c1200c7f81f668c
+
+Native components identified by that upstream revision:
+Tesseract 5.5.1 (Apache License 2.0); Leptonica 1.85.0 (BSD-style license);
+Independent JPEG Group libjpeg v9f (IJG license); libpng 1.6.48
+(libpng license and upstream copyright notices).
+Full upstream license texts are in ocr/licenses/ in this APK.
+
+English, Hindi and Marathi tessdata_fast traineddata are Apache License 2.0.
+Source revision: 87416418657359cb625c412a48b6e1d6d41c29bd.
+https://github.com/tesseract-ocr/tessdata_fast/tree/87416418657359cb625c412a48b6e1d6d41c29bd
+Full model license: ocr/licenses/tessdata-fast-LICENSE.txt.
+Model files are build inputs, not source-repository attachments.
+
+Binary inputs, sizes and SHA-256 values are recorded in the source project's
+config/ocr-models.json and docs/checkpoints/2026-10-22-ocr-input-provenance.json.
+An upstream source review and a downloaded AAR digest do not independently
+establish a reproducible source-to-binary relationship. This notice is for the
+OCR inputs; it does not claim the whole application's native license audit is
+complete or that recognition quality has been established for any language.

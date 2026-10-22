@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "probeOnly": true,
+  "coordinate": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+  "sourceRevision": "15c534717b1cb58261b58d4e4c1200c7f81f668c",
+  "inputs": [
+    {
+      "url": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.pom",
+      "fileName": "tesseract4android-4.9.0.pom",
+      "byteCount": 731,
+      "sha256": "4353bbd6b5fb2801ea2276b100a1a45cf90668cdaea09989e0814792a8d75732"
+    },
+    {
+      "url": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar",
+      "fileName": "tesseract4android-4.9.0.aar",
+      "byteCount": 12848454,
+      "sha256": "bce5d6413a1a5ae3d7240033fbbc851ba3217d0a08d9769400e17a077f42cb2a"
+    }
+  ],
+  "nativeLibraries": [
+    {
+      "abi": "arm64-v8a",
+      "name": "libjpeg.so",
+      "byteCount": 251888,
+      "sha256": "0e751fcd26f2a60e8b87c2da274473c6c2a26352e5a9071033f1f88a93b39308",
+      "loadSegments": 2,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "libleptonica.so",
+      "byteCount": 2878240,
+      "sha256": "00436d8562bc833a22111a1451cf46147f05aecf8a257751e127689a1ee6e3c4",
+      "loadSegments": 3,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "libpngx.so",
+      "byteCount": 219880,
+      "sha256": "e70d48e405b56f1df06921c4ebbee0612140a8f2c7b0a2641fbbf6fea53eda4c",
+      "loadSegments": 2,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "arm64-v8a",
+      "name": "libtesseract.so",
+      "byteCount": 4164360,
+      "sha256": "bce8dcca1544d9f8708ac126c1e920bfa92481509672d8472470e8c2eebcd43c",
+      "loadSegments": 3,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "armeabi-v7a",
+      "name": "libjpeg.so",
+      "byteCount": 187096,
+      "sha256": "2b2c8a048f8a10bbaab41e90cbd2db3eececde70899e3f3a2a3d36208ccd5f76",
+      "loadSegments": 2,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "armeabi-v7a",
+      "name": "libleptonica.so",
+      "byteCount": 2160740,
+      "sha256": "309d92453c04479def3f54e4a319271766ad11cc5a0995b34e80764bd505680e",
+      "loadSegments": 3,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "armeabi-v7a",
+      "name": "libpngx.so",
+      "byteCount": 162104,
+      "sha256": "f92d0ba22b90600b3efce1568e1ce7d7e960927cec4afe500fb5514e1bf323c3",
+      "loadSegments": 2,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "armeabi-v7a",
+      "name": "libtesseract.so",
+      "byteCount": 3004948,
+      "sha256": "b1c543bcbc128cb89bdbe2eaca4d89d34c448195aad464c92fc6103ff1e4e0ab",
+      "loadSegments": 3,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "x86",
+      "name": "libjpeg.so",
+      "byteCount": 271936,
+      "sha256": "2c8c5e1bc43f3a153e7ccafa368ee36ad6183ef381ff13584afe4bf002c7d637",
+      "loadSegments": 2,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "x86",
+      "name": "libleptonica.so",
+      "byteCount": 2969648,
+      "sha256": "1f2042cb18f630a2d79870cf0f15bc9a986d64ec1e71c20d7912691a2baa5ad6",
+      "loadSegments": 3,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "x86",
+      "name": "libpngx.so",
+      "byteCount": 234260,
+      "sha256": "045251f5da11a984df7e0fec8e68eb1c507417ab9b1bf7d31b628d36adcc550c",
+      "loadSegments": 2,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "x86",
+      "name": "libtesseract.so",
+      "byteCount": 4339620,
+      "sha256": "6a11dc8331d3eb0f91c6efd7fc36a6ea4c3d6c2d3eb1d3c6f934a3f3f5aca048",
+      "loadSegments": 3,
+      "minimumAlignment": 4096
+    },
+    {
+      "abi": "x86_64",
+      "name": "libjpeg.so",
+      "byteCount": 281728,
+      "sha256": "2621f8760a4dda288c7efe14db8be19f8c86ec7bf1e1a3a768fd99ab82e0a296",
+      "loadSegments": 2,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "x86_64",
+      "name": "libleptonica.so",
+      "byteCount": 3104384,
+      "sha256": "f53676b54a1206de049fdb9f2944b49e548468acafe015501867c5768b78aa92",
+      "loadSegments": 3,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "x86_64",
+      "name": "libpngx.so",
+      "byteCount": 231224,
+      "sha256": "efbba9d3d9b6fbf688d6027b976406822dacca8d81f67972a3378a5fd30769f0",
+      "loadSegments": 2,
+      "minimumAlignment": 16384
+    },
+    {
+      "abi": "x86_64",
+      "name": "libtesseract.so",
+      "byteCount": 4332136,
+      "sha256": "29a5f2fb99af2ed00c93537191b4ff7af50993b7c578ab32e9f49435ee857b2e",
+      "loadSegments": 3,
+      "minimumAlignment": 16384
+    }
+  ],
+  "tessdataRevision": "87416418657359cb625c412a48b6e1d6d41c29bd",
+  "models": [
+    {
+      "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata",
+      "fileName": "eng.traineddata",
+      "byteCount": 4113088,
+      "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+      "language": "eng"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/hin.traineddata",
+      "fileName": "hin.traineddata",
+      "byteCount": 1122751,
+      "sha256": "4c73ffc59d497c186b19d1e90f5d721d678ea6b2e277b719bee4e2af12271825",
+      "language": "hin"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/mar.traineddata",
+      "fileName": "mar.traineddata",
+      "byteCount": 2118233,
+      "sha256": "0ba3f2d116972e72fe9e176bc84c38e81dfb6670f4ed1f7f6c8e16a27da7cb61",
+      "language": "mar"
+    }
+  ],
+  "modelLicense": {
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/LICENSE",
+    "fileName": "LICENSE.tessdata.txt",
+    "byteCount": 11358,
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  "modelLicenseFirstLines": [
+    "",
+    "                                 Apache License",
+    "                           Version 2.0, January 2004",
+    "                        http://www.apache.org/licenses/",
+    "",
+    "   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION",
+    "",
+    "   1. Definitions.",
+    "",
+    "      \"License\" shall mean the terms and conditions for use, reproduction,"
+  ],
+  "pomDependencies": [
+    {
+      "groupId": "androidx.annotation",
+      "artifactId": "annotation",
+      "version": "1.3.0",
+      "scope": "runtime"
+    }
+  ],
+  "manifest": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"cz.adaptech.tesseract4android\" >\n\n    <uses-sdk android:minSdkVersion=\"21\" />\n\n</manifest>",
+  "sourcesUnavailable": true,
+  "inspectionPassed": true,
+  "evidence": {
+    "workflowRun": "https://github.com/nikslogy/private-doc-ai/actions/runs/39718922514",
+    "jobId": 119627600961,
+    "sourceCommit": "3b75dc1dce24d838e858f236162e93cfa4cbb14c",
+    "verificationScope": "Actual public input bytes inspected on GitHub runner; not local archive verification or reproducible native build proof."
+  }
+}

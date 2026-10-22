@@ -70,15 +70,20 @@ decrypted keys are persisted for a background task. A process-wide vault mutex
 prevents another controller's recovery from racing publication.
 
 `OfflineDocumentIndexer` accepts a supplied original and optional OCR engine,
-never a vault key. Production has no approved OCR engine; raster pages keep a
-needs-OCR state and native pages remain available. ML Kit's actual Latin and
-Devanagari adapter is instrumentation-only because diagnostics behavior is
-unresolved. Neither production flavour includes it. The probe waits for a Task
-to settle before releasing/recycling its bitmap; cancellation is cooperative.
+never a vault key. The new Tesseract adapter receives only a bounded memory
+bitmap, geometry, requested script and a cancellation predicate. A separate
+public-model store verifies bundled weights before native initialization. Each
+page gets a fresh engine with supported debug/output suppression checked before
+pixels. A joined watchdog requests cooperative stop; a native hang still needs
+future isolation. The indexer validates page identity, script, exact offsets,
+boxes, states and budgets before encrypted persistence. Failed/empty OCR retries
+retain earlier useful evidence and mark a failure. Native PDF text stays preferred.
+ML Kit's real adapter remains instrumentation-only due unresolved diagnostics;
+neither production flavour includes that SDK. Its Task-lifetime probe is separate.
 
 LiteRT-LM currently has a real CPU load probe with automatic tools disabled.
 It is not a `LocalModelEngine` generation implementation. The model catalogue is
-empty. There is no approved production OCR engine, chat/QA executor, full PDF
+empty. OCR Android verification is pending. There is no chat/QA executor, full PDF
 viewer, derivative executor, backup store or recovery flow yet. These are
 ordered future milestones, not capabilities implied by interface names.
 

@@ -11,6 +11,8 @@ EXPECTED = {
     "com.privateassistant.platform.vault.VaultEvidenceMigrationInstrumentedTest": 3,
     "com.privateassistant.platform.vault.StreamingCryptoInstrumentedTest": 4,
     "com.privateassistant.platform.vault.DurableFilesInstrumentedTest": 2,
+    "com.privateassistant.platform.documents.OcrBoundaryInstrumentedTest": 3,
+    "com.privateassistant.platform.documents.TesseractOcrInstrumentedTest": 6,
 }
 
 

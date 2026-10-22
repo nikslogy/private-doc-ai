@@ -35,7 +35,13 @@ data class DocumentIndexResult(val pages: List<IndexedPage>) {
     val complete: Boolean get() = pages.all { it.state == PageIndexState.READY || it.state == PageIndexState.EMPTY }
 }
 
-/** Real engines may be supplied to development probes; production has none approved. */
+/** Shared limits at both the recognition and encrypted persistence boundaries. */
+internal object DocumentIndexLimits {
+    const val MAX_SPANS_PER_PAGE = 20_000
+    const val MAX_SPANS_PER_DOCUMENT = 50_000
+}
+
+/** A real local engine consumes only the supplied page; availability is explicit. */
 interface OcrEngine {
     /** Synchronous: may return only once the engine has finished consuming the bitmap. */
     fun recognize(bitmap: android.graphics.Bitmap, pageNumber: Int, geometry: PageGeometry, script: OcrScript): IndexedPage

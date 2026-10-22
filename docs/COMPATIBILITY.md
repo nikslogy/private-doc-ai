@@ -38,6 +38,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API36 x86_64; physical checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
+| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR candidate | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; API36 runtime tests pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |
 
 Actual published artifacts resolved and compiled in CI without metadata-version
@@ -81,6 +82,19 @@ than silently changing routing. Tests use synthetic hosts/fake tools; the
 actual session proxy remains unreachable and downloads are not verified.
 
 ## Exact spike APIs
+
+The next OCR build uses a separately reviewed Tesseract adapter, not the ML Kit
+probe. `config/ocr-runtime.json` pins the resolved AAR; `config/ocr-models.json`
+pins public English/Hindi/Marathi tessdata_fast bytes at immutable revision
+87416418657359cb625c412a48b6e1d6d41c29bd. The app receives bitmap pixels in
+memory and checks supported debug/output options before recognition. The
+interruptible binding entry point is getHOCRText; transient markup is discarded
+and evidence is constructed from ResultIterator lines. Watchdog stop requests
+settle before native cleanup/bitmap recycling; no hard native timeout is claimed.
+The [actual input inventory](checkpoints/2026-10-22-ocr-input-provenance.json)
+records 16 KiB alignment for OCR arm64/x86_64 libraries and 4 KiB for 32-bit ABIs.
+Published sources JAR was unavailable; the wrapper tag was reviewed but a
+reproducible native binary/source identity is not established.
 
 `MemoryDocumentParser` opens a bounded `ByteArray` with `PdfiumCore.newDocument`.
 It closes document/page/text handles, extracts native page text and renders

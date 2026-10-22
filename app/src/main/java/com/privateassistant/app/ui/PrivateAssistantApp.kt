@@ -140,6 +140,7 @@ fun PrivateAssistantApp(
                             DocumentEvidenceScreen(state, document, onBack = model::closeDocument,
                                 onRetry = { model.openDocument(document, state.selectedPage) },
                                 onRead = { model.readDocument(document) }, onCancelRead = model::cancelReading,
+                                onOcr = { script -> model.readDocument(document, script) },
                                 onExport = { model.closeDocument(); onExport(document) },
                                 onDelete = { model.deleteDocument(document) })
                         } ?: DocumentsScreen(state, model::setQuery, onImport, model::openDocument)

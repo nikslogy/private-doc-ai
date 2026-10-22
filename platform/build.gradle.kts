@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.room)
 }
 
+// The direct AAR has no transitive dependency or POM-driven behavior. The exact
+// same coordinate is verified below before Android preBuild can complete.
+val tesseractAarCoordinate = "com.github.adaptech-cz.Tesseract4Android:tesseract4android:${libs.versions.tesseract.get()}@aar"
+val tesseractBinary by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    isTransitive = false
+}
+
 android {
     namespace = "com.privateassistant.platform"
     compileSdk = 36
@@ -24,11 +33,32 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    sourceSets.getByName("main").assets.srcDir(layout.buildDirectory.dir("generated/ocrAssets"))
     sourceSets.getByName("androidTest").assets.srcDirs(
         rootProject.file("test-fixtures/generated"),
         rootProject.file("config"),
     )
 }
+
+// Downloads are explicit in check-host.sh. Direct Gradle builds verify the exact
+// generated public assets without network access or implicit model selection.
+val verifyOcrAssets by tasks.registering(Exec::class) {
+    workingDir(rootProject.projectDir)
+    commandLine("python3", "scripts/prepare-ocr-assets.py", "--verify-only")
+    inputs.file(rootProject.file("config/ocr-models.json"))
+    inputs.file(rootProject.file("scripts/prepare-ocr-assets.py"))
+    inputs.dir(layout.buildDirectory.dir("generated/ocrAssets"))
+}
+val verifyTesseractBinary by tasks.registering(Exec::class) {
+    workingDir(rootProject.projectDir)
+    inputs.file(rootProject.file("config/ocr-runtime.json"))
+    inputs.file(rootProject.file("scripts/verify-ocr-dependency.py"))
+    inputs.files(tesseractBinary)
+    doFirst {
+        commandLine("python3", "scripts/verify-ocr-dependency.py", tesseractBinary.singleFile.absolutePath)
+    }
+}
+tasks.named("preBuild").configure { dependsOn(verifyOcrAssets, verifyTesseractBinary) }
 
 // The Room plugin isolates KSP output per variant, then verifies/copies equal schemas.
 room { schemaDirectory("$projectDir/schemas") }
@@ -46,6 +76,8 @@ dependencies {
     implementation(libs.pdfium)
     implementation(libs.litertlm)
     implementation(libs.exifinterface)
+    implementation(tesseractAarCoordinate) { isTransitive = false }
+    add(tesseractBinary.name, tesseractAarCoordinate)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.junit)

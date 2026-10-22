@@ -2,6 +2,7 @@ package com.privateassistant.platform.vault
 
 import com.privateassistant.core.search.LiteralSearchQuery
 import com.privateassistant.platform.documents.DocumentIndexResult
+import com.privateassistant.platform.documents.DocumentIndexLimits
 import com.privateassistant.platform.documents.EvidenceBox
 import com.privateassistant.platform.documents.ExtractionMethod
 import com.privateassistant.platform.documents.MemoryDocumentParser
@@ -45,10 +46,13 @@ internal object VaultEvidenceStore {
     ): List<VaultPageEvidence> = result.pages.map { page ->
         val old = previous.firstOrNull { it.pageNumber == page.pageNumber }
         val pending = page.state == PageIndexState.NEEDS_OCR || page.errorCode == "OCR_UNAVAILABLE"
+        val emptyOcr = page.state == PageIndexState.EMPTY &&
+            (page.method == ExtractionMethod.OCR_LATIN || page.method == ExtractionMethod.OCR_DEVANAGARI)
         if (pending && old != null && old.text.isNotBlank()) {
             // A native-only refresh cannot erase valid OCR for this immutable original.
             old
-        } else if (page.state == PageIndexState.FAILED && !pending && old != null && old.text.isNotBlank()) {
+        } else if ((page.state == PageIndexState.FAILED && !pending || emptyOcr) && old != null && old.text.isNotBlank()) {
+            // An empty OCR retry is not stronger evidence than previously read text.
             old.copy(state = VaultPageState.FAILED)
         } else {
             VaultPageEvidence(
@@ -128,12 +132,12 @@ internal object VaultEvidenceStore {
     private fun validate(document: DocumentEntity, pages: List<VaultPageEvidence>) {
         if (pages.size !in 1..MemoryDocumentParser.MAX_PDF_PAGES ||
             pages.sumOf { it.text.length.toLong() } > MemoryDocumentParser.MAX_TEXT_CHARS ||
-            pages.sumOf { it.spans.size.toLong() } > MAX_SPANS_PER_DOCUMENT ||
+            pages.sumOf { it.spans.size.toLong() } > DocumentIndexLimits.MAX_SPANS_PER_DOCUMENT ||
             pages.withIndex().any { (index, page) -> page.pageNumber != index + 1 }
         ) throw VaultIntegrityException()
         pages.forEach { page ->
             if (page.documentId != document.id || page.revisionId != document.revisionId ||
-                page.spans.size > MAX_SPANS_PER_PAGE || page.extractorVersion.length !in 1..128 ||
+                page.spans.size > DocumentIndexLimits.MAX_SPANS_PER_PAGE || page.extractorVersion.length !in 1..128 ||
                 (page.state == VaultPageState.READY && page.text.isBlank()) ||
                 (page.state == VaultPageState.EMPTY && page.text.isNotBlank()) ||
                 (page.geometry != null && (page.geometry.pageNumber != page.pageNumber || page.geometry.width <= 0 || page.geometry.height <= 0))
@@ -150,7 +154,4 @@ internal object VaultEvidenceStore {
             }
         }
     }
-
-    private const val MAX_SPANS_PER_PAGE = 20_000
-    private const val MAX_SPANS_PER_DOCUMENT = 50_000L
 }

@@ -125,7 +125,7 @@ class VaultEvidenceMigrationInstrumentedTest {
         }
     }
 
-    @Test fun failedPageRetainsPriorEvidenceAndInterruptedIndexRequiresRetry() {
+    @Test fun failedOrEmptyOcrRetainsPriorEvidenceAndInterruptedIndexRequiresRetry() {
         withStorage { context, _, path, key ->
             val document = document()
             val previous = page(document, "Retain exact premium 00019")
@@ -135,10 +135,21 @@ class VaultEvidenceMigrationInstrumentedTest {
             assertEquals(previous.text, merged.single().text)
             assertEquals(VaultPageState.FAILED, merged.single().state)
             assertEquals(VaultIndexState.PARTIAL, VaultEvidenceStore.indexState(merged))
+            val priorOcr = previous.copy(method = ExtractionMethod.OCR_LATIN, extractorVersion = "prior-ocr-v1")
+            val emptyOcr = DocumentIndexResult(listOf(IndexedPage(1, "", null, ExtractionMethod.OCR_LATIN,
+                "new-ocr-v1", state = PageIndexState.EMPTY)))
+            val retainedOcr = VaultEvidenceStore.indexed(document, emptyOcr, listOf(priorOcr))
+            assertEquals(priorOcr.copy(state = VaultPageState.FAILED), retainedOcr.single())
+            assertEquals(VaultIndexState.PARTIAL, VaultEvidenceStore.indexState(retainedOcr))
+            // Explicit native extraction keeps its own semantics; this rule is OCR-only.
+            val nativeEmpty = emptyOcr.copy(pages = emptyOcr.pages.map { it.copy(method = ExtractionMethod.UTF8_TEXT) })
+            val nativePages = VaultEvidenceStore.indexed(document, nativeEmpty, listOf(previous))
+            assertEquals(VaultPageState.EMPTY, nativePages.single().state)
+            assertTrue(nativePages.single().text.isEmpty())
             withDatabase(context, path, key) { db ->
                 db.runInTransaction {
                     db.documents().insert(document)
-                    VaultEvidenceStore.replace(db, document, merged)
+                    VaultEvidenceStore.replace(db, document, retainedOcr)
                     db.documents().updateIndex(document.id, 1, VaultIndexState.INDEXING.name)
                 }
             }
@@ -146,6 +157,10 @@ class VaultEvidenceMigrationInstrumentedTest {
                 db.documents().recoverInterruptedIndexing()
                 assertEquals(VaultIndexState.FAILED.name, db.documents().find(document.id)!!.indexState)
                 assertEquals(previous.text, db.evidence().pages(document.id).single().text)
+                val retained = VaultEvidenceStore.read(db, db.documents().find(document.id)!!).single()
+                assertEquals(priorOcr.method, retained.method)
+                assertEquals(priorOcr.extractorVersion, retained.extractorVersion)
+                assertEquals(priorOcr.spans, retained.spans)
             }
         }
     }

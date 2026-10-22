@@ -23,7 +23,7 @@ for variant in ('offlineDebug', 'connectedDebug'):
         if path.exists():
             shutil.rmtree(path)
 PY
-classes='com.privateassistant.platform.vault.SqlCipherInstrumentedTest,com.privateassistant.platform.vault.VaultEvidenceMigrationInstrumentedTest,com.privateassistant.platform.vault.StreamingCryptoInstrumentedTest,com.privateassistant.platform.vault.DurableFilesInstrumentedTest'
+classes='com.privateassistant.platform.vault.SqlCipherInstrumentedTest,com.privateassistant.platform.vault.VaultEvidenceMigrationInstrumentedTest,com.privateassistant.platform.vault.StreamingCryptoInstrumentedTest,com.privateassistant.platform.vault.DurableFilesInstrumentedTest,com.privateassistant.platform.documents.OcrBoundaryInstrumentedTest,com.privateassistant.platform.documents.TesseractOcrInstrumentedTest'
 if ./gradlew --no-daemon --console=plain --stacktrace \
   "-Pandroid.injected.device.serial=$ANDROID_SERIAL" \
   "-Pandroid.testInstrumentationRunnerArguments.class=$classes" \

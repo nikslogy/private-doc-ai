@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "coordinate": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+  "sourceRevision": "15c534717b1cb58261b58d4e4c1200c7f81f668c",
+  "artifact": {
+    "url": "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar",
+    "byteCount": 12848454,
+    "sha256": "bce5d6413a1a5ae3d7240033fbbc851ba3217d0a08d9769400e17a077f42cb2a"
+  }
+}

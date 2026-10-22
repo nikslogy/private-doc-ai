@@ -10,6 +10,7 @@ room = "2.7.2"
 tink = "1.17.0"
 sqlcipher = "4.9.0"
 mlkitText = "16.0.1"
+tesseract = "4.9.0"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -7,8 +7,11 @@ python3 scripts/test-native-libraries.py
 python3 scripts/test-validation.py
 python3 scripts/test-java-tool-env.py
 python3 scripts/test-apk-delivery.py
+python3 scripts/test-ocr-assets.py
 python3 scripts/security-check.py
 scripts/bootstrap-android.sh --check-only
+# These public OCR assets are bundled in both variants; app document processing stays offline.
+python3 scripts/prepare-ocr-assets.py --download
 [[ -x ./gradlew ]] || { printf 'Gradle wrapper is missing. Restore the verified wrapper files; do not fetch an unverified JAR.\n' >&2; exit 1; }
 ./gradlew --no-daemon --console=plain --stacktrace \
   :core:test \
