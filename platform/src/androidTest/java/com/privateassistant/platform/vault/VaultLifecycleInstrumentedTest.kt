@@ -6,6 +6,15 @@ import android.content.ContextWrapper
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.privateassistant.core.DocumentId
+import com.privateassistant.core.EvidenceValidator
+import com.privateassistant.core.PageText
+import com.privateassistant.core.RevisionId
+import com.privateassistant.core.RevisionRef
+import com.privateassistant.core.RevisionText
+import com.privateassistant.core.facts.FieldKey
+import com.privateassistant.core.facts.FieldResolution
+import com.privateassistant.core.facts.LabelledFieldExtractor
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
@@ -57,15 +66,36 @@ class VaultLifecycleInstrumentedTest {
             assertEquals(1, controller.documents().size)
             assertEquals(VaultIndexState.INDEXED, original.indexState)
             assertEquals(1, original.pageCount)
-            val evidence = controller.pageEvidence(original.id).single()
+            val evidence = controller.pageEvidence(original.id, original.revisionId).single()
             assertEquals(expected.toString(Charsets.UTF_8), evidence.text)
+            val originalFile = File(vaultDirectory, "objects/${original.revisionId}.blob")
+            val ciphertextBeforeFacts = originalFile.readBytes()
+            try {
+                controller.pageEvidence(original.id, UUID.randomUUID().toString())
+                fail("A pinned read must reject a different revision")
+            } catch (_: VaultSourceUnavailableException) {
+                // A stale source selection must not silently become the current source.
+            }
+            val ref = RevisionRef(DocumentId(original.id), RevisionId(original.revisionId))
+            val sourceText = RevisionText(ref, listOf(PageText(evidence.pageNumber, evidence.text)))
+            val fields = LabelledFieldExtractor().extract(sourceText)
+            assertFalse(fields.truncated)
+            assertEquals("00007123", fields.candidates.single { it.key == FieldKey.POLICY_NUMBER }.rawValue)
+            assertEquals(setOf("INR 1,234.50", "INR 1,235.50"), fields.candidates
+                .filter { it.key == FieldKey.PREMIUM_TOTAL }.map { it.rawValue }.toSet())
+            assertTrue(fields.resolve(FieldKey.PREMIUM_TOTAL) is FieldResolution.Conflict)
+            assertEquals("03/04/2026", fields.candidates.single { it.key == FieldKey.COVERAGE_START }.rawValue)
+            assertTrue(fields.candidates.all { EvidenceValidator().validate(it.evidence, sourceText).isValid })
+            assertTrue(fields.candidates.all { it.evidence.ref == ref })
+            assertArrayEquals("Reading fields must leave immutable original ciphertext unchanged",
+                ciphertextBeforeFacts, originalFile.readBytes())
             val hit = controller.searchDocuments("PRIVATE_VAULT_LIFECYCLE_CANARY").single()
             assertEquals(original.id, hit.document.id)
             assertEquals(original.revisionId, hit.document.revisionId)
             assertEquals(evidence.text.substring(hit.startOffset, hit.endOffset), hit.quote)
             // Explicit native reindex preserves immutable identity and exact original bytes.
             controller.indexDocument(original.id)
-            assertEquals(evidence, controller.pageEvidence(original.id).single())
+            assertEquals(evidence, controller.pageEvidence(original.id, original.revisionId).single())
             assertArrayEquals(expected, ByteArrayOutputStream().also { controller.copyOriginalTo(original.id, it) }.toByteArray())
             controller.lock()
             try {
@@ -75,7 +105,7 @@ class VaultLifecycleInstrumentedTest {
                 // Expected.
             }
             try {
-                controller.pageEvidence(original.id)
+                controller.pageEvidence(original.id, original.revisionId)
                 fail("A locked controller must not return evidence")
             } catch (_: VaultLockedException) {
                 // Expected.
@@ -107,13 +137,19 @@ class VaultLifecycleInstrumentedTest {
             assertFalse("Interrupted staging ciphertext must be reconciled", interrupted.exists())
             assertTrue("Recovery must not remove unrecognized files", unrecognized.exists())
             assertEquals(original, controller.documents().single())
-            assertEquals(evidence, controller.pageEvidence(original.id).single())
+            val reopenedEvidence = controller.pageEvidence(original.id, original.revisionId).single()
+            assertEquals(evidence, reopenedEvidence)
+            val reopenedSource = RevisionText(ref, listOf(PageText(reopenedEvidence.pageNumber, reopenedEvidence.text)))
+            val reopenedFields = LabelledFieldExtractor().extract(reopenedSource)
+            assertEquals(fields.candidates.map { listOf(it.key, it.rawValue, it.evidence, it.decimal?.plainText, it.currency) },
+                reopenedFields.candidates.map { listOf(it.key, it.rawValue, it.evidence, it.decimal?.plainText, it.currency) })
+            assertTrue(reopenedFields.candidates.all { EvidenceValidator().validate(it.evidence, reopenedSource).isValid })
+            assertArrayEquals(ciphertextBeforeFacts, originalFile.readBytes())
             assertEquals(original.id, controller.searchDocuments("PRIVATE_VAULT_LIFECYCLE_CANARY").single().document.id)
             assertArrayEquals(expected, ByteArrayOutputStream().also { controller.copyOriginalTo(original.id, it) }.toByteArray())
 
             // A missing referenced object must reject recovery before it removes orphan ciphertext.
             controller.lock()
-            val originalFile = File(vaultDirectory, "objects/${original.revisionId}.blob")
             val held = File(vaultDirectory, "held-ciphertext")
             assertTrue(originalFile.renameTo(held))
             val preservedOrphan = File(vaultDirectory, "objects/${UUID.randomUUID()}.blob")

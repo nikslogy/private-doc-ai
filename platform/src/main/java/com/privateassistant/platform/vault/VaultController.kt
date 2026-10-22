@@ -159,11 +159,15 @@ class VaultController(context: Context) {
         }
     }
 
-    suspend fun pageEvidence(documentId: String): List<VaultPageEvidence> = withContext(Dispatchers.IO) {
+    /** Optional revision pin prevents a selected source silently following a future revision. */
+    suspend fun pageEvidence(documentId: String, expectedRevisionId: String? = null): List<VaultPageEvidence> = withContext(Dispatchers.IO) {
         operations.withLock {
             val active = requireSession()
             val document = active.database.documents().find(validId(documentId))
                 ?: throw VaultIndexException()
+            if (expectedRevisionId != null && document.revisionId != validId(expectedRevisionId)) {
+                throw VaultSourceUnavailableException()
+            }
             val pages = VaultEvidenceStore.read(active.database, document)
             currentCoroutineContext().ensureActive()
             ensureSession(active)

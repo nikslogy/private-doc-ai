@@ -19,13 +19,13 @@ must be measured before privacy claims are released.
 ML Kit documents diagnostic collection, including installation identifiers and
 usage/performance metrics. It is absent from both production variants. Its
 real OCR adapter is an instrumentation-only synthetic-data probe guarded
-against INTERNET permission; production reports OCR unavailable. Blocking
+against INTERNET permission; production instead uses local Tesseract. Blocking
 network permission alone would not establish absence of local diagnostic
 queues. See [the decision record](decisions/0003-probe-only-bundled-ocr.md).
 The host gate checks direct source dependencies and the resolved production
 runtime graph, once tooling is available, for accidental SDK inclusion.
 
-The next development build uses a separate local Tesseract adapter with pinned
+The current development build uses a separate local Tesseract adapter with pinned
 public English/Hindi/Marathi language files. Model downloads happen on the build
 runner and are verified before packaging; the app does not download them.
 Images are supplied as bounded memory bitmaps. The adapter disables supported

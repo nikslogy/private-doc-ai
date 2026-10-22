@@ -1,1 +1,8 @@
 PRIVATE_VAULT_LIFECYCLE_CANARY: synthetic document for encrypted-vault instrumentation.
+Policy number: 00007123
+Total premium: INR 1,234.50
+Total premium: INR 1,235.50
+Pre-tax premium: INR 1,000.00
+Tax: INR 234.50
+Insured value: INR 6,00,000.00
+Coverage start: 03/04/2026

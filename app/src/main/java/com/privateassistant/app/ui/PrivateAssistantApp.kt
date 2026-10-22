@@ -144,7 +144,10 @@ fun PrivateAssistantApp(
                                 onExport = { model.closeDocument(); onExport(document) },
                                 onDelete = { model.deleteDocument(document) })
                         } ?: DocumentsScreen(state, model::setQuery, onImport, model::openDocument)
-                        AppPage.ASSISTANT -> AssistantScreen()
+                        AppPage.ASSISTANT -> DocumentFactsScreen(state,
+                            onSelectDocument = model::chooseFactsDocument,
+                            onClearDocument = model::clearFactsDocument,
+                            onViewSource = model::viewFactSource)
                         AppPage.PRIVACY -> PrivacyScreen(onLock)
                     }
                 }
@@ -343,27 +346,6 @@ private fun DocumentRow(document: VaultDocument, enabled: Boolean, onClick: () -
             Spacer(Modifier.width(8.dp))
             AppIcon(R.drawable.ic_chevron, R.string.document_details, Modifier.size(20.dp))
         }
-    }
-}
-
-@Composable
-private fun AssistantScreen() {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        Text(stringResource(R.string.assistant_title), style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold)
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
-            Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                AppIcon(R.drawable.ic_sparkle, null, Modifier.size(38.dp))
-                Text(stringResource(R.string.assistant_unavailable_title), style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.SemiBold)
-                Text(stringResource(R.string.assistant_unavailable_body), style = MaterialTheme.typography.bodyMedium)
-            }
-        }
-        InfoBlock(R.drawable.ic_file, R.string.assistant_available_title, R.string.assistant_available_body)
-        InfoBlock(R.drawable.ic_shield, R.string.assistant_privacy_title, R.string.assistant_privacy_body)
-        Text(stringResource(R.string.assistant_roadmap_note), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

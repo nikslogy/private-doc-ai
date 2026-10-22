@@ -1,5 +1,7 @@
 package com.privateassistant.app.ui
 
+import com.privateassistant.core.facts.FieldKey
+
 /** Ephemeral view data. These values must be cleared with the unlocked session. */
 enum class IndexStatusUi { NOT_INDEXED, NEEDS_OCR, PARTIAL, READY, FAILED, INDEXING }
 
@@ -30,4 +32,20 @@ data class SearchMatchUi(
     val documentId: String,
     val pageNumber: Int,
     val excerpt: String,
+)
+
+/** Label matches, not generated answers. Kept only in the authorized session's memory. */
+data class FieldCandidateUi(val rawValue: String, val pageNumber: Int, val quote: String)
+
+data class FieldGroupUi(
+    val key: FieldKey,
+    val candidates: List<FieldCandidateUi>,
+    val conflicting: Boolean,
+)
+
+data class DocumentFactsUi(
+    val revisionId: String,
+    val groups: List<FieldGroupUi>,
+    val truncated: Boolean,
+    val incomplete: Boolean,
 )

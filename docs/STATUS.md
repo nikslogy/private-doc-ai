@@ -1,5 +1,22 @@
 # Development status
 
+## M3 document-facts update in progress — 22 October 2026
+
+The user reports the Preview app is working and asks to defer OCR tuning.
+This is a manual report, not a completed physical-device suite. The next source
+adds an explicit document/revision picker and conservative English labelled
+fields with exact quotes/page links, distinct monetary meanings, visible conflicts
+and partial-text warnings. Facts clear on lock/delete/reindex and persist only in
+unlocked memory. No model, AI answer, remote processing or schema migration was
+added. See [DOCUMENT_FACTS.md](DOCUMENT_FACTS.md). Source version is now code 4 /
+0.3.0-dev; the latest verified/downloadable APK below is still code 3 until the
+new stable delivery gate passes.
+
+Local scripts/check-host.sh passed all 77 Python cases and source policy checks,
+then failed at absent pinned Gradle/Android SDK prerequisites. New Kotlin tests,
+UI compilation/lint and augmented real-credential Android lifecycle checks await
+the GitHub runner. No local Android result is claimed.
+
 Checkpoint 8: 22 October 2026 — stable-signed offline OCR development APKs ready.
 **Full host checks and 44 Android test executions passed. New Preview apps install
 alongside existing apps and start separate vaults. Keep the existing apps/data.**
@@ -106,16 +123,23 @@ bytes/licences and source-to-binary provenance limits.
 
 ## Next concrete task
 
-Test Preview OCR/import/search/export/locking on the user's phone with synthetic
-scans. Run the full explicit-target device suite and a subsequent same-key APK
-update preserving a synthetic vault. Record actual outcomes; absence of a device
-is never a pass. Measure representative English/Hindi/Marathi accuracy, active
+Validate and deliver the code-4 M3 document-facts update with the existing Preview
+IDs and signing identity. Then implement M4 verified on-device model management,
+actual inference and cancellation before M5 cited questions/summaries. General
+AI remains unavailable while config/models.json is empty. Remaining M3 retrieval
+evaluation and follow-up/ambiguity cases are tracked separately from this narrow
+label reader; no full milestone or QA accuracy claim is made.
+
+The full explicit-target device suite and same-key APK update preserving a
+synthetic vault remain pending. Record actual outcomes; absence of a device
+is never a pass. OCR tuning is deferred by user request. Remaining accuracy,
+cancellation/privacy/hardware gates still apply. Measure English/Hindi/Marathi accuracy, active
 cancellation, memory/thermal behavior, log/filesystem/connected traffic canaries
 and actual 16 KiB loading. Finish complete native provenance/notices and M0/M1
 hardware/privacy gates; encrypted thumbnails and remaining M2 validation are open.
 
 AI answers/summaries remain unavailable: config/models.json is empty and no
-on-device generation engine is shipped. Next product steps are M3 fields/source
-selection/retrieval, M4 verified local model management/inference, M5 cited Q&A
+on-device generation engine is shipped. Product steps continue with M4 verified
+local model management/inference, M5 cited Q&A
 and summaries, M6 document tools and M7 encrypted backup/recovery. No remote
 processing, telemetry, cloud fallback or app-store release was enabled.

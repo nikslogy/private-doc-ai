@@ -32,6 +32,14 @@ enter the generated quoted all-terms query. Hits are independently checked
 against raw source text and return exact UTF-16 quotes from an immutable revision.
 Search is bounded lexical matching and does not infer policy validity or facts.
 
+The Assistant tab's manual facts reader pins an explicitly chosen document and
+revision. A bounded core label grammar returns literal values with validated exact
+line evidence, preserves raw identifiers/dates/decimals, and leaves conflicting
+values unresolved. Generic labels retain generic meanings. UI session/generation
+guards reject stale results; lock, deletion and reindex invalidate transient facts.
+No extracted-field plaintext file or database migration is introduced. See
+[DOCUMENT_FACTS.md](DOCUMENT_FACTS.md) for limits and scope.
+
 The UI combines name/type matches with content hits and opens a page-text
 evidence viewer showing page, revision and extraction method. It does not yet
 render a full PDF viewer. Image validation includes bounded sampled decode,
@@ -56,7 +64,8 @@ available for the future typed-action executor; no model executor is connected.
 `core` preserves explicit document/revision references and decimal source text.
 Evidence validation checks exact revision/page/UTF-16 span/quote. Numeric token
 checks cannot establish semantic field classification; application field storage
-and real QA evaluation remain necessary. Actions are a closed set with bounded
+and real QA evaluation remain necessary. The label reader supplies conservative
+field candidates, not model-based semantic verification. Actions are a closed set with bounded
 pages, image geometry, compression and rasterization consent. Model actions do
 not include export/delete. Follow-ups pin a prior selected revision. The domain
 heavy-job gate is available for future orchestration.

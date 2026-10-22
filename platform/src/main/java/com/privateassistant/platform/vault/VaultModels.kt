@@ -73,3 +73,5 @@ class VaultIndexException(cause: Throwable? = null) :
     VaultException("The document could not be indexed. Its original and previous evidence have been preserved.", cause)
 class VaultSearchException(cause: Throwable? = null) :
     VaultException("Enter up to 512 characters and 24 search terms.", cause)
+class VaultSourceUnavailableException :
+    VaultException("The selected source revision is unavailable. Select a document again.")

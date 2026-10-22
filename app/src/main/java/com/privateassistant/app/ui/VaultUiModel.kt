@@ -7,6 +7,13 @@ import android.provider.DocumentsContract
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import com.privateassistant.app.R
+import com.privateassistant.core.DocumentId
+import com.privateassistant.core.EvidenceValidator
+import com.privateassistant.core.PageText
+import com.privateassistant.core.RevisionId
+import com.privateassistant.core.RevisionRef
+import com.privateassistant.core.RevisionText
+import com.privateassistant.core.facts.LabelledFieldExtractor
 import com.privateassistant.platform.documents.ExtractionMethod
 import com.privateassistant.platform.documents.OcrScript
 import com.privateassistant.platform.vault.VaultAuthenticationRequiredException
@@ -29,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -54,6 +62,10 @@ data class VaultUiState(
     val evidence: DocumentEvidenceUi? = null,
     val evidenceLoading: Boolean = false,
     val evidenceFailed: Boolean = false,
+    val factsDocument: VaultDocument? = null,
+    val facts: DocumentFactsUi? = null,
+    val factsLoading: Boolean = false,
+    val factsFailed: Boolean = false,
     val indexing: Boolean = false,
     val ocrAvailable: Boolean = false,
     val page: AppPage = AppPage.DOCUMENTS,
@@ -75,8 +87,10 @@ class VaultUiModel(
     private var operation: Job? = null
     private var searchJob: Job? = null
     private var evidenceJob: Job? = null
+    private var factsJob: Job? = null
     private var searchGeneration = 0L
     private var evidenceGeneration = 0L
+    private var factsGeneration = 0L
     private var session = 0L
     private var pendingImports: List<Uri> = emptyList()
     private var pendingExport: VaultDocument? = null
@@ -114,10 +128,13 @@ class VaultUiModel(
         operation = null
         searchGeneration++
         evidenceGeneration++
+        factsGeneration++
         searchJob?.cancel()
         searchJob = null
         evidenceJob?.cancel()
         evidenceJob = null
+        factsJob?.cancel()
+        factsJob = null
         pendingExport = null
         // SAF URIs may be retained briefly for an import requested before the background timeout.
         // No document contents or metadata are retained in the locked UI.
@@ -219,6 +236,7 @@ class VaultUiModel(
             vault.deleteDocument(document.id)
             val documents = vault.documents()
             closeDocument()
+            if (mutableState.value.factsDocument?.id == document.id) clearFactsDocument()
             publish(expectedSession) { it.copy(documents = documents, message = R.string.document_deleted) }
         }
     }
@@ -250,6 +268,80 @@ class VaultUiModel(
             evidence = null, evidenceLoading = false, evidenceFailed = false) }
     }
 
+    /** Only a direct source-picker action sets the source; import order never chooses a policy. */
+    fun chooseFactsDocument(document: VaultDocument) {
+        if (!isCurrentDocument(document) || mutableState.value.busy) return
+        clearFactsDocument()
+        val currentSession = session
+        val generation = factsGeneration
+        mutableState.update { it.copy(factsDocument = document, factsLoading = true) }
+        factsJob = scope.launch {
+            try {
+                val pages = vault.pageEvidence(document.id, document.revisionId)
+                requireSession(currentSession)
+                if (generation != factsGeneration || !isSelectedFactsDocument(document)) return@launch
+                val facts = withContext(Dispatchers.Default) {
+                    // Stored evidence is checked again against the exact explicit immutable revision.
+                    if (pages.any { it.documentId != document.id || it.revisionId != document.revisionId }) {
+                        throw VaultIntegrityException()
+                    }
+                    if (pages.isEmpty()) {
+                        DocumentFactsUi(document.revisionId, emptyList(), truncated = false, incomplete = true)
+                    } else {
+                        val source = RevisionText(RevisionRef(DocumentId(document.id), RevisionId(document.revisionId)),
+                            pages.map { PageText(it.pageNumber, it.text) })
+                        val extracted = LabelledFieldExtractor().extract(source)
+                        currentCoroutineContext().ensureActive()
+                        val validator = EvidenceValidator()
+                        if (extracted.candidates.any { !validator.validate(it.evidence, source).isValid }) {
+                            throw VaultIntegrityException()
+                        }
+                        DocumentFactsUi(document.revisionId,
+                            extracted.candidates.groupBy { it.key }.entries.sortedBy { it.key.ordinal }.map { (key, values) ->
+                                FieldGroupUi(key, values.map { field ->
+                                    FieldCandidateUi(field.rawValue, field.evidence.pageNumber, field.evidence.quote)
+                                }, conflicting = values.map { it.rawValue }.distinct().size > 1)
+                            }, extracted.truncated,
+                            incomplete = document.indexState != VaultIndexState.INDEXED ||
+                                pages.any { it.state != VaultPageState.READY })
+                    }
+                }
+                if (generation != factsGeneration || !isSelectedFactsDocument(document)) return@launch
+                publish(currentSession) { it.copy(facts = facts, factsLoading = false) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (failure: Exception) {
+                if (session == currentSession && generation == factsGeneration && isSelectedFactsDocument(document)) {
+                    if (!handleSessionFailure(currentSession, failure)) mutableState.update {
+                        it.copy(facts = null, factsLoading = false, factsFailed = true)
+                    }
+                }
+            }
+        }
+    }
+
+    fun clearFactsDocument() {
+        factsGeneration++
+        factsJob?.cancel()
+        factsJob = null
+        mutableState.update { it.copy(factsDocument = null, facts = null, factsLoading = false, factsFailed = false) }
+    }
+
+    fun viewFactSource(pageNumber: Int) {
+        val state = mutableState.value
+        val document = state.factsDocument ?: return
+        val facts = state.facts ?: return
+        if (state.busy || !isCurrentDocument(document) || facts.revisionId != document.revisionId ||
+            pageNumber !in 1..maxOf(1, document.pageCount)) return
+        setPage(AppPage.DOCUMENTS)
+        openDocument(document, pageNumber)
+    }
+
+    private fun isSelectedFactsDocument(document: VaultDocument): Boolean = mutableState.value.let {
+        isCurrentDocument(document) && it.factsDocument?.id == document.id &&
+            it.factsDocument?.revisionId == document.revisionId
+    }
+
     /** An OCR script is supplied only by a current user language selection. */
     fun readDocument(document: VaultDocument, script: OcrScript? = null) {
         if (!isCurrentDocument(document)) return
@@ -257,6 +349,8 @@ class VaultUiModel(
         if (script != null && (!mutableState.value.ocrAvailable ||
             document.mimeType !in setOf("application/pdf", "image/jpeg", "image/png"))) return
         runOperation { expectedSession ->
+            // OCR/native refresh can change evidence even for the same immutable original.
+            if (mutableState.value.factsDocument?.id == document.id) clearFactsDocument()
             publish(expectedSession) { it.copy(indexing = true) }
             try {
                 vault.indexDocument(document.id, script)
@@ -330,7 +424,7 @@ class VaultUiModel(
         mutableState.update { it.copy(evidenceLoading = true, evidenceFailed = false) }
         evidenceJob = scope.launch {
             try {
-                val pages = vault.pageEvidence(document.id)
+                val pages = vault.pageEvidence(document.id, document.revisionId)
                 if (generation != evidenceGeneration) return@launch
                 val summary = document.indexSummary(pages.count { it.state == VaultPageState.READY && it.text.isNotBlank() })
                 val evidence = DocumentEvidenceUi(document.revisionId, summary, pages.map { page ->

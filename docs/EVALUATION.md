@@ -1,5 +1,12 @@
 # Evaluation and evidence
 
+The M3 selected-source label reader adds synthetic core extraction cases and
+augments the real authenticated vault lifecycle probe with pinned reads, exact
+field citations, conflicting premiums and unchanged original bytes/ciphertext.
+Actual execution results are recorded in STATUS. This is grammar/boundary
+verification, not a policy-QA or representative-layout accuracy benchmark.
+Phone UI/source-switch races and full held-out evaluation remain pending.
+
 This repository provides an encrypted-evidence/search development source checkpoint and a small deterministic synthetic corpus. No representative document/model benchmark has been run. Source checks and unit tests establish narrower properties than complete Android privacy or release readiness.
 
 Run `python3 scripts/test-fixtures.py` for fixture reproducibility, digests, two-page PDF structure, PNG integrity, and exact UTF-16 evidence spans. Run `python3 scripts/security-check.py` for source manifest/export/logging/execution policies. Run `scripts/check-host.sh` after provisioning the pinned toolchain for core/platform/flavor unit tests, lint, assembly, and inspection of each actual merged APK manifest. A missing toolchain is a failure with setup instructions, never a passing or silently skipped suite. `verify-artifact.sh` prints the APK SHA-256; this does not verify provenance or device behavior.
@@ -24,6 +31,7 @@ fixture tests, 22 synthetic native ELF/ZIP tests and ten mocked validation-gate
 tests (38 passing Python tests). No APK or model result is implied.
 
 ML Kit's real adapter is test-only while its diagnostics behavior is unresolved;
-both production variants report OCR unavailable. A development recognizer test
+both production variants exclude ML Kit and use the separately reviewed local
+Tesseract adapter. A development recognizer test
 cannot establish an approved telemetry-free production path or conversational
 Hindi/Marathi quality. See the decision record and NATIVE_COMPATIBILITY.md.
