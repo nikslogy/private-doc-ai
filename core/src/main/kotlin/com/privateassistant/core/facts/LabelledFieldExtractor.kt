@@ -122,6 +122,9 @@ class LabelledFieldExtractor {
             val number = match.groupValues[2]
             val suffix = match.groupValues[3].takeIf(String::isNotEmpty)
             if (prefix != null && suffix != null) return null
+            // The evidence-backed field has its own raw-token limit. Grouping
+            // can make a token exceed it even when its ungrouped decimal fits.
+            if (number.length > 128) return null
             val decimal = decimal(number) ?: return null
             val alternate = match.groupValues[4]
             if (alternate.isNotEmpty() && decimal(alternate)?.plainText != decimal.plainText) return null

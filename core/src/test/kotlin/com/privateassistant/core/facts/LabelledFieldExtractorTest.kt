@@ -132,6 +132,19 @@ class LabelledFieldExtractorTest {
         assertEquals(raw, unique("Total premium: INR $raw", FieldKey.PREMIUM_TOTAL).decimal!!.plainText)
     }
 
+    @Test fun `oversize grouped raw token is omitted without suppressing later valid fields`() {
+        // 139 source characters become 105 decimal digits after grouping is removed.
+        // The normalized decimal fits ExactDecimal, but the evidence token does not.
+        val grouped = List(35) { "123" }.joinToString(",")
+        assertTrue(grouped.length > 128)
+        assertTrue(grouped.replace(",", "").length <= 128)
+        val result = extract("Insured value: INR $grouped\nTotal premium: INR 12.30")
+        assertFalse(result.truncated)
+        assertEquals(1, result.candidates.size)
+        assertTrue(result.resolve(FieldKey.INSURED_VALUE) is FieldResolution.Missing)
+        assertEquals("12.30", (result.resolve(FieldKey.PREMIUM_TOTAL) as FieldResolution.Unique).field.decimal!!.plainText)
+    }
+
     @Test fun `negative amount retains sign and does not become positive`() {
         val field = unique("Total premium: INR -12.30", FieldKey.PREMIUM_TOTAL)
         assertEquals("-12.30", field.decimal!!.plainText)
