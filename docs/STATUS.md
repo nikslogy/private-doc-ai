@@ -1,7 +1,12 @@
 # Development status
 
 Checkpoint 6: 22 October 2026 — first-unlock repair built and emulator-verified.
-**Repaired development APKs are ready. Physical fingerprint/UI confirmation is pending.**
+**Repaired development APKs are ready. The user confirms phone unlock/login and document import work.**
+
+On 22 October 2026, the user reported that the repaired app opens, allows login
+and imports documents on the previously identified iQOO Neo 10 / Android 16.
+This is user-reported manual phone evidence for those flows, not an automated
+physical-device suite or confirmation of every security/lifecycle property.
 
 ## Install the repair
 
@@ -94,7 +99,8 @@ cleanup, missing-object rejection, limited private-file canary scans and deletio
 No authentication substitutes or weakened key policy were used.
 
 This is an emulator regression subset, not the complete check-device.sh suite.
-Physical fingerprint prompts, activity UI, actual process death/power loss,
+Beyond the user's successful unlock/import report, full physical fingerprint/UI
+coverage, actual process death/power loss,
 OEM/16 KiB runtime behavior, comprehensive leakage/traffic/performance and
 multiple physical phone tiers remain pending. Model/production OCR/recovery
 checks remain unavailable. No release-readiness claim.
@@ -122,11 +128,15 @@ Production OCR, AI answers/summaries, derivative tools and portable backup/recov
 remain unavailable; model catalogue is empty and ML Kit is instrumentation-only.
 M0/M1 stay open for the outstanding hardware/privacy/licence gates.
 
-Next: the user should install the new offline APK, open Private Vault Test and
-retry fingerprint unlock on iQOO Neo 10 / Android 16. Record the actual result.
-Then run ANDROID_SERIAL=<explicit-target> scripts/check-device.sh on authorized
+Next: finish the remaining vault/device/privacy checks; do not repeat the
+already successful initial phone unlock/import check as an unresolved blocker.
+Run ANDROID_SERIAL=<explicit-target> scripts/check-device.sh on authorized
 physical targets and document non-skipped outcomes plus full native provenance/
 licence notices, real 16 KiB loading and connected traffic inspection.
+The next product phase is production offline OCR (M2), after a privacy-approved
+engine is selected; ML Kit diagnostics remain unresolved. Then complete local
+retrieval/fields (M3), verified model management/inference (M4), and cited document
+questions/summaries (M5). File tools (M6) and encrypted backup/recovery (M7) follow.
 Use synthetic documents and keep their sources; uninstalling/losing the Keystore
 can lose access because recovery is not implemented.
 
