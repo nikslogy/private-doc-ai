@@ -73,7 +73,11 @@ Stable signing support now uses a pinned public certificate and separate
 .preview app IDs/launcher names, with no temporary-key fallback. Six new
 synthetic signing tests pass locally, and the actual PKCS12 public identity
 was verified locally without printing secrets. A disposable-key CI build check
-will verify both preview IDs/labels and rejection of an unpinned signer.
+has passed for source 7ae7c285fa9ee85a9b6f84a185cb14f6a96be984 in
+[run 39723881468](https://github.com/nikslogy/private-doc-ai/actions/runs/39723881468),
+alongside the full host gate (77 Python cases). Its Android regression step is
+still running. The user confirms both GitHub signing secrets are saved; the
+main-only actual stable-key delivery run is next.
 No actual stable-key APK or update-preserves-vault result is claimed yet.
 See [the one-time setup](DEVELOPMENT_SIGNING.md). Private key/password files
 exist only in the ignored private workspace; only the public fingerprint is committed.
@@ -95,9 +99,8 @@ Recovery is not implemented, so retain source documents and use synthetic data.
 
 ## Next concrete task
 
-Finish the stable preview build-configuration CI check. Then the user must add
-the two prepared values as GitHub repository Actions secrets; the current GitHub
-connection cannot write secrets. Trigger the main-only stable delivery workflow,
+Complete the remaining source-validation Android regressions and trigger the
+main-only actual stable delivery workflow using the user-confirmed repository secrets.
 verify both signers against the public pin, run all host/Android gates, and test
 that a subsequent same-key update preserves a synthetic vault. Deliver the
 preview APKs with separate app IDs; preserve the user's existing apps/data.
