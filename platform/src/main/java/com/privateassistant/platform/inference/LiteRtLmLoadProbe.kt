@@ -6,6 +6,7 @@ import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.LogSeverity
+import com.google.ai.edge.litertlm.ThinkingConfig
 import com.privateassistant.platform.documents.HeavyWorkGate
 import java.io.File
 import java.security.MessageDigest
@@ -72,7 +73,7 @@ class LiteRtLmLoadProbe {
             val engine = Engine(
                 EngineConfig(
                     modelPath = artifact.file.absolutePath,
-                    backend = Backend.CPU(numOfThreads = 2),
+                    backend = Backend.CPU(threadCount = 2),
                     maxNumTokens = 512,
                     cacheDir = ":nocache",
                 ),
@@ -80,7 +81,9 @@ class LiteRtLmLoadProbe {
             try {
                 engine.initialize()
                 check(engine.isInitialized()) { "Native engine initialization did not complete" }
-                engine.createConversation(ConversationConfig(automaticToolCalling = false)).use { conversation ->
+                engine.createConversation(ConversationConfig(automaticToolCalling = false,
+                    tools = emptyList(), maxOutputToken = 128,
+                    thinkingConfig = ThinkingConfig(enableThinking = false))).use { conversation ->
                     // Verifies the pinned native cancellation entry point only. Idle cancellation
                     // does not measure or establish active generation cancellation latency.
                     conversation.cancelProcess()
@@ -93,6 +96,6 @@ class LiteRtLmLoadProbe {
     }
 
     companion object {
-        const val RUNTIME_VERSION = "0.9.0"
+        const val RUNTIME_VERSION = "0.16.0"
     }
 }

@@ -250,7 +250,7 @@ class InstalledModelStore internal constructor(private val root: File, private v
             m.licenseIdentifier, m.licenseTermsUrl, m.requiresLicenseAcceptance.toString(),
             m.contextTokens.toString(), m.minimumRamBytes.toString(), m.displayName, m.downloadUrl,
             m.experimental.toString(), m.evaluatedLanguages.joinToString(","), m.evaluatedTasks.joinToString(","),
-            m.backends.joinToString(","), LiteRtLmLoadProbe.RUNTIME_VERSION)
+            m.backends.joinToString(","), m.runtimeVersion)
         return hex(MessageDigest.getInstance("SHA-256").digest(fields.joinToString("\u0000").toByteArray(Charsets.UTF_8)))
     }
     private fun hex(bytes: ByteArray) = bytes.joinToString("") { "%02x".format(it.toInt() and 255) }

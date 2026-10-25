@@ -8,6 +8,7 @@ import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.LogSeverity
 import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.SamplerConfig
+import com.google.ai.edge.litertlm.ThinkingConfig
 import com.privateassistant.platform.documents.HeavyWorkGate
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
@@ -19,15 +20,16 @@ import kotlinx.coroutines.withContext
 class LocalInferenceResult(val text: String, val runtimeVersion: String, val backend: String) {
     override fun toString(): String = "LocalInferenceResult"
 }
-enum class LocalInferenceFailure { INPUT_LIMIT, OUTPUT_LIMIT, RUNTIME, TIMEOUT, UNSUPPORTED_OUTPUT }
+enum class LocalInferenceFailure { INPUT_LIMIT, OUTPUT_LIMIT, RUNTIME, TIMEOUT, UNSUPPORTED_OUTPUT, ADMISSION }
 class LocalInferenceException(val reason: LocalInferenceFailure) : Exception(reason.name)
 
 /** Real CPU generation. No cache, tools, chat persistence, document repository or network capability. */
-class LocalInferenceRunner(private val maxDurationMillis: Long = 90_000) {
+class LocalInferenceRunner(private val maxDurationMillis: Long = 300_000) {
     init { require(maxDurationMillis in 1..300_000) }
     suspend fun generate(artifact: VerifiedModelArtifact, prompt: String,
         cancellationRequested: () -> Boolean = { false }, onGenerationStarted: () -> Unit = {},
         onNativeCancellationRequested: () -> Unit = {}, onNativeSendFailed: () -> Unit = {},
+        beforeNativeLoad: () -> Boolean = { true },
     ): LocalInferenceResult = withContext(Dispatchers.IO) {
         if (prompt.isBlank() || prompt.length > MAX_INPUT_UTF16) throw LocalInferenceException(LocalInferenceFailure.INPUT_LIMIT)
         val context = currentCoroutineContext()
@@ -40,16 +42,21 @@ class LocalInferenceRunner(private val maxDurationMillis: Long = 90_000) {
         }
         try { HeavyWorkGate.run {
             checkRequest()
+            // OCR/render work may have held the gate since the UI's earlier snapshot.
+            // Check admission inside it, immediately before allocating the native engine.
+            if (!beforeNativeLoad()) throw LocalInferenceException(LocalInferenceFailure.ADMISSION)
+            checkRequest()
             Engine.setNativeMinLogSeverity(LogSeverity.INFINITY)
             val engine = Engine(EngineConfig(modelPath = artifact.file.absolutePath,
-                backend = Backend.CPU(numOfThreads = 2), maxNumTokens = 512, cacheDir = ":nocache"))
+                backend = Backend.CPU(threadCount = 2), maxNumTokens = 512, cacheDir = ":nocache"))
             try {
                 // The runtime has no interruptible initialize entry point. Recheck after return.
                 engine.initialize()
                 check(engine.isInitialized())
                 checkRequest()
                 engine.createConversation(ConversationConfig(automaticToolCalling = false,
-                    tools = emptyList(), samplerConfig = SamplerConfig(topK = 1, topP = 1.0, temperature = 0.0))).use { conversation ->
+                    tools = emptyList(), maxOutputToken = 128, thinkingConfig = ThinkingConfig(enableThinking = false),
+                    samplerConfig = SamplerConfig(topK = 1, topP = 1.0, temperature = 0.0))).use { conversation ->
                     val finished = AtomicBoolean(false)
                     val stopFailed = AtomicBoolean(false)
                     val watchdog = Thread({

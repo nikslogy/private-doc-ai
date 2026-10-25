@@ -1,5 +1,44 @@
 # Development status
 
+## In progress — compact model for the 4 GB device target (25 October)
+
+The user reports that the code6 memory guard blocked model execution on the
+12 GB iQOO Neo 10; this was an application admission failure, not a measured
+native model run on that phone. Previous success with smaller Gemma models in
+Google's app is consistent with the model/runtime choice being the limitation.
+The previous legacy Qwen candidate consumed about 8.14 GiB process HWM on our
+emulator, and simply waiting longer cannot remove those allocations.
+
+Code7 / 0.4.2-dev replaces the runnable profile with an exact verified 347 MB
+Qwen3 0.6B dynamic INT4, no-thinking artifact, exported with 1280 context rather
+than the former 4096. LiteRT-LM is pinned to 0.16.0, whose official public AAR
+matches Google's SHA-256. The runner keeps a 512-token combined budget, adds a
+native 128-output-token bound, disables thinking/tools/cache and allows up to
+five minutes for a slow operation. Initialization still has no hard native
+interrupt guarantee. A model-specific 3 GiB reported-total / 1536 MiB available
+memory profile replaces the former 10/8 GiB admission for this artifact only.
+Memory is rechecked inside the heavy-work gate immediately before native load.
+These are experimental application settings, not universal 4 GB phone support.
+
+The original runtime-0.9 catalogue record and receipt identity are retained so
+an existing installation stays recognized and can be removed only by explicit
+user action. Old model loading/downloading/importing is retired on the new
+runtime. A new synthetic Android regression reconstructs the exact historical
+receipt and verifies recognition/preservation/removal without touching vaults.
+
+Actual so far: the full new public model download passed exact size/SHA-256;
+production platform Kotlin compilation on 0.16.0 passed. Full host validation,
+the fresh 4096 MiB emulator generation/cancellation/memory probe and signed APK
+build remain pending. No new APK is delivered or 4 GB compatibility claimed
+until those results are recorded. Normal document QA remains disabled while
+M5's citation/intent/evaluation implementation is still pending.
+
+Next: complete the full host gate, run the same real model test and actual
+application memory admission on an explicit 4 GiB emulator, then deliver the
+same-signing-key code7 update if all relevant checks pass. Record process memory
+and complete operation times, keeping phone and quality checks separate.
+
+
 ## Checkpoint 10 — verified installation and real native generation probe
 
 [Download the stable-signed 0.4.1-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).

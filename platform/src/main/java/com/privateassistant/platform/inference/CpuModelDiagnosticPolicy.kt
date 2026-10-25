@@ -6,7 +6,7 @@ data class ModelMemoryRequirements(
 )
 
 /**
- * Conservative admission for the fixed synthetic CPU diagnostic only.
+ * Reviewed-artifact admission for the fixed synthetic CPU diagnostic only.
  * These thresholds are application configuration, not a measured model minimum,
  * a phone compatibility guarantee or authorization to answer document questions.
  */
@@ -31,21 +31,23 @@ object CpuModelDiagnosticPolicy {
     // A runtime upgrade needs an explicit resource-profile review. Keeping the
     // runtime argument internal also lets JVM regressions exercise that denial.
     internal fun requirementsForRuntime(model: RegisteredModel, runtimeVersion: String): ModelMemoryRequirements? {
-        if (runtimeVersion != "0.9.0" || model.id != "qwen25-15b-q8-legacy" ||
+        if (runtimeVersion != "0.16.0" || model.runtimeVersion != runtimeVersion ||
+            model.id != "qwen3-06b-q4-nothink" ||
             model.sha256 != QWEN_SHA256 || model.byteCount != QWEN_BYTES ||
             !model.experimental || "CPU" !in model.backends) return null
 
-        // The earlier nominal 6 GiB emulator was killed for LOW_MEMORY. A nominal
-        // 10 GiB target completed generation/cancellation; neither observation
-        // establishes a minimum. Require additional conservative phone headroom.
+        // These settings admit a bounded experiment on nominal 4 GB devices,
+        // whose Android-reported total is below 4 GiB. They are not measured
+        // sufficiency: the exact quantized artifact still needs device probes.
+        // The former Qwen 2.5/0.9 profile is deliberately retired, not weakened.
         return ModelMemoryRequirements(
-            minimumTotalBytes = maxOf(model.minimumRamBytes, 10 * GIB),
-            minimumAvailableBytes = maxOf(model.byteCount + 512 * MIB, 8 * GIB),
+            minimumTotalBytes = maxOf(model.minimumRamBytes, 3 * GIB),
+            minimumAvailableBytes = maxOf(model.byteCount + 512 * MIB, 1536 * MIB),
         )
     }
 
     private const val MIB = 1024L * 1024
     private const val GIB = 1024 * MIB
-    private const val QWEN_BYTES = 1_597_931_520L
-    private const val QWEN_SHA256 = "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9"
+    private const val QWEN_BYTES = 347_251_840L
+    private const val QWEN_SHA256 = "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139"
 }

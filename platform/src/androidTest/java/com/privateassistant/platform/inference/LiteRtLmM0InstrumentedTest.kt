@@ -32,7 +32,7 @@ class LiteRtLmM0InstrumentedTest {
         val expectedBytes = requireNotNull(args.getString("modelByteCount")).toLong()
         val verified = ModelFileVerifier.verify(file, expectedBytes, expectedHash, licenseAccepted = true)
         val result = LiteRtLmLoadProbe().loadAndRelease(verified)
-        assertEquals("0.9.0", result.runtimeVersion)
+        assertEquals("0.16.0", result.runtimeVersion)
         assertEquals("CPU", result.backend)
         assertTrue(result.manualToolCallingConfigured)
     }

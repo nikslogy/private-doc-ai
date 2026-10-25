@@ -203,19 +203,31 @@ private fun ModelEntryCard(
         Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(model.displayName, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text(Formatter.formatShortFileSize(context, model.byteCount), style = MaterialTheme.typography.bodyMedium)
+            if (model.recommended) {
+                Text(stringResource(R.string.models_small_recommended),
+                    style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.models_small_note), style = MaterialTheme.typography.bodySmall)
+            }
+            if (model.olderRuntime) {
+                Text(stringResource(R.string.models_older_runtime), style = MaterialTheme.typography.bodySmall)
+            } else if (!model.diagnosticAvailable) {
+                Text(stringResource(R.string.models_memory_profile_unavailable), style = MaterialTheme.typography.bodySmall)
+            }
             Text(stringResource(if (model.installed) R.string.models_installed else R.string.models_not_installed),
                 style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             if (model.experimental) Text(stringResource(R.string.models_experimental_label),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (model.invalid) Text(stringResource(R.string.models_invalid), color = MaterialTheme.colorScheme.error)
             if (!model.installed && !model.invalid) {
-                TextButton(onClick = onDownload, enabled = enabled) { Text(stringResource(R.string.models_get_file)) }
-                Button(onClick = onImport, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
+                TextButton(onClick = onDownload, enabled = enabled && model.diagnosticAvailable) {
+                    Text(stringResource(R.string.models_get_file))
+                }
+                Button(onClick = onImport, enabled = enabled && model.diagnosticAvailable, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.models_import))
                 }
             } else {
                 if (model.installed) {
-                FilledTonalButton(onClick = onDiagnostic, enabled = enabled, modifier = Modifier.fillMaxWidth()) {
+                FilledTonalButton(onClick = onDiagnostic, enabled = enabled && model.diagnosticAvailable, modifier = Modifier.fillMaxWidth()) {
                     Text(stringResource(R.string.models_test))
                 }
                 Text(stringResource(R.string.models_test_description), style = MaterialTheme.typography.bodySmall)

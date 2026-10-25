@@ -29,12 +29,12 @@ class InstalledModelStoreInstrumentedTest {
         put("sha256", MessageDigest.getInstance("SHA-256").digest(content).joinToString("") { "%02x".format(it.toInt() and 255) })
         put("downloadUrl", "https://example.invalid/synthetic-fixture")
         put("license", JSONObject().put("identifier", "synthetic-test").put("termsUrl", "https://example.invalid/licence").put("requiresAcceptance", true))
-        put("runtimeVersion", "0.9.0"); put("format", "litertlm"); put("contextTokens", 512)
+        put("runtimeVersion", LiteRtLmLoadProbe.RUNTIME_VERSION); put("format", "litertlm"); put("contextTokens", 512)
         put("minimumRamBytes", 1); put("evaluatedLanguages", JSONArray()); put("evaluatedTasks", JSONArray())
         put("backends", JSONArray().put("CPU"))
     }
     private fun catalogue(vararg records: JSONObject) = ModelCatalogue.parse(JSONObject()
-        .put("schemaVersion", 1).put("runtime", JSONObject().put("id", "litert-lm").put("version", "0.9.0").put("format", "litertlm"))
+        .put("schemaVersion", 1).put("runtime", JSONObject().put("id", "litert-lm").put("version", LiteRtLmLoadProbe.RUNTIME_VERSION).put("format", "litertlm"))
         .put("models", JSONArray(records.toList())).toString())
     private fun root(): File = File(InstrumentationRegistry.getInstrumentation().targetContext.noBackupFilesDir.canonicalFile,
         "model-store-test-${UUID.randomUUID()}")
@@ -48,6 +48,28 @@ class InstalledModelStoreInstrumentedTest {
             store.withVerifiedModel("synthetic") { _, artifact -> assertArrayEquals(bytes, artifact.file.readBytes()) }
             store.install("synthetic", object : InputStream() { override fun read(): Int = error("Duplicate must not read input") }, true)
             assertEquals(1, root.listFiles()!!.size)
+        } finally { root.deleteRecursively() }
+    }
+    @Test fun runtimeUpgradeRetainsHistoricalReceiptUntilExplicitRemoval() = runBlocking {
+        val root = root().apply { mkdir() }
+        // Pinned synthetic slot/receipt written in the 0.9 installation format.
+        // Do not generate this fixture through the current install implementation.
+        val legacyIdentity = "f6c73ad5e5cc39fa335b856a82bfcdaa572338e2711033e10c73bb590e4492c5"
+        val legacySlot = File(root, "m-$legacyIdentity").apply { mkdir() }
+        val modelFile = File(legacySlot, "model.litertlm").apply { writeBytes(bytes) }
+        File(legacySlot, "ack.txt").writeText("model-install-v1\n$legacyIdentity\nlicence-acknowledged\n")
+        Os.chmod(modelFile.path, 256)
+        val keep = File(root, "keep-unknown").apply { writeText("SYNTHETIC-PUBLIC-KEEP") }
+        try {
+            val historicalCatalogue = catalogue(record().put("runtimeVersion", "0.9.0"))
+            val store = InstalledModelStore(root, historicalCatalogue)
+            assertEquals(InstalledModelStatus.VERIFIED, store.installedModels().single().status)
+            assertArrayEquals(bytes, modelFile.readBytes())
+            assertNull(CpuModelDiagnosticPolicy.requirements(historicalCatalogue.models.single()))
+            assertTrue(legacySlot.exists())
+            store.remove("synthetic")
+            assertFalse(legacySlot.exists())
+            assertEquals("SYNTHETIC-PUBLIC-KEEP", keep.readText())
         } finally { root.deleteRecursively() }
     }
     @Test fun wrongHashRejectsAndCleansOnlyOwnedStaging() = runBlocking {

@@ -10,6 +10,7 @@ python3 scripts/test-apk-delivery.py
 python3 scripts/test-ocr-assets.py
 python3 scripts/test-ocr-runtime.py
 python3 scripts/test-development-signing.py
+python3 scripts/test-probe-model.py
 python3 scripts/security-check.py
 scripts/bootstrap-android.sh --check-only
 # These public OCR assets are bundled in both variants; app document processing stays offline.

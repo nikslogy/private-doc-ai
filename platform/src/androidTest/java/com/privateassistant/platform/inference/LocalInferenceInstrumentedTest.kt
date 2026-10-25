@@ -1,5 +1,6 @@
 package com.privateassistant.platform.inference
 
+import android.app.ActivityManager
 import android.os.Bundle
 import android.os.Process
 import android.os.SystemClock
@@ -40,6 +41,7 @@ class LocalInferenceInstrumentedTest {
         val context = instrumentation.targetContext
         val model = requireNotNull(ModelCatalogue.read(context).find(requireNotNull(args.getString("modelId"))))
         require(model.experimental && model.backends.contains("CPU"))
+        require(model.runtimeVersion == LiteRtLmLoadProbe.RUNTIME_VERSION)
         require(args.getString("runtimeVersion") == LiteRtLmLoadProbe.RUNTIME_VERSION)
         require(args.getString("modelSha256") == model.sha256)
         require(args.getString("modelByteCount") == model.byteCount.toString())
@@ -63,11 +65,31 @@ class LocalInferenceInstrumentedTest {
         scanPrivateFiles(context.cacheDir, file, canary)
         scanPrivateFiles(context.noBackupFilesDir, file, canary)
         phase("CANARY_BASELINE_RETURNED")
+        // Exercise the same admission hook as the app, including after waiting
+        // for the heavy-work gate. This test never overrides a resource denial.
+        fun admitsNativeLoad(): Boolean {
+            val memory = ActivityManager.MemoryInfo()
+            context.getSystemService(ActivityManager::class.java).getMemoryInfo(memory)
+            return CpuModelDiagnosticPolicy.permits(model, memory.totalMem, memory.availMem,
+                Process.is64Bit(), memory.lowMemory)
+        }
+        assertTrue("The explicit target must pass this reviewed model's application memory policy", admitsNativeLoad())
+        var deniedSendEntered = false
+        try {
+            LocalInferenceRunner().generate(artifact, LocalInferenceRunner.SYNTHETIC_PROMPT,
+                onGenerationStarted = { deniedSendEntered = true }, beforeNativeLoad = { false })
+            fail("A denied admission hook must return before native initialization")
+        } catch (denied: LocalInferenceException) {
+            assertEquals(LocalInferenceFailure.ADMISSION, denied.reason)
+            assertFalse(deniedSendEntered)
+        }
+        phase("ADMISSION_DENIAL_VERIFIED")
         val started = SystemClock.elapsedRealtime()
         phase("NATIVE_GENERATION_START")
         val result = LocalInferenceRunner(maxDurationMillis = 300_000).generate(artifact,
             LocalInferenceRunner.SYNTHETIC_PROMPT + "\nSynthetic marker: " + canary,
-            onGenerationStarted = { phase("NATIVE_SEND_STARTED") })
+            onGenerationStarted = { phase("NATIVE_SEND_STARTED") },
+            beforeNativeLoad = ::admitsNativeLoad)
         phase("NATIVE_GENERATION_RETURNED")
         val generationMillis = SystemClock.elapsedRealtime() - started
         assertEquals(LiteRtLmLoadProbe.RUNTIME_VERSION, result.runtimeVersion)
@@ -98,7 +120,7 @@ class LocalInferenceInstrumentedTest {
                 },
                 onNativeSendFailed = {
                     if (nativeSendFailures.getAndIncrement() == 0) phase("NATIVE_SEND_FAILED")
-                })
+                }, beforeNativeLoad = ::admitsNativeLoad)
             fail("The actual synchronous generation window must observe the cancellation request")
         } catch (_: CancellationException) {
             assertTrue("Initialization must return before the generation-phase hook", generationEntered.get() > 0)

@@ -21,15 +21,16 @@ memory = {}
 for line in Path('/proc/meminfo').read_text().splitlines():
     key, value = line.split(':', 1)
     memory[key] = int(value.strip().split()[0]) * 1024
-# Ten GiB nominal emulator RAM plus two GiB host headroom is a diagnostic
-# setting after a six GiB LOW_MEMORY exit, not a measured phone/model minimum.
-# This direct probe does not exercise the UI's separate reported-memory guard.
+# Four GiB nominal emulator RAM plus two GiB measured host headroom is the
+# explicit small-model experiment. A result is not proof for all 4 GB phones.
 # No Gradle process runs during native inference.
-required = (10240 + 2048) * 1024**2
+required = (4096 + 2048) * 1024**2
 free = shutil.disk_usage('.').free
 Path(sys.argv[1]).write_text(json.dumps({'hostTotalBytes': memory['MemTotal'],
     'hostAvailableBytes': memory['MemAvailable'], 'minimumAvailableGuardBytes': required,
-    'emulatorRamMiB': 10240, 'hostFreeDiskBytes': free}, indent=2) + '\n')
+    'modelId': 'qwen3-06b-q4-nothink', 'emulatorRamMiB': 4096,
+    'scope': 'Fixed small-model experiment on nominal 4 GiB x86_64 emulator; no physical-phone RAM minimum established',
+    'hostFreeDiskBytes': free}, indent=2) + '\n')
 if memory['MemAvailable'] < required or free < 7 * 1024**3:
     raise SystemExit('Insufficient measured runner memory/disk; no native model result is claimed')
 PY
@@ -61,7 +62,7 @@ cleanup() {
   exit "$cleanup_result"
 }
 trap cleanup EXIT
-python3 scripts/download-probe-model.py --model-id qwen25-15b-q8-legacy \
+python3 scripts/download-probe-model.py --model-id qwen3-06b-q4-nothink \
   --output "$model_directory/model.litertlm" --report "$report_directory/download-verification.json" \
   --download --accept-license
 avd_name='private-document-assistant-model-api36'
@@ -76,7 +77,7 @@ p.write_text('\n'.join(lines) + '\n')
 PY
 "$sdk_directory/emulator/emulator" -avd "$avd_name" -port 5554 \
   -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim \
-  -camera-back none -camera-front none -memory 10240 -cores 2 -accel on \
+  -camera-back none -camera-front none -memory 4096 -cores 2 -accel on \
   > "$report_directory/emulator.txt" 2>&1 &
 emulator_pid=$!
 boot_deadline=$((SECONDS + 360))
@@ -92,5 +93,5 @@ done
 [[ "$(adb -s "$ANDROID_SERIAL" shell getprop ro.build.version.sdk | tr -d '\r')" == 36 ]] || exit 1
 [[ "$(adb -s "$ANDROID_SERIAL" shell getprop ro.kernel.qemu | tr -d '\r')" == 1 ]] || exit 1
 [[ "$(adb -s "$ANDROID_SERIAL" shell getprop ro.product.cpu.abi | tr -d '\r')" == x86_64 ]] || exit 1
-timeout 1200 scripts/check-model-generation.sh qwen25-15b-q8-legacy "$model_directory/model.litertlm" --accept-license
+timeout 1200 scripts/check-model-generation.sh qwen3-06b-q4-nothink "$model_directory/model.litertlm" --accept-license
 printf '%s\n' 'Real synthetic model probe completed on the explicit emulator. Phone capability, document QA, complete privacy and hard native timeout evidence remain separate.'

@@ -12,6 +12,7 @@ class RegisteredModel internal constructor(
     val requiresLicenseAcceptance: Boolean, val contextTokens: Int, val minimumRamBytes: Long,
     evaluatedLanguages: List<String>, evaluatedTasks: List<String>, backends: List<String>,
     val displayName: String = id, val downloadUrl: String = "", val experimental: Boolean = true,
+    val runtimeVersion: String = LiteRtLmLoadProbe.RUNTIME_VERSION,
 ) {
     val evaluatedLanguages: List<String> = Collections.unmodifiableList(ArrayList(evaluatedLanguages))
     val evaluatedTasks: List<String> = Collections.unmodifiableList(ArrayList(evaluatedTasks))
@@ -34,6 +35,9 @@ class RegisteredModel internal constructor(
         // This build only admits explicitly experimental entries. Evaluation/QA needs another gate.
         require(experimental)
         require(this.evaluatedLanguages.isEmpty() && this.evaluatedTasks.isEmpty())
+        // Retain the previous public model's installation identity for explicit
+        // removal. A historical runtime record does not authorize native load.
+        require(runtimeVersion in setOf(LiteRtLmLoadProbe.RUNTIME_VERSION, "0.9.0"))
     }
     companion object { const val MAX_MODEL_BYTES = 4L * 1024 * 1024 * 1024 }
 }
@@ -74,14 +78,15 @@ class ModelCatalogue private constructor(models: List<RegisteredModel>) {
             require(records.length() <= 32)
             val models = (0 until records.length()).map { index ->
                 val m = records.getJSONObject(index)
-                require(m.getString("runtimeVersion") == LiteRtLmLoadProbe.RUNTIME_VERSION && m.getString("format") == "litertlm")
+                require(m.getString("format") == "litertlm")
                 val license = m.getJSONObject("license")
                 RegisteredModel(m.getString("id"), m.getString("revision"), m.getString("fileName"),
                     m.getLong("byteCount"), m.getString("sha256"), license.getString("identifier"),
                     license.getString("termsUrl"), license.getBoolean("requiresAcceptance"),
                     m.getInt("contextTokens"), m.getLong("minimumRamBytes"),
                     strings(m, "evaluatedLanguages"), strings(m, "evaluatedTasks"), strings(m, "backends"),
-                    m.getString("displayName"), m.getString("downloadUrl"), m.getString("assessment") == "experimental")
+                    m.getString("displayName"), m.getString("downloadUrl"), m.getString("assessment") == "experimental",
+                    m.getString("runtimeVersion"))
             }
             require(models.map { it.id }.distinct().size == models.size)
             return ModelCatalogue(models)

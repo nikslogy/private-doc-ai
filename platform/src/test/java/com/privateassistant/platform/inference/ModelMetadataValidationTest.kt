@@ -15,8 +15,9 @@ class ModelMetadataValidationTest {
         download: String = "https://example.invalid/synthetic-fixture",
         contextTokens: Int = 512, backends: List<String> = listOf("CPU"),
         languages: List<String> = emptyList(), tasks: List<String> = emptyList(), experimental: Boolean = true,
+        runtimeVersion: String = LiteRtLmLoadProbe.RUNTIME_VERSION,
     ) = RegisteredModel(id, revision, fileName, bytes, sha256, "synthetic-test", terms, true,
-        contextTokens, 1, languages, tasks, backends, downloadUrl = download, experimental = experimental)
+        contextTokens, 1, languages, tasks, backends, downloadUrl = download, experimental = experimental, runtimeVersion = runtimeVersion)
 
     private fun rejected(block: () -> Unit) {
         try { block(); fail("Unsafe metadata must fail before storage or runtime work") }
@@ -81,4 +82,17 @@ class ModelMetadataValidationTest {
         try { (reviewed.backends as MutableList<String>).add("REMOTE"); fail("Metadata must be immutable") }
         catch (_: UnsupportedOperationException) { }
     }
+    @Test fun historicalRuntimeIdentityIsRetainedWithoutAResourceProfile() {
+        val historical = model(runtimeVersion = "0.9.0")
+        assertEquals("0.9.0", historical.runtimeVersion)
+        assertEquals(null, CpuModelDiagnosticPolicy.requirements(historical))
+        assertEquals(LiteRtLmLoadProbe.RUNTIME_VERSION, model().runtimeVersion)
+    }
+
+    @Test fun unknownRuntimeMetadataCannotEnterTheStore() {
+        listOf("latest", "0.16.1", "", "0.9.0\n").forEach { runtime ->
+            rejected { model(runtimeVersion = runtime) }
+        }
+    }
+
 }

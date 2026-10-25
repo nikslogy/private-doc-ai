@@ -32,13 +32,13 @@ class ModelImportPrivacyInstrumentedTest {
             put("downloadUrl", "https://example.invalid/synthetic-fixture")
             put("license", JSONObject().put("identifier", "synthetic-test")
                 .put("termsUrl", "https://example.invalid/licence").put("requiresAcceptance", true))
-            put("runtimeVersion", "0.9.0"); put("format", "litertlm")
+            put("runtimeVersion", LiteRtLmLoadProbe.RUNTIME_VERSION); put("format", "litertlm")
             put("contextTokens", 512); put("minimumRamBytes", 1)
             put("evaluatedLanguages", JSONArray()); put("evaluatedTasks", JSONArray())
             put("backends", JSONArray().put("CPU"))
         }
         val catalogue = ModelCatalogue.parse(JSONObject().put("schemaVersion", 1)
-            .put("runtime", JSONObject().put("id", "litert-lm").put("version", "0.9.0").put("format", "litertlm"))
+            .put("runtime", JSONObject().put("id", "litert-lm").put("version", LiteRtLmLoadProbe.RUNTIME_VERSION).put("format", "litertlm"))
             .put("models", JSONArray().put(record)).toString())
         val root = File(InstrumentationRegistry.getInstrumentation().targetContext.noBackupFilesDir.canonicalFile,
             "model-import-privacy-${UUID.randomUUID()}")

@@ -8,10 +8,58 @@ from pathlib import Path
 import shutil
 import sys
 import time
-from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
+
+# Exact public identities reviewed independently of the mutable catalogue. An
+# additional model/revision requires another source/licence/hash review here.
+REVIEWED_MODELS = {
+    "qwen25-15b-q8-legacy": (
+        "litert-community/Qwen2.5-1.5B-Instruct",
+        "19edb84c69a0212f29a6ef17ba0d6f278b6a1614",
+        "Qwen2.5-1.5B-Instruct_multi-prefill-seq_q8_ekv4096.litertlm",
+        1_597_931_520,
+        "faa60663b333290c1496c499828b21d3e3254a788cacd8cce917ce0f761a2dc9",
+        "0.9.0",
+        "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/2fd50615a2a9792d223eba8e0741aa90ef21a869/LICENSE",
+    ),
+    "qwen3-06b-q4-nothink": (
+        "litert-community/Qwen3-0.6B-int4",
+        "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+        "qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm",
+        347_251_840,
+        "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+        "0.16.0",
+        "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+    ),
+}
+
+
+def validate_reviewed_model(catalogue: dict, model_id: str) -> dict:
+    """Admit only an exact reviewed public artifact for the selected runtime."""
+    if model_id not in REVIEWED_MODELS:
+        raise ValueError("The public-model identity has not been reviewed")
+    models = [m for m in catalogue.get("models", []) if m.get("id") == model_id]
+    if len(models) != 1:
+        raise ValueError("Expected one reviewed experimental model")
+    model = models[0]
+    repository, revision, filename, count, digest, runtime, terms_url = REVIEWED_MODELS[model_id]
+    if (catalogue.get("schemaVersion") != 1
+            or catalogue.get("runtime") != {"id": "litert-lm", "version": runtime, "format": "litertlm"}
+            or model.get("assessment") != "experimental"
+            or model.get("format") != "litertlm"
+            or model.get("runtimeVersion") != runtime
+            or model.get("revision") != revision or model.get("fileName") != filename
+            or model.get("byteCount") != count or model.get("sha256") != digest
+            or "CPU" not in model.get("backends", [])
+            or model.get("evaluatedLanguages") != [] or model.get("evaluatedTasks") != []
+            or model.get("license") != {"identifier": "Apache-2.0", "termsUrl": terms_url, "requiresAcceptance": True}):
+        raise ValueError("The public-model metadata differs from its reviewed identity/runtime/licence")
+    expected_url = f"https://huggingface.co/{repository}/resolve/{revision}/{filename}?download=true"
+    if model.get("downloadUrl") != expected_url:
+        raise ValueError("Expected the exact pinned public upstream file URL")
+    return model
 
 
 def main() -> None:
@@ -25,26 +73,11 @@ def main() -> None:
     if os.environ.get("GITHUB_ACTIONS") != "true" or os.environ.get("RUNNER_ENVIRONMENT") != "github-hosted":
         raise ValueError("This downloader requires the explicitly invoked disposable GitHub runner")
     catalogue = json.loads((ROOT / "config/models.json").read_text())
-    models = [m for m in catalogue["models"] if m["id"] == args.model_id]
-    if len(models) != 1:
-        raise ValueError("Expected one reviewed experimental model")
-    model = models[0]
-    if model.get("assessment") != "experimental" or model["license"]["identifier"] != "Apache-2.0":
-        raise ValueError("This explicit experiment is limited to the reviewed public Apache-2.0 candidate")
+    model = validate_reviewed_model(catalogue, args.model_id)
     revision = model["revision"]
     digest = model["sha256"]
     count = model["byteCount"]
-    import re
-    if not re.fullmatch(r"[a-f0-9]{40}", revision) or not re.fullmatch(r"[a-f0-9]{64}", digest):
-        raise ValueError("Reviewed immutable identity is missing")
-    if not 0 < count <= 4 * 1024**3 or model["runtimeVersion"] != catalogue["runtime"]["version"]:
-        raise ValueError("Unsupported reviewed model bounds")
     url = model["downloadUrl"]
-    parsed = urlparse(url)
-    expected_path = f"/litert-community/Qwen2.5-1.5B-Instruct/resolve/{revision}/{model['fileName']}"
-    if (parsed.scheme != "https" or parsed.hostname != "huggingface.co" or parsed.path != expected_path
-            or parsed.username or parsed.password or parsed.fragment):
-        raise ValueError("Expected the pinned public upstream file URL")
     output = args.output.absolute()
     if output.exists() or output.is_symlink() or output.parent.is_symlink():
         raise ValueError("Refusing an existing or symbolic model destination")

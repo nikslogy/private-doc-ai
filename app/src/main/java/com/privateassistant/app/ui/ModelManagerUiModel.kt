@@ -9,6 +9,9 @@ import com.privateassistant.app.R
 import com.privateassistant.platform.inference.CpuModelDiagnosticPolicy
 import com.privateassistant.platform.inference.InstalledModelStatus
 import com.privateassistant.platform.inference.InstalledModelStore
+import com.privateassistant.platform.inference.LiteRtLmLoadProbe
+import com.privateassistant.platform.inference.LocalInferenceException
+import com.privateassistant.platform.inference.LocalInferenceFailure
 import com.privateassistant.platform.inference.LocalInferenceRunner
 import com.privateassistant.platform.inference.ModelCatalogue
 import com.privateassistant.platform.inference.ModelInstallException
@@ -26,7 +29,8 @@ import kotlinx.coroutines.withContext
 
 data class ModelEntryUi(val id: String, val displayName: String, val byteCount: Long,
     val licenseIdentifier: String, val licenseTermsUrl: String, val downloadUrl: String,
-    val installed: Boolean, val sha256: String, val experimental: Boolean, val invalid: Boolean = false)
+    val installed: Boolean, val sha256: String, val experimental: Boolean, val invalid: Boolean = false,
+    val diagnosticAvailable: Boolean = false, val recommended: Boolean = false, val olderRuntime: Boolean = false)
 data class ModelMemoryUi(val totalBytes: Long, val availableBytes: Long,
     val minimumTotalBytes: Long, val minimumAvailableBytes: Long)
 data class ModelManagerUiState(val entries: List<ModelEntryUi> = emptyList(), val loading: Boolean = false,
@@ -58,7 +62,7 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
     }
     fun prepareImport(id: String, acknowledged: Boolean): Boolean {
         if (revoked.get() || mutableState.value.busy || mutableState.value.loading || !acknowledged ||
-            catalogue?.find(id) == null) return false
+            catalogue?.find(id)?.let(CpuModelDiagnosticPolicy::requirements) == null) return false
         pending = id to revoked
         return true
     }
@@ -118,12 +122,19 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
                 return false
             }
             if (!hasMemoryHeadroom()) return@launch
-            val result = requireNotNull(store).withVerifiedModel(id, token::get) { _, artifact ->
-                // Full model verification can take time; use a fresh snapshot before native load.
-                if (!hasMemoryHeadroom()) return@withVerifiedModel null
-                LocalInferenceRunner().generate(artifact, LocalInferenceRunner.SYNTHETIC_PROMPT, token::get)
+            val result = try {
+                requireNotNull(store).withVerifiedModel(id, token::get) { _, artifact ->
+                    // The runner checks after waiting for the shared OCR/render/model gate,
+                    // so verification or competing heavy work cannot stale this snapshot.
+                    LocalInferenceRunner().generate(artifact, LocalInferenceRunner.SYNTHETIC_PROMPT, token::get,
+                        beforeNativeLoad = ::hasMemoryHeadroom)
+                }
+            } catch (failure: LocalInferenceException) {
+                // The callback already recorded the selected model's memory warning.
+                if (failure.reason == LocalInferenceFailure.ADMISSION) return@launch
+                throw failure
             }
-            if (result != null && !token.get()) {
+            if (!token.get()) {
                 mutableState.update { it.copy(diagnosticText = result.text, message = R.string.models_test_complete) }
             }
         }
@@ -133,7 +144,7 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
         mutableState.update { it.copy(message = R.string.models_cancelling) }
     }
     fun isReviewedLink(url: String): Boolean = !revoked.get() && catalogue?.models?.any {
-        url == it.downloadUrl || url == it.licenseTermsUrl
+        url == it.licenseTermsUrl || (url == it.downloadUrl && CpuModelDiagnosticPolicy.requirements(it) != null)
     } == true
 
     private suspend fun loadEntries(token: AtomicBoolean) {
@@ -146,9 +157,12 @@ class ModelManagerUiModel(private val context: Context, private val scope: Corou
         val installed = selectedStore.installedModels().associateBy { it.modelId }
         if (token.get()) return
         mutableState.update { current -> current.copy(entries = loaded.models.map { m ->
+            val diagnosticAvailable = CpuModelDiagnosticPolicy.requirements(m) != null
             ModelEntryUi(m.id, m.displayName, m.byteCount, m.licenseIdentifier, m.licenseTermsUrl,
                 m.downloadUrl, installed[m.id]?.status == InstalledModelStatus.VERIFIED,
-                m.sha256, m.experimental, installed[m.id]?.status == InstalledModelStatus.INVALID)
+                m.sha256, m.experimental, installed[m.id]?.status == InstalledModelStatus.INVALID,
+                diagnosticAvailable = diagnosticAvailable, recommended = diagnosticAvailable,
+                olderRuntime = m.runtimeVersion != LiteRtLmLoadProbe.RUNTIME_VERSION)
         }) }
     }
     private fun launch(modelId: String? = null, loading: Boolean = false, diagnostic: Boolean = false,

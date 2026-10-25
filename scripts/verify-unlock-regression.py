@@ -13,7 +13,7 @@ EXPECTED = {
     "com.privateassistant.platform.vault.DurableFilesInstrumentedTest": 2,
     "com.privateassistant.platform.documents.OcrBoundaryInstrumentedTest": 3,
     "com.privateassistant.platform.documents.TesseractOcrInstrumentedTest": 6,
-    "com.privateassistant.platform.inference.InstalledModelStoreInstrumentedTest": 10,
+    "com.privateassistant.platform.inference.InstalledModelStoreInstrumentedTest": 11,
     "com.privateassistant.platform.inference.ModelImportPrivacyInstrumentedTest": 1,
 }
 

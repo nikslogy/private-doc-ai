@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       acknowledgePublicModelExperiment:
-        description: 'Download the reviewed public Apache-2.0 model for synthetic native tests only'
+        description: 'Download the reviewed public 4-bit model for synthetic tests on a nominal 4 GiB emulator'
         type: boolean
         required: true
         default: false
@@ -51,7 +51,9 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
           echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
       - name: Validate bounded synthetic-process memory diagnostics
-        run: python3 scripts/test-model-process-memory.py
+        run: |
+          python3 scripts/test-model-process-memory.py
+          python3 scripts/test-probe-model.py
       - name: Set up pinned Android and Gradle tools
         run: scripts/bootstrap-android.sh --accept-sdk-licenses
       - name: Compile the real offline instrumentation APK
@@ -66,7 +68,7 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-private-assistant-model-kvm.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Verify public weights and run real synthetic generation/cancellation
+      - name: Verify small public weights and run real generation/cancellation on a nominal 4 GiB target
         run: scripts/run-ci-model-emulator.sh --download-reviewed-model --accept-license
       - name: Upload narrow model experiment reports only
         if: ${{ always() }}

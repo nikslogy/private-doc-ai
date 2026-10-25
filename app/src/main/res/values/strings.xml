@@ -6,8 +6,8 @@
     <string name="models_memory_required">This experimental CPU test needs a 64-bit app and sufficient memory. Close other apps and try again.</string>
     <string name="models_memory_total">Total memory: %1$s. This test requires %2$s.</string>
     <string name="models_memory_available">Available memory: %1$s. This test requires %2$s now.</string>
-    <string name="models_memory_profile_note">These limits use memory reported by Android and are conservative settings. Phone compatibility is still being evaluated.</string>
-    <string name="models_memory_profile_unavailable">A conservative CPU memory profile is not available for this model and runtime. The local test is unavailable.</string>
+    <string name="models_memory_profile_note">These are experimental test limits for the selected model, using memory reported by Android. Other models can have different requirements. Phone compatibility is still being evaluated.</string>
+    <string name="models_memory_profile_unavailable">A reviewed memory profile is not available for this model in this update. Its local test is unavailable.</string>
     <string name="models_operation_failed">The model operation did not complete. Check the selected file, free space and model installation. Your vault originals are preserved.</string>
     <string name="models_cancelling">Cancellation requested. Waiting for the current operation to return safely…</string>
     <string name="models_cancelled">Model operation cancelled.</string>
@@ -207,6 +207,9 @@
     <string name="models_installed">Installed and verified</string>
     <string name="models_not_installed">Not installed</string>
     <string name="models_experimental_label">Experimental · device and document evaluation pending</string>
+    <string name="models_small_recommended">Start here · smaller model</string>
+    <string name="models_small_note">Recommended for testing with limited memory. Responses may be slow. Compatibility on 4 GB phones is still being evaluated.</string>
+    <string name="models_older_runtime">This older model cannot run in this update. Choose the smaller model above. Any installed copy is preserved until you choose Remove model.</string>
     <string name="models_test">Test local model</string>
     <string name="models_test_description">Runs a fixed synthetic prompt using the model on this device. No vault documents or questions are supplied.</string>
     <string name="models_diagnostic_failed">The local model test did not complete. The model may be unsupported, need more memory, or have been interrupted. Document questions remain unavailable.</string>
