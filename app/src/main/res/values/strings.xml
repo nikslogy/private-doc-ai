@@ -2,7 +2,7 @@
 <resources>
     <string name="models_install_complete">The reviewed model was installed and verified.</string>
     <string name="models_removed">The installed model copy was removed.</string>
-    <string name="models_test_complete">The synthetic local test completed. Document questions remain unavailable.</string>
+    <string name="models_test_complete">Local model test completed. Open Assistant to chat, or select a document for its printed facts.</string>
     <string name="models_memory_required">This experimental CPU test needs a 64-bit app and sufficient memory. Close other apps and try again.</string>
     <string name="models_memory_total">Total memory: %1$s. This test requires %2$s.</string>
     <string name="models_memory_available">Available memory: %1$s. This test requires %2$s now.</string>
@@ -85,7 +85,7 @@
     <string name="vault_operation_failed">The operation could not be completed. Check available storage and try again.</string>
     <string name="assistant_title">Document assistant</string>
     <string name="assistant_unavailable_title">AI questions and summaries · coming later</string>
-    <string name="assistant_unavailable_body">Set up on-device AI below. Document questions and summaries will follow device testing. You can inspect labelled document values now.</string>
+    <string name="assistant_unavailable_body">Open Assistant for local chat or select a document for supported printed facts. Broader document analysis is still being developed.</string>
     <string name="assistant_available_title">Ready to use today</string>
     <string name="assistant_available_body">Import original files, search indexed text, inspect extracted page evidence, export a copy, and delete files from your encrypted vault.</string>
     <string name="assistant_privacy_title">You stay in control</string>
@@ -212,7 +212,7 @@
     <string name="models_older_runtime">This older model cannot run in this update. Choose the smaller model above. Any installed copy is preserved until you choose Remove model.</string>
     <string name="models_test">Test local model</string>
     <string name="models_test_description">Runs a fixed synthetic prompt using the model on this device. No vault documents or questions are supplied.</string>
-    <string name="models_diagnostic_failed">The local model test did not complete. The model may be unsupported, need more memory, or have been interrupted. Document questions remain unavailable.</string>
+    <string name="models_diagnostic_failed">The local model test did not complete. The model may need more memory or have been interrupted. Document facts remain available without the model.</string>
     <string name="models_diagnostic_output">Local model test output</string>
     <string name="models_diagnostic_output_note">Actual generated text from the synthetic test. It is unverified model output and does not authorize any action.</string>
     <string name="models_remove">Remove model</string>

@@ -82,6 +82,9 @@ class VaultUiModel(
     private val scope: CoroutineScope,
 ) {
     val models = ModelManagerUiModel(context, scope)
+    val assistant = AssistantChatUiModel(context, scope) { document ->
+        vault.pageEvidence(document.id, document.revisionId)
+    }
     // Bundled capability is fixed for this installed APK. Never do asset I/O while locking.
     private val ocrAvailable = vault.ocrAvailable
     private val mutableState = MutableStateFlow(VaultUiState(ocrAvailable = ocrAvailable))
@@ -121,11 +124,13 @@ class VaultUiModel(
             val documents = vault.documents()
             publish(expectedSession) { it.copy(unlocked = true, documents = documents, requiresDeviceSecurity = false) }
             models.unlock()
+            assistant.unlock(documents)
             if (pendingImports.isNotEmpty()) importPending(expectedSession)
         }
     }
 
     fun lock() {
+        assistant.lock()
         models.lock()
         session++
         operation?.cancel()
@@ -235,6 +240,7 @@ class VaultUiModel(
 
     fun deleteDocument(document: VaultDocument) {
         if (!isCurrentDocument(document)) return
+        assistant.invalidateDocument(document.id)
         runOperation { expectedSession ->
             requireSession(expectedSession)
             vault.deleteDocument(document.id)
@@ -253,6 +259,8 @@ class VaultUiModel(
 
     fun setPage(page: AppPage) {
         if (!mutableState.value.unlocked) return
+        if (page != AppPage.ASSISTANT) assistant.cancel()
+        else assistant.refreshModel()
         if (mutableState.value.modelManagerOpen) models.cancel()
         closeDocument()
         mutableState.update { it.copy(page = page, modelManagerOpen = false) }
@@ -260,12 +268,26 @@ class VaultUiModel(
 
     fun openModels() {
         if (!mutableState.value.unlocked) return
+        assistant.cancel()
         mutableState.update { it.copy(modelManagerOpen = true) }
         models.refresh()
     }
     fun closeModels() {
         models.cancel()
         mutableState.update { it.copy(modelManagerOpen = false) }
+        assistant.refreshModel()
+    }
+
+    fun viewChatSource(citation: AssistantCitationUi) {
+        val chat = assistant.state.value
+        if (chat.messages.none { message -> message.citations.any { it === citation } }) return
+        val document = mutableState.value.documents.singleOrNull {
+            it.id == citation.documentId && it.revisionId == citation.revisionId
+        } ?: return
+        if (!isCurrentDocument(document) || mutableState.value.busy ||
+            citation.pageNumber !in 1..document.pageCount) return
+        setPage(AppPage.DOCUMENTS)
+        openDocument(document, citation.pageNumber)
     }
 
     fun openDocument(document: VaultDocument, pageNumber: Int? = null) {
@@ -365,6 +387,7 @@ class VaultUiModel(
             document.mimeType !in setOf("application/pdf", "image/jpeg", "image/png"))) return
         runOperation { expectedSession ->
             // OCR/native refresh can change evidence even for the same immutable original.
+            assistant.invalidateDocument(document.id)
             if (mutableState.value.factsDocument?.id == document.id) clearFactsDocument()
             publish(expectedSession) { it.copy(indexing = true) }
             try {
@@ -373,6 +396,7 @@ class VaultUiModel(
             } finally {
                 // Failure can publish a failed/partial status while retaining earlier source text.
                 if (currentCoroutineContext().isActive && session == expectedSession) {
+                    assistant.invalidateDocument(document.id)
                     val documents = vault.documents()
                     val updated = documents.firstOrNull { it.id == document.id }
                     publish(expectedSession) { it.copy(documents = documents,
@@ -502,6 +526,7 @@ class VaultUiModel(
     private fun publish(expectedSession: Long, update: (VaultUiState) -> VaultUiState) {
         requireSession(expectedSession)
         mutableState.update(update)
+        if (mutableState.value.unlocked) assistant.setDocuments(mutableState.value.documents)
     }
 
     private fun runOperation(block: suspend (Long) -> Unit) {

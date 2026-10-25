@@ -6,7 +6,7 @@ data class ModelMemoryRequirements(
 )
 
 /**
- * Reviewed-artifact admission for the fixed synthetic CPU diagnostic only.
+ * Reviewed-artifact CPU admission shared by the diagnostic and experimental chat.
  * These thresholds are application configuration, not a measured model minimum,
  * a phone compatibility guarantee or authorization to answer document questions.
  */

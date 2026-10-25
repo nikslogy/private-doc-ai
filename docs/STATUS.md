@@ -1,5 +1,43 @@
 # Development status
 
+## In progress — actual local chat and cited document facts (code8)
+
+The user reports that the compact-model synthetic test completed on their
+12 GB iQOO Neo 10 / Android16. This is a manual runtime confirmation, not an
+independently measured phone benchmark or full privacy/update-preservation suite.
+They correctly report that the delivered code7 still had no chat input. Code8 /
+0.5.0-dev implements the first actual Assistant chat interface and gateway.
+
+General chat accepts the user's own bounded message and recent conversation
+context, verifies the already-installed compact model and executes the real
+local adapter. It has no vault reader, remote endpoint, cache, action executor
+or durable chat storage. Model replies are explicitly unverified. Chat is kept
+only in the unlocked session's memory and clears on lock. Clear/cancel/source
+switch revoke pending work; old callbacks cannot publish into a new conversation.
+The existing model catalogue/receipt identity is unchanged, so no new model file
+is needed when the installed compact model remains verified.
+
+An explicit source picker enables supported English printed policy/invoice
+questions, with immutable revision/page quotes and source buttons. Ambiguous,
+missing, conflicting or incomplete evidence clarifies/abstains. A summary is a
+bounded extractive summary of printed facts, not unrestricted generated document
+analysis. General chat redirects obvious private-document questions to source
+selection and file-action requests to existing explicit controls. Neither model
+output nor document text authorizes an action. OCR/reindex and deletion invalidate
+chat sources/citations; messages never mix selected sources or vault sessions.
+
+Actual so far: the focused :core:test, production app Kotlin and platform
+instrumentation Kotlin compilation passed. The full host gate, selected Android
+controller/gateway regressions and actual chat-prompt/history/gateway native
+experiment remain pending. No code8 APK is delivered until the signed build gate
+passes. The current code7 artifact below is historical setup capability only.
+
+Next: finish full host validation, run all96 selected Android cases and the
+constrained native chat/gateway/short-history/cancel/hash/canary experiment, then
+publish the stable-signed code8 APK as an update. Record exact results and all
+remaining physical/representative-language/accuracy/privacy limits.
+
+
 ## Checkpoint 11 — compact model passes a 4 GiB Android experiment
 
 [Download the stable-signed 0.4.2-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).

@@ -6,12 +6,18 @@ import android.os.Process
 import android.os.SystemClock
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.privateassistant.core.assistant.ChatRole
+import com.privateassistant.core.assistant.ChatTurn
+import com.privateassistant.core.assistant.LocalChatPrompt
 import java.io.File
 import java.nio.file.Files
+import java.util.UUID
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -39,7 +45,8 @@ class LocalInferenceInstrumentedTest {
         }
         phase("ARGUMENTS_ACCEPTED")
         val context = instrumentation.targetContext
-        val model = requireNotNull(ModelCatalogue.read(context).find(requireNotNull(args.getString("modelId"))))
+        val catalogue = ModelCatalogue.read(context)
+        val model = requireNotNull(catalogue.find(requireNotNull(args.getString("modelId"))))
         require(model.experimental && model.backends.contains("CPU"))
         require(model.runtimeVersion == LiteRtLmLoadProbe.RUNTIME_VERSION)
         require(args.getString("runtimeVersion") == LiteRtLmLoadProbe.RUNTIME_VERSION)
@@ -84,10 +91,14 @@ class LocalInferenceInstrumentedTest {
             assertFalse(deniedSendEntered)
         }
         phase("ADMISSION_DENIAL_VERIFIED")
+        val chatHistory = listOf(ChatTurn(ChatRole.USER, "My name is Riya."),
+            ChatTurn(ChatRole.ASSISTANT, "Hello Riya."))
+        val chatPrompt = LocalChatPrompt.build(
+            "Say hello in one short sentence. Synthetic marker: $canary", chatHistory)
         val started = SystemClock.elapsedRealtime()
         phase("NATIVE_GENERATION_START")
         val result = LocalInferenceRunner(maxDurationMillis = 300_000).generate(artifact,
-            LocalInferenceRunner.SYNTHETIC_PROMPT + "\nSynthetic marker: " + canary,
+            chatPrompt,
             onGenerationStarted = { phase("NATIVE_SEND_STARTED") },
             beforeNativeLoad = ::admitsNativeLoad)
         phase("NATIVE_GENERATION_RETURNED")
@@ -130,6 +141,42 @@ class LocalInferenceInstrumentedTest {
             phase("CANCELLATION_RETURNED")
         }
         val cancellationMillis = SystemClock.elapsedRealtime() - cancellationStarted
+        // Exercise the app's actual gateway with a separately installed verified public
+        // model, not a synthetic native artifact or a shortcut around its store lease.
+        val gatewayRoot = File(context.noBackupFilesDir.canonicalFile, "model-chat-probe-${UUID.randomUUID()}")
+        require(!gatewayRoot.exists() && !Files.isSymbolicLink(gatewayRoot.toPath()))
+        val gatewayStore = InstalledModelStore(gatewayRoot, catalogue)
+        var gatewayMillis = 0L
+        var gatewayGeneratedUtf16 = 0
+        var historyRecallMatched = false
+        phase("CHAT_GATEWAY_INSTALL_START")
+        try {
+            file.inputStream().use { gatewayStore.install(model.id, it, licenseAccepted = true) }
+            val gateway = LocalChatGateway(context, catalogue, gatewayStore)
+            assertTrue("Chat readiness must verify the actual installed public artifact", gateway.isReady())
+            phase("CHAT_GATEWAY_START")
+            val gatewayStarted = SystemClock.elapsedRealtime()
+            val chatResult = gateway.generate(LocalChatPrompt.build(
+                "What name did I tell you? Reply briefly.", chatHistory))
+            gatewayMillis = SystemClock.elapsedRealtime() - gatewayStarted
+            gatewayGeneratedUtf16 = chatResult.text.length
+            assertTrue("The actual chat gateway must return bounded nonempty text",
+                chatResult.text.isNotBlank() && gatewayGeneratedUtf16 <= LocalInferenceRunner.MAX_OUTPUT_UTF16)
+            historyRecallMatched = Regex("\\bRiya\\b", RegexOption.IGNORE_CASE).containsMatchIn(chatResult.text)
+            assertTrue("The fixed short-history smoke must recall its synthetic name", historyRecallMatched)
+            assertEquals(LiteRtLmLoadProbe.RUNTIME_VERSION, chatResult.runtimeVersion)
+            assertEquals("CPU", chatResult.backend)
+            phase("CHAT_GATEWAY_RETURNED")
+        } finally {
+            withContext(NonCancellable) {
+                // Only this fresh test-owned slot is removed. Preserve the original probe
+                // file, normal model installations and all unrelated app-private entries.
+                gatewayStore.remove(model.id)
+                assertTrue("The owned gateway root must contain no leftover files", gatewayRoot.listFiles()!!.isEmpty())
+                assertTrue("The owned empty gateway root must be removed", gatewayRoot.delete())
+            }
+        }
+        phase("CHAT_GATEWAY_CLEANUP_RETURNED")
         // Synchronous native return + joined cancellation watchdog precede runner cleanup.
         // This is an emulator observation, not a hard native timeout or phone latency claim.
         ModelFileVerifier.verify(file, model.byteCount, model.sha256, licenseAccepted = true)
@@ -145,6 +192,9 @@ class LocalInferenceInstrumentedTest {
             putInt("generatedUtf16", result.text.length)
             putInt("nativeCancellationCalls", nativeCancellationCalls.get())
             putInt("nativeSendFailures", nativeSendFailures.get())
+            putLong("chatGatewayElapsedMillis", gatewayMillis)
+            putInt("chatGatewayGeneratedUtf16", gatewayGeneratedUtf16)
+            putBoolean("chatHistoryRecallMatched", historyRecallMatched)
         })
     }
 

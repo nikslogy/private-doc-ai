@@ -57,4 +57,5 @@ done
   adb -s "$ANDROID_SERIAL" shell getconf PAGE_SIZE
 } > "$report_directory/target.txt"
 timeout 900 scripts/check-unlock-regression.sh
+timeout 600 scripts/check-chat-regression.sh
 timeout 300 scripts/check-ci-authenticated-unlock.sh

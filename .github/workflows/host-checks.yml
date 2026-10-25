@@ -64,6 +64,7 @@ jobs:
           path: |
             artifacts/unlock-regression/
             platform/build/outputs/androidTest-results/
+            app/build/outputs/androidTest-results/
             platform/build/reports/androidTests/
           if-no-files-found: warn
           retention-days: 7

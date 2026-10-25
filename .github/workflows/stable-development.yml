@@ -53,6 +53,7 @@ jobs:
           path: |
             artifacts/unlock-regression/
             platform/build/outputs/androidTest-results/
+            app/build/outputs/androidTest-results/
           if-no-files-found: warn
           retention-days: 7
       - name: Upload APKs signed by the pinned development identity

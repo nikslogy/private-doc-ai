@@ -7,8 +7,15 @@ weights reach a plaintext model file. Crash/rejection cleanup needs no retained
 staging key. Model slots/receipts contain public metadata only and live under
 noBackup; source URIs/names are not persisted. Lease verification excludes model
 replacement/removal during native use. The setup screen's real-generation test
-uses only fixed synthetic input; normal document QA is disabled. Cache and tools
-are disabled; native stop is cooperative. Actual privacy/cancel/device results
+uses fixed synthetic input. Code8 adds a separate actual-chat gateway: only the
+current user message and bounded recent conversation text reach the local model.
+The gateway receives no vault key, document repository, URI or action executor.
+Chat is memory-only while unlocked, with no saved state or durable transcript;
+lock/clear/source change revoke pending work and discard visible/history state.
+Document mode reads supported printed facts from explicitly selected revision
+evidence, verifies exact spans and returns source-page links without sending
+that source text to the general-chat model. Cache and tools are disabled; native
+stop is cooperative. Actual privacy/cancel/device results
 remain separate from source implementation and are tracked in STATUS.
 
 The intended local processing boundary is implemented in source, with runtime

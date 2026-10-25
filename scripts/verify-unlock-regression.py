@@ -15,6 +15,7 @@ EXPECTED = {
     "com.privateassistant.platform.documents.TesseractOcrInstrumentedTest": 6,
     "com.privateassistant.platform.inference.InstalledModelStoreInstrumentedTest": 11,
     "com.privateassistant.platform.inference.ModelImportPrivacyInstrumentedTest": 1,
+    "com.privateassistant.platform.inference.LocalChatGatewayInstrumentedTest": 5,
 }
 
 

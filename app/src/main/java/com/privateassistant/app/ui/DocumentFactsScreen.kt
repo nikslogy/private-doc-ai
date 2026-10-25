@@ -176,7 +176,7 @@ private fun FieldGroupCard(group: FieldGroupUi, enabled: Boolean, onViewSource: 
 }
 
 @StringRes
-private fun fieldLabel(key: FieldKey): Int = when (key) {
+internal fun fieldLabel(key: FieldKey): Int = when (key) {
     FieldKey.POLICY_NUMBER -> R.string.facts_policy_number
     FieldKey.VEHICLE_REGISTRATION -> R.string.facts_vehicle_registration
     FieldKey.POLICY_HOLDER -> R.string.facts_policy_holder

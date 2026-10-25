@@ -1,0 +1,21 @@
+<resources>
+    <string name="chat_source_unavailable">That source is no longer available. Choose a document again.</string>
+    <string name="chat_source_changed">The document text changed. Choose it again to start a fresh chat.</string>
+    <string name="chat_reply_cancelled">Reply cancelled. Native processing may take time to finish.</string>
+    <string name="chat_choose_document_notice">Choose a document above so I can check its printed facts and show source pages.</string>
+    <string name="chat_use_controls_notice">Chat cannot change or share files. Use the document controls; sharing and deletion need your direct confirmation.</string>
+    <string name="chat_document_incomplete">Some source text is missing or incomplete. Open the document and read its text or run OCR, then choose it again.</string>
+    <string name="chat_document_summary_conflicts">Partial summary of printed facts. Conflicting values are present; review the source pages.</string>
+    <string name="chat_document_summary_partial">Partial summary of printed facts; this does not cover the whole document.</string>
+    <string name="chat_document_summary_title">Summary of supported printed facts, with source pages:</string>
+    <string name="chat_document_fact_title">The selected document prints:</string>
+    <string name="chat_document_conflict">The selected document prints conflicting values. I cannot choose one:</string>
+    <string name="chat_document_missing">I could not find that supported label in this document. Review the source text; OCR and unsupported layouts can miss facts.</string>
+    <string name="chat_document_clarify">Which amount do you mean: total premium, premium before tax, tax, insured value, sum insured or deductible?</string>
+    <string name="chat_document_unsupported">This document chat can read supported printed policy and invoice fields, or summarize those facts. Try “What is the total premium?” or “What is the policy number?”. Broader document analysis is still being developed.</string>
+    <string name="chat_model_required_notice">Set up and import the recommended compact model to use general chat. Document facts do not need a model.</string>
+    <string name="chat_memory_notice">There is not enough available memory for the compact model right now. Close other apps and try again, or ask about a selected document’s printed facts.</string>
+    <string name="chat_generation_failed">The local model could not finish this reply. Try a shorter message or clear the chat and try again.</string>
+    <string name="chat_request_failed">This question could not be completed. Choose the source again or try a shorter message.</string>
+    <string name="chat_document_more_matches">More matches exist; open the source to review them.</string>
+</resources>

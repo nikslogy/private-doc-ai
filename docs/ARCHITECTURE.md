@@ -32,13 +32,24 @@ enter the generated quoted all-terms query. Hits are independently checked
 against raw source text and return exact UTF-16 quotes from an immutable revision.
 Search is bounded lexical matching and does not infer policy validity or facts.
 
-The Assistant tab's manual facts reader pins an explicitly chosen document and
-revision. A bounded core label grammar returns literal values with validated exact
-line evidence, preserves raw identifiers/dates/decimals, and leaves conflicting
-values unresolved. Generic labels retain generic meanings. UI session/generation
-guards reject stale results; lock, deletion and reindex invalidate transient facts.
-No extracted-field plaintext file or database migration is introduced. See
-[DOCUMENT_FACTS.md](DOCUMENT_FACTS.md) for limits and scope.
+The Assistant tab now has actual local chat and an explicit document source
+picker. General chat sends the current bounded user message plus recent context
+through LocalChatPrompt and LocalChatGateway to the verified compact model. It
+has no vault reader, network or mutation capability; generated replies are marked
+unverified. Chat lives only in unlocked-session memory. It is never saved through
+Compose saved state, a plaintext file, database chat table or native KV cache.
+
+Document mode reads only the explicitly chosen immutable revision through the
+unlocked VaultController. DocumentChatEngine recognizes supported English printed
+policy/invoice questions and verifies the existing labelled-field evidence. Exact
+raw identifiers/dates/decimals and page quotes survive. Missing, ambiguous,
+conflicting or incomplete sources abstain/clarify; summaries are explicitly
+bounded extractive facts, not unrestricted model-generated document analysis.
+Model replies do not become citations. App-owned citation objects can open only a
+still-current authorized document/page; text cannot synthesize a source callback.
+Changing source clears conversation/history. Lock, clear, cancellation, deletion
+and OCR/reindex invalidate pending results, source quotes and generation epochs.
+No schema change, durable chat history or extracted-field plaintext is added.
 
 The UI combines name/type matches with content hits and opens a page-text
 evidence viewer showing page, revision and extraction method. It does not yet
@@ -104,12 +115,13 @@ The real LiteRT-LM 0.16.0 CPU adapter uses a 512-token combined context, native
 post-allocation output checks and synchronous send with a joined native
 cancellation watchdog. Model-specific admission runs inside the heavy-work gate
 immediately before allocation. Lock clears UI state and requests cancellation. Native
-initialization/hangs have no hard cancellation guarantee. UI generation uses
-only a fixed synthetic prompt; actual validation is recorded in STATUS. Synthetic
-OCR Android verification passed; physical checks remain open.
-There is no chat/QA executor, full PDF
-viewer, derivative executor, backup store or recovery flow yet. These are
-ordered future milestones, not capabilities implied by interface names.
+initialization/hangs have no hard cancellation guarantee. Model setup retains its
+fixed synthetic diagnostic; the separate chat gateway accepts actual user chat
+prompts. General-chat intent rules offer source selection or existing controls
+for obvious private-document/action requests, and never execute a model action.
+Actual validation is recorded in STATUS. Synthetic OCR Android verification
+passed; physical checks remain open. Unrestricted document synthesis, full PDF
+viewer, derivative execution, portable backup and recovery remain future work.
 
 See [CRYPTO_DESIGN](CRYPTO_DESIGN.md), [PRIVACY](PRIVACY.md),
 [COMPATIBILITY](COMPATIBILITY.md) and [STATUS](STATUS.md).

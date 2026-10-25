@@ -80,6 +80,7 @@ fun PrivateAssistantApp(
 ) {
     val state by model.state.collectAsState()
     val modelState by model.models.state.collectAsState()
+    val chatState by model.assistant.state.collectAsState()
     val snackbar = remember { SnackbarHostState() }
     val context = LocalContext.current
     BackHandler(enabled = state.unlocked && state.selectedDocument != null) { model.closeDocument() }
@@ -153,10 +154,12 @@ fun PrivateAssistantApp(
                             onDiagnostic = model.models::diagnostic, onRemove = model.models::remove,
                             onCancel = model.models::cancel, onRefresh = model.models::refresh,
                             onOpenLink = onOpenModelLink)
-                        else DocumentFactsScreen(state,
-                            onSelectDocument = model::chooseFactsDocument,
-                            onClearDocument = model::clearFactsDocument,
-                            onViewSource = model::viewFactSource, onOpenModelManager = model::openModels)
+                        else AssistantChatScreen(chatState,
+                            onDraft = model.assistant::setDraft, onSend = model.assistant::send,
+                            onCancel = model.assistant::cancel, onClear = model.assistant::clearConversation,
+                            onSelectDocument = model.assistant::selectDocument,
+                            onViewSource = model::viewChatSource, onOpenModels = model::openModels,
+                            onRefreshModel = model.assistant::refreshModel)
                         AppPage.PRIVACY -> PrivacyScreen(onLock)
                     }
                 }
