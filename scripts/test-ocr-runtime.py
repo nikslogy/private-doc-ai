@@ -34,9 +34,11 @@ class Opener:
     def __init__(self, actions):
         self.actions = list(actions)
         self.requests = []
+        self.request_headers = []
 
     def open(self, request, timeout):
         self.requests.append((request.full_url, request.get_method(), timeout))
+        self.request_headers.append({key.lower(): value for key, value in request.header_items()})
         action = self.actions.pop(0)
         if isinstance(action, BaseException):
             raise action
@@ -49,6 +51,7 @@ class OcrRuntimePreparationTest(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.root = Path(self.temporary.name)
         self.repository = self.root / "ignored/verified-ocr-maven"
+        self.gradle_home = self.root / "ignored/gradle-user-home"
         self.target = self.repository / RUNTIME.ARTIFACT_PATH
         self.payload = b"synthetic-public-aar-fixture-481596"
         self.record = {
@@ -64,7 +67,11 @@ class OcrRuntimePreparationTest(unittest.TestCase):
         destination.write_bytes(self.payload)
 
     def prepare(self, fetch=None):
-        return RUNTIME.prepare_runtime(self.record, self.repository, download=True, fetch=fetch or self.fetch)
+        return RUNTIME.prepare_runtime(self.record, self.repository, download=True, fetch=fetch or self.fetch,
+                                       gradle_user_home=self.gradle_home)
+
+    def gradle_entry(self, home=None, version="4.9.0", group="com.github.adaptech-cz.Tesseract4Android"):
+        return (home or self.gradle_home) / "caches/modules-2/files-2.1" / group / "tesseract4android" / version / ("a" * 40) / RUNTIME.ARTIFACT_PATH.name
 
     def assert_no_staging(self):
         self.assertEqual(list(self.repository.rglob(".ocr-runtime-*")) if self.repository.exists() else [], [])
@@ -212,6 +219,95 @@ class OcrRuntimePreparationTest(unittest.TestCase):
         tls = next(handler for handler in handlers if isinstance(handler, HTTPSHandler))._context
         self.assertEqual(tls.verify_mode, ssl.CERT_REQUIRED)
         self.assertTrue(tls.check_hostname)
+
+    def test_request_headers_identify_project_and_disable_stale_or_encoded_responses(self):
+        _, opener, _, _ = self.download([self.payload])
+        self.assertEqual(opener.requests[0][0], RUNTIME.VERIFIER.URL)
+        self.assertEqual(opener.request_headers, [{
+            "user-agent": "private-doc-ai-verified-ocr-bootstrap/1",
+            "accept-encoding": "identity", "cache-control": "no-cache",
+        }])
+
+    def test_exhausted_http_failure_exposes_safe_status_without_provider_content(self):
+        marker = "SYNTHETIC_SECRET_PROVIDER_CONTENT_481596"
+        error = HTTPError("https://user:password@example.invalid/" + marker, 503, marker, {}, None)
+        opener = Opener([error, error, error])
+        with patch.object(RUNTIME, "build_opener", return_value=opener):
+            with self.assertRaises(RUNTIME.PreparationError) as captured:
+                RUNTIME.download_artifact(self.record, self.root / "download.part", pause=lambda _: None)
+        self.assertEqual(str(captured.exception), "Pinned OCR runtime download unavailable (HTTP_503); no artifact published")
+        self.assertNotIn(marker, str(captured.exception))
+        self.assertNotIn("password", str(captured.exception))
+        self.assertFalse((self.root / "download.part").exists())
+
+    def test_transport_diagnostics_use_known_class_without_exception_or_credentials(self):
+        marker = "SYNTHETIC_PROXY_PASSWORD_481596"
+        error = URLError(ssl.SSLCertVerificationError(1, marker))
+        with patch.object(RUNTIME, "build_opener", return_value=Opener([error])):
+            with self.assertRaises(RUNTIME.PreparationError) as captured:
+                RUNTIME.download_artifact(self.record, self.root / "download.part", pause=lambda _: self.fail("TLS must not retry"))
+        self.assertEqual(str(captured.exception), "Pinned OCR runtime download unavailable (SSLCertVerificationError); no artifact published")
+        self.assertNotIn(marker, str(captured.exception))
+
+    def test_exact_verified_gradle_artifact_is_copied_without_network(self):
+        source = self.gradle_entry()
+        source.parent.mkdir(parents=True)
+        source.write_bytes(self.payload)
+        self.assertEqual(self.prepare(), self.target)
+        self.assertEqual(self.fetches, [])
+        self.assertEqual(source.read_bytes(), self.payload)
+        self.assertEqual(self.target.read_bytes(), self.payload)
+        self.assertEqual(self.target.stat().st_mode & 0o777, 0o444)
+        self.assert_no_staging()
+
+    def test_corrupt_gradle_cache_is_preserved_and_only_verified_get_can_publish(self):
+        source = self.gradle_entry()
+        source.parent.mkdir(parents=True)
+        corrupt = b"X" + self.payload[1:]
+        source.write_bytes(corrupt)
+        self.prepare()
+        self.assertEqual(len(self.fetches), 1)
+        self.assertEqual(source.read_bytes(), corrupt)
+        self.assertEqual(self.target.read_bytes(), self.payload)
+        self.assert_no_staging()
+
+    def test_symlink_gradle_file_and_hash_directory_are_never_accepted(self):
+        outside = self.root / "outside-gradle"
+        outside.mkdir()
+        canary = outside / RUNTIME.ARTIFACT_PATH.name
+        canary.write_bytes(self.payload)
+        for linked_directory in (False, True):
+            with self.subTest(linked_directory=linked_directory):
+                home = self.root / f"gradle-link-{linked_directory}"
+                source = self.gradle_entry(home=home)
+                source.parent.parent.mkdir(parents=True)
+                if linked_directory:
+                    source.parent.symlink_to(outside, target_is_directory=True)
+                else:
+                    source.parent.mkdir()
+                    source.symlink_to(canary)
+                repository = self.root / f"repository-link-{linked_directory}"
+                before = len(self.fetches)
+                RUNTIME.prepare_runtime(self.record, repository, download=True, fetch=self.fetch, gradle_user_home=home)
+                self.assertEqual(len(self.fetches), before + 1)
+                self.assertEqual(canary.read_bytes(), self.payload)
+
+    def test_gradle_import_stays_within_exact_coordinate_and_canonical_home(self):
+        for source in (self.gradle_entry(version="4.9.1"), self.gradle_entry(group="unrelated.group")):
+            source.parent.mkdir(parents=True)
+            source.write_bytes(self.payload)
+        self.prepare()
+        self.assertEqual(len(self.fetches), 1)
+        # An explicitly aliased home cannot turn an outside cache into an import.
+        outside_home = self.root / "outside-home"
+        source = self.gradle_entry(home=outside_home)
+        source.parent.mkdir(parents=True)
+        source.write_bytes(self.payload)
+        alias_parent = self.root / "alias-parent"
+        alias_parent.mkdir()
+        RUNTIME.prepare_runtime(self.record, self.root / "canonical-repository", download=True,
+                                fetch=self.fetch, gradle_user_home=alias_parent / ".." / "outside-home")
+        self.assertEqual(len(self.fetches), 2)
 
     def test_transient_http_errors_retry_bounded_then_accept_only_verified_bytes(self):
         for code in (404, 429, 500, 502, 503):

@@ -50,6 +50,15 @@ jobs:
           test -x "$JAVA_HOME_21_X64/bin/java"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
           echo "$JAVA_HOME_21_X64/bin" >> "$GITHUB_PATH"
+      - name: Restore trusted host Gradle dependency cache
+        uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        with:
+          path: |
+            .tooling/gradle-user-home/caches
+            .tooling/gradle-user-home/wrapper
+          key: gradle-model-probe-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-${{ github.sha }}
+          restore-keys: |
+            gradle-v1-${{ runner.os }}-${{ runner.arch }}-jdk21-
       - name: Validate bounded synthetic-process memory diagnostics
         run: |
           python3 scripts/test-model-process-memory.py

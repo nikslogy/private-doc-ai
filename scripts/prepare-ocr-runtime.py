@@ -4,6 +4,7 @@
 import argparse
 import hashlib
 import importlib.util
+from itertools import islice
 import json
 import os
 from pathlib import Path
@@ -19,7 +20,10 @@ from urllib.request import HTTPRedirectHandler, HTTPSHandler, ProxyHandler, Requ
 ROOT = Path(__file__).resolve().parents[1]
 PIN = ROOT / "config/ocr-runtime.json"
 REPOSITORY = ROOT / ".tooling/verified-ocr-maven"
+GRADLE_USER_HOME = ROOT / ".tooling/gradle-user-home"
 ARTIFACT_PATH = Path("com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar")
+GRADLE_COORDINATE_PATH = Path("caches/modules-2/files-2.1/com.github.adaptech-cz.Tesseract4Android/tesseract4android/4.9.0")
+MAX_GRADLE_HASH_DIRECTORIES = 32
 ATTEMPTS = 3
 SOCKET_TIMEOUT_SECONDS = 30
 ATTEMPT_BUDGET_SECONDS = 90
@@ -76,6 +80,68 @@ def transient_failure(failure):
             or isinstance(reason, socket.gaierror) and reason.errno == socket.EAI_AGAIN)
 
 
+def safe_transport_category(failure):
+    """Fixed diagnostic tokens only: never provider text, URLs or proxy credentials."""
+    if isinstance(failure, HTTPError):
+        code = failure.code
+        return f"HTTP_{code}" if type(code) is int and 100 <= code <= 599 else "HTTPError"
+    reason = failure.reason if isinstance(failure, URLError) else failure
+    for kind in (ssl.SSLCertVerificationError, ssl.SSLError, TimeoutError,
+                 ConnectionResetError, ConnectionAbortedError, ConnectionRefusedError, socket.gaierror):
+        if isinstance(reason, kind):
+            return kind.__name__
+    return "URLError" if isinstance(failure, URLError) else "OSError"
+
+
+def copy_verified_gradle_artifact(record, destination, gradle_user_home):
+    """Import only the reviewed AAR from the exact existing Gradle coordinate."""
+    home = Path(gradle_user_home).absolute()
+    coordinate = home / GRADLE_COORDINATE_PATH
+    try:
+        # Do not follow an ancestor alias or inspect unrelated cache coordinates.
+        reject_symlinks(coordinate)
+        if home.resolve() != home or not coordinate.is_dir():
+            return False
+        candidates = list(islice(coordinate.iterdir(), MAX_GRADLE_HASH_DIRECTORIES + 1))
+        if len(candidates) > MAX_GRADLE_HASH_DIRECTORIES:
+            return False
+    except (OSError, ValueError):
+        return False
+    for directory in sorted(candidates):
+        if not re.fullmatch(r"[a-f0-9]{40}", directory.name):
+            continue
+        source = directory / ARTIFACT_PATH.name
+        created = False
+        try:
+            reject_symlinks(source)
+            if not directory.is_dir() or not source.is_file() or source.absolute() != source.resolve():
+                continue
+            verify_cached(record, source)
+            # A bounded second copy plus final verification prevents a changed cache
+            # file from publishing different bytes after its first successful hash.
+            received = 0
+            with source.open("rb") as input_file, destination.open("xb") as output_file:
+                created = True
+                while True:
+                    block = input_file.read(min(64 * 1024, record["artifact"]["byteCount"] + 1 - received))
+                    if not block:
+                        break
+                    received += len(block)
+                    if received > record["artifact"]["byteCount"]:
+                        raise PreparationError("Gradle OCR cache entry changed size")
+                    output_file.write(block)
+                output_file.flush()
+                os.fsync(output_file.fileno())
+            verify_cached(record, destination)
+            return True
+        except (OSError, ValueError):
+            if created:
+                destination.unlink(missing_ok=True)
+            # Cache misses/corruption never weaken verification or change origin.
+            continue
+    return False
+
+
 def download_artifact(record, destination, pause=time.sleep):
     validate_pin(record)
     reject_symlinks(destination)
@@ -91,7 +157,11 @@ def download_artifact(record, destination, pause=time.sleep):
             digest = hashlib.sha256()
             count = 0
             deadline = time.monotonic() + ATTEMPT_BUDGET_SECONDS
-            request = Request(artifact["url"], method="GET")
+            request = Request(artifact["url"], method="GET", headers={
+                "User-Agent": "private-doc-ai-verified-ocr-bootstrap/1",
+                "Accept-Encoding": "identity",
+                "Cache-Control": "no-cache",
+            })
             with opener.open(request, timeout=SOCKET_TIMEOUT_SECONDS) as response:
                 if response.status != 200 or response.geturl() != artifact["url"]:
                     raise PreparationError("Unexpected OCR runtime download response")
@@ -117,7 +187,8 @@ def download_artifact(record, destination, pause=time.sleep):
             if created:
                 destination.unlink(missing_ok=True)
             if not transient_failure(failure) or attempt + 1 == ATTEMPTS:
-                raise PreparationError("Pinned OCR runtime download unavailable; no artifact published") from None
+                category = safe_transport_category(failure)
+                raise PreparationError(f"Pinned OCR runtime download unavailable ({category}); no artifact published") from None
             # Fixed bounded delays ignore untrusted Retry-After/redirect headers.
             pause(attempt + 1)
         except BaseException:
@@ -126,7 +197,8 @@ def download_artifact(record, destination, pause=time.sleep):
             raise
 
 
-def prepare_runtime(record, repository=REPOSITORY, download=False, fetch=download_artifact):
+def prepare_runtime(record, repository=REPOSITORY, download=False, fetch=download_artifact,
+                    gradle_user_home=GRADLE_USER_HOME):
     validate_pin(record)
     repository = Path(repository).absolute()
     destination = repository / ARTIFACT_PATH
@@ -144,7 +216,8 @@ def prepare_runtime(record, repository=REPOSITORY, download=False, fetch=downloa
     staging = Path(tempfile.mkdtemp(prefix=".ocr-runtime-", dir=destination.parent))
     staged = staging / "artifact.aar"
     try:
-        fetch(record, staged)
+        if not copy_verified_gradle_artifact(record, staged, gradle_user_home):
+            fetch(record, staged)
         # Reuse the mandatory Gradle-input verifier, independently of fetch code.
         verify_cached(record, staged)
         os.chmod(staged, 0o444)
