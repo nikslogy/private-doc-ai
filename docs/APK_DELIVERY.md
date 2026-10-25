@@ -2,11 +2,11 @@
 
 ## Current stable Preview build
 
-[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).
+[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).
 Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
-host gate, pinned signer checks and 66 non-skipped Android test executions in
-[run 39819743976](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976).
-Version 0.4.1-dev / code 6 retains permanent IDs com.privateassistant.app.preview
+host gate, pinned signer checks and 68 non-skipped Android test executions in
+[run 40168429140](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140).
+Version 0.4.2-dev / code 7 retains permanent IDs com.privateassistant.app.preview
 and com.privateassistant.app.connected.preview. The connected launcher is
 **Private Vault Connected Preview**. Install over the existing Preview apps
 without uninstalling or clearing data. Earlier Test/original apps retain separate
@@ -17,9 +17,11 @@ produce literal values, exact source quotes/page links and unresolved conflict
 warnings. OCR may change digits and unsupported layouts may not match. AI
 questions/summaries remain disabled. Set up on-device AI offers verified import
 and a fixed synthetic diagnostic. Real CPU generation/cancellation passed on an
-explicit emulator, with sampled process high-water memory around 8.14 GiB.
-Code6 checks total/available memory before native loading; this does not prove
-phone compatibility. Consult MODEL_SETUP.md and STATUS.md before running it.
+explicit nominal 4 GiB emulator, with observed process high-water memory around
+2.47 GiB. Choose the new recommended Qwen 3 0.6B entry and import its 347 MB file;
+the old 1.6 GB file is a different retired model. Code7 checks model-specific
+total/available memory inside the heavy-work gate before native loading. This
+does not prove physical-phone compatibility or universal 4 GB support. Consult MODEL_SETUP.md and STATUS.md before running it.
 This is experimental setup, not a completed AI assistant.
 
 The persistent user-owned signing key is held in repository Actions secrets;

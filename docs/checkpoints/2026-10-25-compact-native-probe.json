@@ -1,0 +1,671 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "Compact INT4 real synthetic CPU generation and active cancellation on a nominal 4 GiB Android emulator",
+  "recordedAtUtc": "2026-10-25T06:26:34Z",
+  "repository": "nikslogy/private-doc-ai",
+  "run": {
+    "id": 40168449811,
+    "attempt": 1,
+    "jobId": 121094201645,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40168449811",
+    "markerCommit": "dbb46b0b56e7994d934b27a9fde8097dce2a8efc",
+    "sourceCommit": "0d213a5537e4dc7550ac3aadc312284c4efdec32",
+    "status": "completed",
+    "conclusion": "success",
+    "runApiUpdatedAtUtc": "2026-10-25T06:22:50Z",
+    "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles",
+    "executed": 1,
+    "failures": 0,
+    "skipped": 0,
+    "samplerUnitTestsPassed": 19,
+    "downloaderAdmissionAndSyntheticTransportTestsPassed": 12,
+    "unexpectedAndroidFailures": []
+  },
+  "model": {
+    "id": "qwen3-06b-q4-nothink",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "fileName": "qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "runtimeVersion": "0.16.0",
+    "backend": "CPU",
+    "licenseIdentifier": "Apache-2.0",
+    "input": "Fixed synthetic generation and cancellation prompts only; no vault documents, keys or user questions",
+    "documentQuestionsAndSummariesEnabled": false
+  },
+  "runtimeConfiguration": {
+    "cpuThreads": 2,
+    "combinedTokenBudget": 512,
+    "maximumOutputTokens": 128,
+    "thinkingEnabled": false,
+    "cacheDir": ":nocache",
+    "automaticToolCalling": false,
+    "tools": [],
+    "operationDeadlineMillis": 300000,
+    "scope": "Pinned application adapter configuration, not a measured allocation bound or hard native timeout"
+  },
+  "target": {
+    "kind": "disposable x86_64 Android emulator",
+    "explicitSerial": "emulator-5554",
+    "api": 36,
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "nominalRamMiB": 4096,
+    "actualGuestMemory": {
+      "totalKiB": 4014272,
+      "availableBeforeTestKiB": 2457980,
+      "pageSizeBytes": 4096
+    },
+    "hostResources": {
+      "hostTotalBytes": 16766414848,
+      "hostAvailableBytes": 14647799808,
+      "minimumAvailableGuardBytes": 6442450944,
+      "modelId": "qwen3-06b-q4-nothink",
+      "emulatorRamMiB": 4096,
+      "scope": "Fixed small-model experiment on nominal 4 GiB x86_64 emulator; no physical-phone RAM minimum established",
+      "hostFreeDiskBytes": 89125199872
+    },
+    "emulatorVersion": "37.2.12",
+    "emulatorBuildId": "16428233",
+    "systemImageRevision": 7,
+    "physicalPhone": false
+  },
+  "admission": {
+    "modelSpecificPolicyPassed": true,
+    "forcedDenialReturnedBeforeNativeInitialization": true,
+    "deniedHookDidNotEnterNativeSend": true,
+    "finalCheckRunsInsideHeavyWorkGate": true,
+    "configuredMinimumTotalBytes": 3221225472,
+    "configuredMinimumAvailableBytes": 1610612736,
+    "requires64Bit": true,
+    "rejectsAndroidLowMemory": true,
+    "scope": "The same model-specific policy admitted the real generation and separate cancellation operation in this test. A forced-false hook raised ADMISSION without entering send. This self-targeting platform test does not exercise Compose UI/physical-phone behavior, prove threshold sufficiency at every admitted memory state, or establish a phone RAM minimum. Pre-test guest values are not the unrecorded individual hook snapshots."
+  },
+  "result": {
+    "realPublicModelGenerationPassed": true,
+    "activeNativeCancellationPassed": true,
+    "beforeAndAfterModelByteCountAndSha256Passed": true,
+    "boundedSyntheticFileCanaryChecksPassed": true,
+    "returnedAfterNativeSendAndWatchdogCleanup": true
+  },
+  "metrics": {
+    "cancellationOperationMillis": 21783,
+    "generatedUtf16": 50,
+    "generationElapsedMillis": 54688,
+    "nativeCancellationCalls": 71,
+    "nativeSendFailures": 1
+  },
+  "metricScope": {
+    "generatedUtf16": "50 actual UTF-16 units of nonempty generated text; output text was not published and no semantic/language accuracy is established.",
+    "generationElapsedMillis": "54,688 ms for complete generation operation including native initialization on this emulator.",
+    "cancellationOperationMillis": "21,783 ms for the separate complete cancellation operation including its own native initialization; not cancellation-request latency.",
+    "nativeCancellationCalls": "71 successful native cancellation API returns observed while cancelling the synchronous send.",
+    "nativeSendFailures": "One expected native synchronous-send failure in the deliberately interrupted operation, followed by CancellationException and completed assertions.",
+    "timeout": "Native send/watchdog cleanup returned in this execution; initialization remains without a hard interrupt guarantee."
+  },
+  "phases": [
+    {
+      "phase": "ARGUMENTS_ACCEPTED",
+      "elapsedRealtimeMillis": 67056,
+      "pid": 2701
+    },
+    {
+      "phase": "MODEL_PATH_VALIDATED",
+      "elapsedRealtimeMillis": 67155,
+      "pid": 2701
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_START",
+      "elapsedRealtimeMillis": 67155,
+      "pid": 2701
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_RETURNED",
+      "elapsedRealtimeMillis": 72392,
+      "pid": 2701
+    },
+    {
+      "phase": "CANARY_BASELINE_START",
+      "elapsedRealtimeMillis": 72393,
+      "pid": 2701
+    },
+    {
+      "phase": "CANARY_BASELINE_RETURNED",
+      "elapsedRealtimeMillis": 72773,
+      "pid": 2701
+    },
+    {
+      "phase": "ADMISSION_DENIAL_VERIFIED",
+      "elapsedRealtimeMillis": 72851,
+      "pid": 2701
+    },
+    {
+      "phase": "NATIVE_GENERATION_START",
+      "elapsedRealtimeMillis": 72868,
+      "pid": 2701
+    },
+    {
+      "phase": "NATIVE_SEND_STARTED",
+      "elapsedRealtimeMillis": 110290,
+      "pid": 2701
+    },
+    {
+      "phase": "NATIVE_GENERATION_RETURNED",
+      "elapsedRealtimeMillis": 127537,
+      "pid": 2701
+    },
+    {
+      "phase": "CANCELLATION_OPERATION_START",
+      "elapsedRealtimeMillis": 127556,
+      "pid": 2701
+    },
+    {
+      "phase": "CANCELLATION_SEND_STARTED",
+      "elapsedRealtimeMillis": 147196,
+      "pid": 2701
+    },
+    {
+      "phase": "NATIVE_CANCEL_RETURNED",
+      "elapsedRealtimeMillis": 147311,
+      "pid": 2701
+    },
+    {
+      "phase": "NATIVE_SEND_FAILED",
+      "elapsedRealtimeMillis": 149107,
+      "pid": 2701
+    },
+    {
+      "phase": "CANCELLATION_RETURNED",
+      "elapsedRealtimeMillis": 149338,
+      "pid": 2701
+    },
+    {
+      "phase": "POST_MODEL_VERIFY_RETURNED",
+      "elapsedRealtimeMillis": 150296,
+      "pid": 2701
+    },
+    {
+      "phase": "CANARY_FINAL_RETURNED",
+      "elapsedRealtimeMillis": 150299,
+      "pid": 2701
+    }
+  ],
+  "memorySampling": {
+    "schemaVersion": 1,
+    "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
+    "emittedPid": 2701,
+    "sampleIntervalMillis": 1000,
+    "sampleLimit": 900,
+    "sampleCount": 84,
+    "sampleColumns": [
+      "elapsedMillis",
+      "rssBytes",
+      "hwmBytes"
+    ],
+    "samples": [
+      [
+        3546,
+        148090880,
+        148090880
+      ],
+      [
+        4568,
+        148353024,
+        148353024
+      ],
+      [
+        5570,
+        148746240,
+        148746240
+      ],
+      [
+        6558,
+        149008384,
+        149008384
+      ],
+      [
+        7541,
+        149008384,
+        149008384
+      ],
+      [
+        8609,
+        149139456,
+        149139456
+      ],
+      [
+        9619,
+        173518848,
+        173518848
+      ],
+      [
+        10583,
+        186101760,
+        186101760
+      ],
+      [
+        11600,
+        225153024,
+        228347904
+      ],
+      [
+        12552,
+        279482368,
+        279482368
+      ],
+      [
+        13550,
+        349769728,
+        349769728
+      ],
+      [
+        14548,
+        404746240,
+        406372352
+      ],
+      [
+        15547,
+        481738752,
+        482742272
+      ],
+      [
+        16585,
+        500469760,
+        500469760
+      ],
+      [
+        17548,
+        536780800,
+        536780800
+      ],
+      [
+        18543,
+        599515136,
+        615755776
+      ],
+      [
+        19569,
+        751026176,
+        751026176
+      ],
+      [
+        20572,
+        843431936,
+        847495168
+      ],
+      [
+        21581,
+        933736448,
+        933867520
+      ],
+      [
+        22563,
+        945999872,
+        945999872
+      ],
+      [
+        23587,
+        1011273728,
+        1011273728
+      ],
+      [
+        24590,
+        1049415680,
+        1049415680
+      ],
+      [
+        25591,
+        1066717184,
+        1066717184
+      ],
+      [
+        26595,
+        1075077120,
+        1075077120
+      ],
+      [
+        27570,
+        1088315392,
+        1088315392
+      ],
+      [
+        28564,
+        1105616896,
+        1109549056
+      ],
+      [
+        29611,
+        1177104384,
+        1180721152
+      ],
+      [
+        30563,
+        1228484608,
+        1228484608
+      ],
+      [
+        31547,
+        1302671360,
+        1302671360
+      ],
+      [
+        32589,
+        1395957760,
+        1395957760
+      ],
+      [
+        33553,
+        1397268480,
+        1397399552
+      ],
+      [
+        34547,
+        1408323584,
+        1408323584
+      ],
+      [
+        35574,
+        1536512000,
+        1536512000
+      ],
+      [
+        36557,
+        1561677824,
+        1561677824
+      ],
+      [
+        37557,
+        1611878400,
+        1611878400
+      ],
+      [
+        38612,
+        1706512384,
+        1706512384
+      ],
+      [
+        39577,
+        1773297664,
+        1773297664
+      ],
+      [
+        40615,
+        1869242368,
+        1874878464
+      ],
+      [
+        41574,
+        1875533824,
+        1875533824
+      ],
+      [
+        42556,
+        1797672960,
+        1881432064
+      ],
+      [
+        43562,
+        1763987456,
+        1881432064
+      ],
+      [
+        44563,
+        1805725696,
+        1881432064
+      ],
+      [
+        45575,
+        1731407872,
+        1881432064
+      ],
+      [
+        46637,
+        1743683584,
+        1881432064
+      ],
+      [
+        47568,
+        1705889792,
+        1881432064
+      ],
+      [
+        48591,
+        1609003008,
+        1881432064
+      ],
+      [
+        49582,
+        1400586240,
+        1881432064
+      ],
+      [
+        50566,
+        1195065344,
+        1881432064
+      ],
+      [
+        51570,
+        1134718976,
+        1881432064
+      ],
+      [
+        52581,
+        1048342528,
+        1881432064
+      ],
+      [
+        53570,
+        940818432,
+        1881432064
+      ],
+      [
+        54573,
+        1083887616,
+        1881432064
+      ],
+      [
+        55640,
+        1161736192,
+        1881432064
+      ],
+      [
+        56642,
+        1321512960,
+        1881432064
+      ],
+      [
+        57634,
+        1316245504,
+        1881432064
+      ],
+      [
+        58643,
+        1293963264,
+        1881432064
+      ],
+      [
+        59654,
+        1252937728,
+        1881432064
+      ],
+      [
+        60578,
+        1199591424,
+        1881432064
+      ],
+      [
+        61569,
+        1015304192,
+        1881432064
+      ],
+      [
+        62668,
+        573337600,
+        1881432064
+      ],
+      [
+        63599,
+        274169856,
+        1881432064
+      ],
+      [
+        64572,
+        294445056,
+        1881432064
+      ],
+      [
+        65582,
+        381161472,
+        1881432064
+      ],
+      [
+        66564,
+        550465536,
+        1881432064
+      ],
+      [
+        67622,
+        603549696,
+        1881432064
+      ],
+      [
+        68619,
+        687742976,
+        1881432064
+      ],
+      [
+        69601,
+        722558976,
+        1881432064
+      ],
+      [
+        70578,
+        824102912,
+        1881432064
+      ],
+      [
+        71597,
+        885121024,
+        1881432064
+      ],
+      [
+        72601,
+        945152000,
+        1881432064
+      ],
+      [
+        73594,
+        1003347968,
+        1881432064
+      ],
+      [
+        74620,
+        1047089152,
+        1881432064
+      ],
+      [
+        75608,
+        1187598336,
+        1881432064
+      ],
+      [
+        76614,
+        1255362560,
+        1881432064
+      ],
+      [
+        77581,
+        1393090560,
+        1881432064
+      ],
+      [
+        78605,
+        1444864000,
+        1881432064
+      ],
+      [
+        79619,
+        1498210304,
+        1881432064
+      ],
+      [
+        80582,
+        1680322560,
+        1881432064
+      ],
+      [
+        81571,
+        1925820416,
+        1925820416
+      ],
+      [
+        82593,
+        2168041472,
+        2168041472
+      ],
+      [
+        83582,
+        2380460032,
+        2653343744
+      ],
+      [
+        84590,
+        2630602752,
+        2653343744
+      ],
+      [
+        85575,
+        693235712,
+        2653343744
+      ],
+      [
+        86569,
+        198963200,
+        2653343744
+      ]
+    ],
+    "readErrors": 0,
+    "timeoutErrors": 0,
+    "metadataRejected": 0,
+    "observedMaxRssBytes": 2630602752,
+    "observedMaxHwmBytes": 2653343744
+  },
+  "memoryEvidenceScope": "84 numeric process samples for only phase-identified PID2701, zero read/timeout/metadata errors. Maximum sampled RSS was 2,630,602,752 bytes; observed kernel-reported VmHWM was 2,653,343,744 bytes (~2.47 GiB). Samples may miss live peaks; VmHWM includes process baseline/shared/file-backed mappings and native initialization. These are x86_64 process observations, not incremental free-RAM demand, a whole-system peak, a hard upper bound or a physical-phone minimum.",
+  "canaryScope": {
+    "roots": [
+      "app files",
+      "app cache",
+      "app no-backup files"
+    ],
+    "timing": "Bounded baseline and final scans around real generation/cancellation/cleanup",
+    "publicModelExclusion": "Only the exact independently hash-verified public model was excluded.",
+    "limitations": "Synthetic marker absence in these scans does not establish continuous cleanliness, complete filesystem/log/memory privacy or traffic inspection."
+  },
+  "artifact": {
+    "id": 12589781782,
+    "name": "experimental-model-probe-40168449811-1",
+    "bytes": 8264,
+    "sha256": "265e7e328c7215085d807e092356c40e3dcc99de0b7ca8e59b11538a6579dbde",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40168449811/artifacts/12589781782",
+    "createdAtUtc": "2026-10-25T06:22:47Z",
+    "expiresAtUtc": "2026-11-01T06:22:46Z",
+    "expiredAtMetadataCheck": false,
+    "independentlyDownloadedAndSha256Verified": true,
+    "independentVerificationScope": "Harness reviewer downloaded the exact 8,264-byte ZIP and checked size/SHA-256 before parsing. Root independently rehashed and parsed that shared ZIP; root did not perform a second network download. Weights/emulator userdata are excluded from this report artifact."
+  },
+  "historicalEvidence": {
+    "legacyCheckpoint": "2026-10-22-native-model-probe.json",
+    "preservedUnchanged": true,
+    "legacyLastPassRunId": 39819779900,
+    "legacyObservedVmHwmBytes": 8742727680,
+    "scope": "The legacy artifact used a different model/runtime and nominal 10 GiB emulator. The new 2.47 GiB observation is lower than that historical 8.14 GiB observation; these two runs are not a controlled latency/resource benchmark. Earlier legacy LOW_MEMORY/unknown-crash attempts remain in their original checkpoints."
+  },
+  "remainingGates": [
+    "Physical iQOO Neo 10 / Android16 update/import/generation/cancel/lock/restart verification with exact APK/model identities.",
+    "A real 4 GB physical phone, another phone tier, sustained memory/thermal/battery/latency measurements and race checks.",
+    "Application UI and real vendor fingerprint paths; full explicit-target device suite.",
+    "Real 16 KiB native loading; this target used 4 KiB pages.",
+    "Representative held-out document QA/language accuracy, source/citation verification and prompt-injection evaluation.",
+    "Comprehensive filesystem/log/traffic/privacy checks, hard native process isolation/timeouts, dependency provenance/notices and portable recovery."
+  ],
+  "evidenceScope": "One freshly executed non-skipped synthetic real-model test on a nominal 4 GiB emulator passed model-specific admission, deliberate admission denial, CPU generation, active cancellation, exact model rehash and narrow file-canary checks. No guarantee for every 4 GB phone, normal document-QA availability, semantic quality, complete privacy or release readiness."
+}

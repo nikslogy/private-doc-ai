@@ -102,8 +102,29 @@ quality or cancellation claim follows.
 
 That C child never hashes or reads a whole model/archive into an application
 buffer: independent size/hash verification occurred in other processes. A
-numeric-only live RSS/HWM repeat is recorded separately below when complete.
-Its settings were two CPU threads, combined context 512, output limit 96,
+second fresh C process also passed with 76 UTF-16 units and no stderr/tool calls.
+Numeric snapshots from that repeat distinguish live native allocations from
+historical process memory:
+
+| Observation | Linux process KiB |
+| --- | ---: |
+| Baseline VmRSS / VmHWM before engine creation | 89800 / 89800 |
+| After initialization VmRSS / VmHWM | 2683740 / 2683740 |
+| After generation VmRSS / VmHWM | 2687332 / 2687332 |
+| After engine/conversation close VmRSS / VmHWM | 2261600 / 2687252 |
+| getrusage maximum RSS | 2687252 |
+
+The repeat took 31,558 ms to initialize, 11,675 ms to generate and 43,555 ms for
+the complete operation. `/proc` snapshots and getrusage differ slightly; the
+individual readings are recorded rather than claiming a hard bound or identical
+accounting. Around 2.16 GiB remained resident after close in this Linux process.
+Deleting engine handles therefore did not establish immediate return of native
+allocator pages to the OS; process exit returned the process resources. Android
+and ARM behavior still require measurement, especially a second engine created
+for the cancellation test. No private data entered either smoke and no complete
+privacy or native-memory erasure claim is made.
+
+The settings were two CPU threads, combined context 512, output limit 96,
 :nocache, no tools, disabled thinking, and TOP_P sampling with k=1, p=1 and
 temperature 0. An initial harness attempted the C API's Greedy and then TopK
 sampler types; both are unimplemented in that CPU path. Source inspection showed
@@ -132,3 +153,17 @@ substitute. SmolLM2-360M has a public 373,719,040-byte conversion, but neither
 Smol candidate has been run by this project. Qwen2.5-0.5B's reviewed community
 repository supplies older .task/.tflite files rather than a directly usable
 .litertlm artifact for this adapter.
+
+## Subsequent constrained Android result
+
+The project's [real compact-model probe](../checkpoints/2026-10-25-compact-native-probe.json)
+40168449811 then passed exactly one fresh synthetic generation/cancellation test
+on a nominal 4096 MiB API 36 x86_64 emulator, including the actual model-specific
+admission check for both operations and a forced denial-before-initialization
+assertion. Android reported 4,014,272 KiB total and 2,457,980 KiB available before
+the test. The 84 numeric process samples had zero read/timeout/metadata errors;
+observed VmHWM was 2,653,343,744 bytes (~2.47 GiB). Model hashes and narrow canary
+checks passed. This establishes that constrained emulator execution, not a
+universal 4 GB-phone guarantee or English/Hindi/Marathi document-QA quality.
+The code7 stable signed build separately passed 109 Python/fullhost and 68 Android
+executions; physical-phone verification and sustained-use/isolation remain open.

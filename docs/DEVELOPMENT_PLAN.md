@@ -21,6 +21,18 @@ app needs no cloud AI account, OpenAI API key, mandatory account or document
 backend. Unsupported AI devices retain vault, direct search and file tools.
 No production fakes or canned answers presented as document analysis.
 
+User clarification, 25 October 2026: useful local assistance on nominal 4 GB
+phones is a product target; slower responses are acceptable. Qualify small
+quantized artifacts and bounded contexts before imposing a device-wide RAM
+restriction. Record actual Android-reported total/available memory, process
+peaks and sustained repeated-use behavior; do not present file size, a desktop
+run or one emulator as universal phone support. Prefer bounded revision-pinned
+retrieval and independently verified literal facts over sending whole documents
+to a larger model. Keep slower low-memory modes explicit and preserve offline,
+privacy, licence, cancellation and citation requirements. Capability and quality
+must be evaluated separately; a small model loading does not enable unverified
+answers. The current compact-model implementation/evidence is in STATUS.
+
 An imported policy can be found as its original, questioned for its premium
 with a page reference, then converted to JPG. Follow-ups pin the selected
 immutable revision unless the user changes selection.

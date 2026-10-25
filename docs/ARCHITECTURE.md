@@ -94,12 +94,16 @@ M4 source adds a public-model installer using reviewed exact size/hash and curre
 licence acknowledgement. Unknown input is staged only as Tink ciphertext under
 an ephemeral memory-only key; hash-verified public weights may then be decrypted
 and published atomically. A process mutex protects verify-to-load leases across
-native work. Document/provider names and URIs are never persisted. A legacy Qwen
-artifact is registered as experimental with no evaluated languages/tasks or QA.
+native work. Document/provider names and URIs are never persisted. The compact
+Qwen 3 INT4 artifact is experimental with no evaluated languages/tasks or QA.
+The old runtime-0.9 record and fingerprint stay intact for recognition and
+explicit removal; it has no load profile under the upgraded runtime.
 
-The real LiteRT-LM CPU adapter uses a 512-token context, no cache/tools, bounded
-input, post-allocation output checks and synchronous send with a joined native
-cancellation watchdog. Lock clears UI state and requests cancellation. Native
+The real LiteRT-LM 0.16.0 CPU adapter uses a 512-token combined context, native
+128-token output limit, thinking disabled, no cache/tools, bounded input,
+post-allocation output checks and synchronous send with a joined native
+cancellation watchdog. Model-specific admission runs inside the heavy-work gate
+immediately before allocation. Lock clears UI state and requests cancellation. Native
 initialization/hangs have no hard cancellation guarantee. UI generation uses
 only a fixed synthetic prompt; actual validation is recorded in STATUS. Synthetic
 OCR Android verification passed; physical checks remain open.

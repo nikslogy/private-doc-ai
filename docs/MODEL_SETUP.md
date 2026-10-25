@@ -1,91 +1,116 @@
-# Experimental on-device model setup (M4)
+# Experimental compact on-device model setup (M4)
 
-This development slice installs reviewed public weights and offers a fixed
-synthetic CPU generation test. It does not enable document questions/summaries.
-See STATUS for actual build/runtime results; source code and installation alone
-are not device, privacy, language-quality or document-accuracy evidence.
+Code7 / 0.4.2-dev adds a compact, verified public model for the 4 GB device
+target. This development slice offers a fixed synthetic CPU generation test;
+it does not enable document questions/summaries. See STATUS for actual
+Android build/runtime results and pending physical-phone checks. A RAM target
+is not a guarantee for every phone with that advertised capacity.
 
-In Assistant, choose **Set up on-device AI**. The model file button opens the
-system browser for the exact immutable upstream artifact. Download it there,
-return to the app, acknowledge its licence and choose **Import model file**.
-The app itself adds no model-download network path. Android document providers
-and the chosen browser can use their own network access. The offline APK retains
-no INTERNET permission.
+In Assistant choose **Set up on-device AI**, then the recommended **Qwen 3 0.6B**
+entry. Its model-file button opens the system browser for the exact immutable
+upstream artifact. Download it there, return, acknowledge the licence and choose
+**Import model file**. Do not reuse the old 1.6 GB Qwen 2.5 download: it is a
+different model. The app adds no model-download network path, and the offline
+APK retains no INTERNET permission. The browser/document provider can use its
+own network connection.
 
-The legacy Qwen 2.5 1.5B file is 1,597,931,520 bytes. Temporary installation needs
-at least twice that size plus 64 MiB of free app storage, separately from the
-downloaded original file. No inference-model weights are included in source/APKs/artifacts.
-Only the immutable revision/hash in config/models.json is accepted; a newer file
-with the same filename has different embedded metadata and is rejected. Its
-experimental registration has no evaluated languages/tasks. Decision 0005
-records the upstream runtime reference, original-versus-new artifact distinction
-and actual licence sources; no Gemma account/licence gate is involved for Qwen.
+The compact file is 347,251,840 bytes, with the exact revision/SHA-256 in
+config/models.json. Installation temporarily needs twice that size plus 64 MiB
+of free app storage, separately from the downloaded source. No inference weights
+are included in source, APKs, workflow artifacts or caches. Only the exact
+reviewed bytes are accepted; a moving upstream file with the same name is not
+an alternative. Its experimental registration has no evaluated languages/tasks.
+[Decision 0007](decisions/0007-low-memory-model.md) records actual upstream
+metadata, conversion, licence and runtime provenance.
 
-An SAF-selected input is untrusted and could be a private document. The installer
-hashes it while writing Tink Streaming AEAD ciphertext under a fresh key held only
-in memory. It never persists that key. Only after exact expected public size/hash
-match does it authenticate/decrypt into plaintext public weights, hash again,
-fsync and atomically publish the slot. Cancellation or rejection removes only
-recognized staging artifacts; crash recovery discards ciphertext with no key.
-Unknown/unrecognized files are preserved. Previous verified slots are never
-silently replaced. Corrupted installations require explicit model removal before
-reimport; that action does not delete source files or vault documents.
+The former Qwen 2.5 1.5B / runtime-0.9 record is retained unchanged. Previously
+installed slots/receipts remain recognized and preserved. Download/import/test
+for that retired runtime profile are disabled; explicit model removal remains
+available. Removing it does not delete a source download or vault documents.
+No old model is automatically deleted, replaced or loaded under a new runtime.
 
-Reviewed metadata, receipts and model files live below noBackup/local-models-v1.
-Source URIs/names are never stored. Symlinks and unexpected slot contents fail
-closed. A process-wide coroutine mutex holds each verified model lease through
-native load, generation and cleanup, excluding store mutation. The token expires
-on return; escaped tokens cannot access their file afterward. This protects the
-normal app path, not a compromised OS or malicious code within the same process.
+## Verified installation boundary
 
-The real LiteRT-LM adapter uses CPU/two threads, a configured 512-token combined context,
-:nocache, no tools and automatic tool calling disabled. Input is at most 1,024
-UTF-16 units; output is at most 2,048, checked after native allocation. A fresh
-conversation/engine is discarded after each operation. The configured context
-does not establish the exported model's actual KV allocation or a measured memory
-bound. A watchdog requests native
-cancellation repeatedly; the synchronous send must return and the watchdog must
-join before native handles close. Initialization has no interrupt entry point;
-a deadline cannot forcibly kill a native hang. UI lock clears model state and
-revokes work immediately, while safe native cleanup may return later.
+An SAF-selected input is untrusted and may be a private document. The installer
+hashes it while writing Tink Streaming AEAD ciphertext under a fresh memory-only
+key, which is never persisted. Only an exact expected public size/hash match
+permits authenticated decryption into plaintext public weights, a second hash,
+fsync and atomic publication. Wrong private inputs never enter plaintext model
+staging. Cancellation/rejection removes only recognized staging files; crash
+recovery discards ciphertext without a key. Unknown files are preserved.
 
-Code6 applies a conservative 64-bit CPU guard for the reviewed artifact/runtime:
-at least 10 GiB Android-reported total memory, 8 GiB currently available and
-no Android low-memory state. Stricter catalogue requirements also apply; unknown
-profiles are unavailable. The UI checks before verification and again before
-native load, and displays actual/required memory on rejection. These are application settings and do
-not establish a tested model minimum or support on the reported iQOO Neo 10.
-The test uses a fixed synthetic prompt only; it receives no vault key, source
-document, extracted evidence or user question. Its displayed text is actual
-unverified model output and cannot authorize any action. No chat/KV state is saved.
+Reviewed metadata, receipts and models live in noBackup/local-models-v1. Source
+URIs/names are not stored. Symlinks/unexpected slot contents fail closed. A
+process-wide coroutine mutex holds each verified model lease through native
+load, generation and cleanup, excluding store mutation; the token expires on
+return. These controls protect the normal app path, not a compromised OS or
+malicious code in the same process. Corrupted slots require explicit removal
+before reimport.
 
-Routine host/stable checks run metadata and tiny synthetic installer/privacy
-tests without downloading an inference model. The separate explicitly requested
-model-runtime-probe workflow downloads/size-hashes the exact public artifact to
-runner scratch, boots a measured-resource API36 emulator with 10 GiB nominal RAM and requires a real,
-non-skipped generation/cancellation test. The test observes native cancel calls
-and a failing synchronous send during the cancellation experiment, rechecks the
-model hash and scans bounded app files/cache/noBackup for a synthetic canary.
-Only the independently hash-verified public model is excluded from that scan.
-It does not establish complete filesystem/log/traffic privacy, hard timeouts,
-phone cancellation latency or semantic answer quality. Its host must have at
-least 12 GiB currently available before emulator startup. These setup guards are
-configuration, not measured model minimums. The direct probe does not exercise
-the phone UI's separate reported-memory guard. Weights and emulator
-userdata are removed and excluded from artifacts/caches.
+## Bounded compact CPU test
 
-The final explicit emulator run 39819779900 passed one fresh real generation/
-cancellation test with no skips, verified unchanged model bytes and both narrow
-canary scans. Its numeric sampler collected 110 process samples; observed max
-RSS was 8,704,966,656 bytes and kernel-reported VmHWM was 8,742,727,680 bytes
-(about 8.14 GiB). This is a process observation on x86_64, not a measured minimum
-for an ARM phone. The direct runtime probe bypasses the separate UI memory guard.
-Full operations included native initialization and took 79,135 ms for generation
-and 16,700 ms for the separate cancellation operation; the latter is not native
-cancellation-request latency. Exact evidence and earlier failures are in
-[the native checkpoint](checkpoints/2026-10-22-native-model-probe.json).
+The real pinned LiteRT-LM 0.16.0 adapter uses two CPU threads, a 512-token combined
+context, 128 output tokens, thinking disabled, :nocache, no tools and automatic
+tool calling disabled. The INT4 artifact has an exported 1280-token context and
+several prefill signatures, instead of the old INT8 artifact's 4096. Smaller
+configured context alone does not establish smaller native allocation; measure
+the actual model/runtime/backend. GPU acceleration is not implemented here.
 
-Next perform explicit phone installation, import/tamper/cancel/lock/restart
-and synthetic generation checks, collect exact model/APK/device identities and
-measure resource/cancellation/privacy behavior. Model-based document QA remains
-gated until real device evidence and the M5 citation/evaluation layer exist.
+Input is at most 1024 UTF-16 units; output is at most 2048, checked after native
+allocation. Operations allow up to five minutes for slower phones. A fresh
+conversation/engine is closed per operation, and a joined watchdog repeatedly
+requests cooperative native cancellation. Synchronous send must return before
+native handles close. Initialization/hangs have no hard interruption guarantee.
+Closing the engine does not guarantee immediate OS RSS reclamation: the separate
+Linux native smoke observed allocator-retained memory after close. Process
+isolation remains a future hardening gate. UI lock clears state and revokes work;
+safe native cleanup can return later.
+
+The exact compact artifact/runtime profile requires a 64-bit process, at least
+3 GiB Android-reported total memory, 1536 MiB currently available and no Android
+low-memory state. Nominal 4 GB phones report less than 4 GiB usable total. These
+are experimental admission settings, not a tested universal minimum. A check
+runs before model verification and again inside the shared heavy-work gate
+immediately before native loading; rejection displays the selected model's
+actual/required memory. There is no override that loads an unknown profile or
+the retired heavy model without review.
+
+The diagnostic uses a fixed synthetic prompt only, with no vault key, source
+document, extracted evidence or user question. Displayed text is actual,
+unverified model output; it cannot authorize actions. Chat/KV state is not saved.
+The smaller model's English/Hindi/Marathi quality and document accuracy are not
+established by a successful runtime test.
+
+## Actual evidence and next checks
+
+The full exact public download passed byte-count/SHA-256 verification. Two real
+Linux CPU smoke runs generated bounded text with the official pinned 0.16.0 C
+API. The measured native child used about 2.56 GiB process HWM, versus the old
+Android experiment's 8.14 GiB; these are different platforms, not a controlled
+speed/memory comparison or proof of Android support. Exact desktop scope and
+retained-memory observations are in decision 0007.
+
+Routine host/stable checks use metadata and tiny synthetic installer/privacy
+fixtures without downloading an inference model. The separate explicit model
+workflow downloads/hashes the reviewed public file to disposable scratch and
+boots an API 36 x86_64 emulator with 4096 MiB nominal RAM. It requires the actual
+application memory policy, denial-before-load, one fresh non-skipped generation/
+cancellation test, before/after model hashes, bounded file-canary scans and
+numeric process memory samples. See STATUS and the compact-native checkpoint for
+the actual verdict. Weights/emulator userdata are cleaned and excluded from
+workflow artifacts/caches. Run 40168449811 passed one fresh test with no skips on
+this constrained target: Android reported 4,014,272 KiB total, 2,457,980 KiB available
+before the test; both real operations passed the application's admission hook.
+The sampler collected 84 numeric samples with zero errors. Observed VmHWM was
+2,653,343,744 bytes (~2.47 GiB); complete generation took 54,688 ms and the separate
+cancellation operation 21,783 ms, both including native initialization. These are
+emulator observations, not a phone minimum, speed or cancellation-latency claim.
+
+After the signed update and explicit emulator results, perform the phone import/
+tamper/cancel/lock/restart and same-key update procedure in DEVICE_TESTS.md. Record
+exact APK/model/device identities, actual total/available RAM, latency and
+resource behavior. The user's iQOO Neo 10 has 12 GB physical RAM and 256 GB storage,
+but no successful native result on that phone has been recorded here. Model-based
+document QA remains gated until device evidence and the M5 citation/evaluation
+layer exist. Narrow synthetic file-canary checks do not establish complete
+filesystem, logs, traffic, memory, thermal, accuracy or release readiness.

@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "Public compact-model provenance and Linux native smoke; not Android device evidence",
+  "model": {
+    "repository": "litert-community/Qwen3-0.6B-int4",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "file": "qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "downloadUrl": "https://huggingface.co/litert-community/Qwen3-0.6B-int4/resolve/256f33043931947c173d7f3cc1d84ee7a8538cc2/qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm?download=true",
+    "verifiedByteCount": 347251840,
+    "verifiedSha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "licence": "Apache-2.0",
+    "licenceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B/blob/c1899de289a04d12100db370d81485cdf75e47ca/LICENSE",
+    "upstreamRuntimeObservedVersion": "0.16.0",
+    "contextTokens": 1280,
+    "prefillLengths": [
+      8,
+      64,
+      128,
+      256,
+      512,
+      1024
+    ],
+    "quantization": "dynamic_int4_block32",
+    "kvType": "float32"
+  },
+  "androidRuntimeArtifact": {
+    "artifact": "com.google.ai.edge.litertlm:litertlm-android:0.16.0",
+    "byteCount": 20192711,
+    "sha256": "420e3dbef46f93d182529438aa2f0091654a5b124a547966d2ef4b0045330d89",
+    "sha256SourceUrl": "https://dl.google.com/dl/android/maven2/com/google/ai/edge/litertlm/litertlm-android/0.16.0/litertlm-android-0.16.0.aar.sha256",
+    "actualLocalArtifactMatchesPublishedSha256": true,
+    "upstreamSourceCommit": "924e79c91542761242244e4f1651851f822e4cbb",
+    "upstreamTag": "v0.16.0",
+    "licenseIdentifier": "Apache-2.0",
+    "licenseUrl": "https://github.com/google-ai-edge/LiteRT-LM/blob/924e79c91542761242244e4f1651851f822e4cbb/LICENSE",
+    "compile": {
+      "task": ":platform:compileOfflineDebugKotlin",
+      "result": "passed",
+      "duration": "57s",
+      "scope": "Production Kotlin compilation only; no actual generation/privacy/device claim"
+    }
+  },
+  "linuxSmokeRuns": [
+    {
+      "scope": "Linux x86_64 CPU C API smoke; no Android/phone or RAM-limit simulation",
+      "runtimeVersion": "0.16.0",
+      "runtimeSourceCommit": "924e79c91542761242244e4f1651851f822e4cbb",
+      "runtimeArchiveBytes": 161599098,
+      "runtimeArchiveSha256": "f0f3ae7b5730af783d1f018f7ad9a8de20c25fedf01af4e35fc11d4382246f7d",
+      "modelBytes": 347251840,
+      "modelSha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+      "returncode": 0,
+      "wallMillis": 39208,
+      "stderrBytes": 0,
+      "generatedOutputStored": false,
+      "input": "Fixed blue-triangle synthetic prompt; no private data",
+      "cpuThreads": 2,
+      "contextTokens": 512,
+      "maxOutputTokens": 96,
+      "sampler": "TOP_P type, k1 p1 temperature0 matching KotlinJNI",
+      "cacheDir": ":nocache",
+      "thinkingEnabled": false,
+      "toolDescriptions": [],
+      "harnessSourceSha256": "c6830d4a4b36ad08844a6b5e71b568aea6fbdd6fa6ebc14aa71f3a34f1ca39f1",
+      "metrics": {
+        "initializationMillis": 23044,
+        "generationMillis": 15844,
+        "fullOperationMillis": 39068,
+        "maxRssKiB": 2687024
+      },
+      "generatedUtf16": 76,
+      "responseContentType": "list",
+      "toolCalls": 0,
+      "passed": true
+    },
+    {
+      "scope": "Linux x86_64 CPU C API smoke; no Android/phone or RAM-limit simulation",
+      "runtimeVersion": "0.16.0",
+      "runtimeSourceCommit": "924e79c91542761242244e4f1651851f822e4cbb",
+      "runtimeArchiveBytes": 161599098,
+      "runtimeArchiveSha256": "f0f3ae7b5730af783d1f018f7ad9a8de20c25fedf01af4e35fc11d4382246f7d",
+      "modelBytes": 347251840,
+      "modelSha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+      "returncode": 0,
+      "wallMillis": 43800,
+      "stderrBytes": 0,
+      "generatedOutputStored": false,
+      "input": "Fixed blue-triangle synthetic prompt; no private data",
+      "cpuThreads": 2,
+      "contextTokens": 512,
+      "maxOutputTokens": 96,
+      "sampler": "TOP_P type, k1 p1 temperature0 matching KotlinJNI",
+      "cacheDir": ":nocache",
+      "thinkingEnabled": false,
+      "toolDescriptions": [],
+      "harnessSourceSha256": "cd9b0d8e9540de04eaa49cef2184595caef6f624c99a7ffd62e71139e603885a",
+      "metrics": {
+        "initializationMillis": 31558,
+        "generationMillis": 11675,
+        "fullOperationMillis": 43555,
+        "maxRssKiB": 2687252
+      },
+      "generatedUtf16": 76,
+      "responseContentType": "list",
+      "toolCalls": 0,
+      "passed": true,
+      "repeatReason": "Numeric live RSS/HWM snapshots distinguish native operation from historical process HWM; C child never hashes/reads model bytes itself. File/archive hashing ran in a different process.",
+      "memorySnapshots": {
+        "baselineRssKiB": 89800,
+        "baselineHwmKiB": 89800,
+        "afterInitRssKiB": 2683740,
+        "afterInitHwmKiB": 2683740,
+        "afterGenerateRssKiB": 2687332,
+        "afterGenerateHwmKiB": 2687332,
+        "afterCloseRssKiB": 2261600,
+        "afterCloseHwmKiB": 2687252
+      }
+    }
+  ],
+  "measurementScope": "A fresh compiled C process, not Python; model/archive hashing ran outside the measured child. Fixed synthetic prompt only. Process RSS/HWM includes native/runtime allocations and is not a hard memory bound. Different /proc and getrusage samples differ slightly; retain raw numeric observations without forcing equality.",
+  "limitations": [
+    "No Android or physical-phone result in these Linux runs",
+    "No constrained-memory simulation or model-RAM minimum established",
+    "No cancellation/quality/language evaluation or comprehensive privacy proof",
+    "Native allocator retained about2.16GiB RSS after engine close in this desktop child; close does not guarantee OS memory reclamation. Child process exit releases its address space.",
+    "Android application adapter separately uses128outputtokens while this desktop smoke used96; no controlled cross-platform comparison"
+  ]
+}

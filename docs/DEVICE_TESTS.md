@@ -137,8 +137,21 @@ not a successful generation/cancellation result.
    failure or unavailable result, never a fabricated answer or cloud fallback.
 
 ```bash
-ANDROID_SERIAL=<explicit-authorized-target> scripts/check-model-generation.sh qwen25-15b-q8-legacy <exact-local-model-file> --accept-license
+ANDROID_SERIAL=<explicit-authorized-target> scripts/check-model-generation.sh qwen3-06b-q4-nothink <exact-local-model-file> --accept-license
 ```
+
+Use the compact 347,251,840-byte Qwen 3 record for code7. The retired runtime-0.9
+model must remain recognized after an update but must not be downloaded, imported
+or loaded on the new runtime; only explicit removal may delete its public slot.
+Check both the old-slot preservation regression and a real same-key phone update.
+
+For the 4 GB target, record Android-reported total/available memory, cold load,
+complete generation, cancellation and numeric process memory. Repeat after native
+cleanup and after OCR to expose retained allocator/workspace memory; a single
+successful load is not sustained-use proof. Capture only authorized synthetic
+observations, never private document text or global phone logs. Total RAM alone
+must not become a device-wide ban; a specific artifact/profile can be unavailable
+while vault, search and literal document facts continue to work.
 
 This opt-in probe uses test-private storage and removes its public model copy.
 Its file scan is narrow; PID/package crash diagnostics are enabled only on the

@@ -1,45 +1,122 @@
 # Development status
 
-## In progress — compact model for the 4 GB device target (25 October)
+## Checkpoint 11 — compact model passes a 4 GiB Android experiment
 
-The user reports that the code6 memory guard blocked model execution on the
-12 GB iQOO Neo 10; this was an application admission failure, not a measured
-native model run on that phone. Previous success with smaller Gemma models in
-Google's app is consistent with the model/runtime choice being the limitation.
-The previous legacy Qwen candidate consumed about 8.14 GiB process HWM on our
-emulator, and simply waiting longer cannot remove those allocations.
+[Download the stable-signed 0.4.2-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).
+Unzip and install the offline APK over **Private Vault Preview**, without
+uninstalling or clearing data. Code7 keeps the existing Preview IDs and pinned
+signing identity. Android 12/API31+ is required. Earlier Test/original apps still
+have separate vaults; no automatic migration or portable recovery exists.
+Actual same-key physical-phone update preservation remains a separate check.
 
-Code7 / 0.4.2-dev replaces the runnable profile with an exact verified 347 MB
-Qwen3 0.6B dynamic INT4, no-thinking artifact, exported with 1280 context rather
-than the former 4096. LiteRT-LM is pinned to 0.16.0, whose official public AAR
-matches Google's SHA-256. The runner keeps a 512-token combined budget, adds a
-native 128-output-token bound, disables thinking/tools/cache and allows up to
-five minutes for a slow operation. Initialization still has no hard native
-interrupt guarantee. A model-specific 3 GiB reported-total / 1536 MiB available
-memory profile replaces the former 10/8 GiB admission for this artifact only.
-Memory is rechecked inside the heavy-work gate immediately before native load.
-These are experimental application settings, not universal 4 GB phone support.
+Open **Assistant → Set up on-device AI** and choose the recommended **Qwen 3
+0.6B** entry. Download/import its **347,251,840-byte** file, then run **Test local
+model**. The previous 1.6 GB Qwen download is a different retired model; do not
+reuse it. Its existing slot/receipt remains recognized and preserved until
+explicit removal. Normal document questions/summaries remain unavailable while
+M5's citation/intent/evaluation layer is pending. This update fixes the model
+memory path; it does not complete the whole assistant.
 
-The original runtime-0.9 catalogue record and receipt identity are retained so
-an existing installation stays recognized and can be removed only by explicit
-user action. Old model loading/downloading/importing is retired on the new
-runtime. A new synthetic Android regression reconstructs the exact historical
-receipt and verifies recognition/preservation/removal without touching vaults.
+The user reports that code6's memory check blocked their iQOO Neo 10 with 12 GB
+physical RAM/256 GB storage and Android 16. That was admission failure before
+loading, not a measured native failure on the phone. Smaller Gemma models
+working in Google's app are consistent with the artifact/runtime choice being
+the limitation, not the phone being inherently unable to run local AI.
 
-Actual so far: the full new public model download passed exact size/SHA-256;
-production platform Kotlin compilation on 0.16.0 passed. Full host validation,
-the fresh 4096 MiB emulator generation/cancellation/memory probe and signed APK
-build remain pending. No new APK is delivered or 4 GB compatibility claimed
-until those results are recorded. Normal document QA remains disabled while
-M5's citation/intent/evaluation implementation is still pending.
+### Concrete changes and actual results
 
-Next: complete the full host gate, run the same real model test and actual
-application memory admission on an explicit 4 GiB emulator, then deliver the
-same-signing-key code7 update if all relevant checks pass. Record process memory
-and complete operation times, keeping phone and quality checks separate.
+The new exact INT4/no-thinking Qwen3 0.6B artifact exports 1280 context rather
+than the old INT8 model's 4096. LiteRT-LM is pinned to 0.16.0; the official AAR
+matches Google's published SHA-256. The adapter keeps two CPU threads and a
+512-token combined budget, adds a native 128-output-token bound, disables
+thinking/tools/cache and allows a five-minute operation for slower phones.
+Initialization/hangs still lack a hard native interruption guarantee.
 
+The compact profile has a 3 GiB Android-reported-total/1536 MiB currently
+available admission setting, 64-bit and no low-memory state. A fresh check runs
+inside the shared heavy-work gate immediately before native allocation. These
+are artifact-specific experimental settings, not a universal 4 GB minimum. The
+old 10/8 GiB profile is retired, not applied to every model or silently weakened.
+A historical-runtime receipt regression verifies recognition/preservation and
+explicit removal while leaving unknown files intact.
 
-## Checkpoint 10 — verified installation and real native generation probe
+| Gate | Actual result |
+| --- | --- |
+| Local scripts/check-host.sh | PASS: 109 Python, 138 passing JVM XML cases (unchanged core 82 UP-TO-DATE, 28+28 platform fresh), no failures/skips; instrumentation compilation, lint, both assemblies and exact manifest/native checks |
+| Stable CI 40168429140, attempt 1, job 121094145801 | PASS complete host and 68 Android executions (33 regression+1 authenticated lifecycle per variant), none skipped |
+| Signatures/packages | PASS both Preview IDs, fixed public certificate, v2 verification and official 16 KiB zipalign |
+| Offline/production policy | PASS actual offline APK has no INTERNET; ML Kit excluded from both production dependency graphs |
+| Static native checks | PASS: 18 64-bit libraries/APK; 16 32-bit libraries remain unverified for 16 KiB behavior |
+| Real compact-model probe 40168449811 | PASS one fresh test, 0 failures/skips; actual application admission and forced denial-before-initialization both exercised |
+| Model integrity/narrow file canaries | PASS host/device size/hash, unchanged post-run model and baseline/final bounded canary scans |
+
+The real model experiment used a disposable API 36 x86_64 emulator with 4096 MiB
+nominal RAM. Android reported 4,014,272 KiB total and 2,457,980 KiB available before
+the test, with 4096-byte pages. It generated 50 UTF-16 units in a 54,688 ms complete
+operation, including initialization. A separate cancellation operation took
+21,783 ms including its own initialization; 71 native cancel calls returned and
+synchronous send failed once as expected. This is not cancellation-request
+latency or phone speed evidence.
+
+Numeric sampling collected 84 samples of PID 2701 with zero read/timeout/metadata
+errors. Maximum sampled RSS was 2,630,602,752 bytes; observed kernel VmHWM was
+2,653,343,744 bytes (~2.47 GiB). The old model's separate 10 GiB experiment observed
+~8.14 GiB. These are exact experiment observations, not a controlled performance
+benchmark, a hard memory bound or proof for all 4 GB ARM phones. Both real native
+operations passed the model-specific admission check on the constrained target.
+
+### Exact delivered identity
+
+- Source: 0d213a5537e4dc7550ac3aadc312284c4efdec32.
+- Built stable commit: f5c70f231d29c4d0be1993d2630516a66d195b68.
+- Native marker: dbb46b0b56e7994d934b27a9fde8097dce2a8efc; same production source.
+- [Stable CI](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140)
+  completed/success; final job logs 25 October 2026 06:24:34 UTC.
+- APK artifact 12589662196: 314,526,647 bytes; SHA-256
+  4533edaecf41d4f020c4a6e2feeedd886dcf4c96db5de5141d8ea7d094e438a0;
+  expires 1 November 2026 at 06:24:32 UTC.
+- Existing signer certificate SHA-256:
+  0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467.
+- Regression report 12589632064: 142,547 bytes, SHA-256
+  ad7bba06a06dbcb3a5f3d33c7e2965728396e2a2048e877db43548d87c61a8b6.
+  Independently downloaded/hash checked and parsed: 96 entries, 2 XML suites,
+  66 cases, 0 failures/errors/skips; 2 additional lifecycle passes are log evidence.
+- [Native report 12589781782](https://github.com/nikslogy/private-doc-ai/actions/runs/40168449811/artifacts/12589781782):
+  8,264 bytes, SHA-256 265e7e328c7215085d807e092356c40e3dcc99de0b7ca8e59b11538a6579dbde,
+  independently downloaded/hash checked/parsed; expires 1 November at 06:22:46 UTC.
+
+| APK | Bytes | SHA-256 |
+| --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | 157165902 | 25cd358284c6ee7c919d47bedf21ffd40fd2bff7841cf68883b04da8db4da0ef |
+| private-document-assistant-connected-debug.apk | 157165954 | 8d291239f343a9450202a15376357bf676d002eb883c01923dc25215bce25b17 |
+
+APK identities/signatures/alignment are from actual CI logs and GitHub metadata;
+the large APK ZIP was not independently downloaded locally. Small regression and
+native reports were independently checked. No signing key was read locally, regenerated or committed, and no temporary-signing fallback exists. JVM XML was not
+uploaded by stable CI. Local XML contains 138 passing cases: 82 unchanged core
+cases reused UP-TO-DATE, plus 56 freshly executed platform cases. CI task
+execution and authored source counts are recorded separately.
+
+Evidence: [build checkpoint](checkpoints/2026-10-25-compact-model-build.json),
+[native checkpoint](checkpoints/2026-10-25-compact-native-probe.json),
+[local host](checkpoints/2026-10-25-local-host-build.json),
+[public provenance/desktop smoke](checkpoints/2026-10-25-compact-model-provenance.json),
+[decision 0007](decisions/0007-low-memory-model.md), [model instructions](MODEL_SETUP.md).
+The desktop native smoke observed allocator-retained memory after engine close;
+the Android experiment exercised a second native operation, but sustained repeated
+use and process isolation remain open. This is a real constrained-emulator result,
+not verified iQOO behavior, representative document accuracy or release readiness.
+
+Next: verify the code7 same-key phone update, compact-model import/generation,
+repeat after OCR, cancel/lock/restart and record exact APK/model/device identities,
+available memory and latency under DEVICE_TESTS.md. Then implement M5's bounded
+revision-pinned evidence/typed intent/verified cited QA and held-out injection/
+language evaluation. Four GB remains a physical-device target until measured on
+representative phones. Hard native isolation, full privacy/traffic/thermal checks,
+real 16 KiB loading, representative accuracy and encrypted backup/recovery remain
+pending. OCR tuning remains deferred by user request.
+
+## Historical checkpoint 10 — verified installation and real native generation probe
 
 [Download the stable-signed 0.4.1-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/39819743976/artifacts/12443389300).
 Both APKs passed the full host gate and **66 Android test executions, none
@@ -118,7 +195,7 @@ secrets; no key was regenerated or published. No temporary signing fallback exis
 
 JVM XML was not uploaded by that workflow; exact executed JVM counts have not
 been independently extracted. The authored counts above are source counts.
-All 66 Android executions used an explicit API36 x86_64 emulator, with no skips.
+All 66 Android executions used an explicit API 36 x86_64 emulator, with no skips.
 They do not establish the full check-device.sh suite, Compose UI races,
 physical fingerprint/vendor behavior or release readiness.
 
@@ -169,7 +246,7 @@ from Android-reported total memory. This direct runtime probe does not exercise
 the phone UI's independent capability guard. Neither setting is a measured model
 minimum or phone proof.
 
-## Current source checks and next concrete task
+## Code6 source checks and historical next task
 
 A bounded explicit GET bootstrap now verifies the same pinned public OCR AAR
 before atomic publication in an ignored exact-coordinate local Maven cache.

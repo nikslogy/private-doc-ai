@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "0d213a5537e4dc7550ac3aadc312284c4efdec32",
+  "versionCode": 7,
+  "versionName": "0.4.2-dev",
+  "command": "source .tooling/env.sh; scripts/check-host.sh",
+  "result": "passed",
+  "pythonCases": 109,
+  "jvmResults": [
+    {
+      "task": "core/build/test-results/test",
+      "tests": 82,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testOfflineDebugUnitTest",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testConnectedDebugUnitTest",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "jvmTotalCases": 138,
+  "appJvmTasks": "NO-SOURCE",
+  "allFourInstrumentationKotlinCompilations": "passed",
+  "lintAppAndPlatformBothVariants": "passed",
+  "bothAssemblies": "passed",
+  "productionDependencyGate": "passed",
+  "offlineInternetPermissionAbsent": true,
+  "mlKitProductionExcluded": true,
+  "staticNative16KiB64BitChecks": "passed; no actual16KiBdeviceclaim",
+  "buildResult": [
+    "BUILD SUCCESSFUL in 5m 34s"
+  ],
+  "logSha256": "f7d5f4f3376019506e716d85a4a7afb04c0b9c1666e5e6c843b5069dd919b531",
+  "localApks": "Diagnostic .dev APKs, not the stable-signed Preview delivery",
+  "kvmPresentAtRecording": false,
+  "androidDeviceSuiteExecutedLocally": false,
+  "androidNativeModelProbe": "Separate explicit CI; no local Android result",
+  "environment": {
+    "java": "Temurin21.0.13+9 verified previously",
+    "trustStore": "Existing /etc/ssl/certs/java/cacerts; TLS verification retained"
+  },
+  "earlierAttempt": "An initial Python-only attempt failed because the newly wired test-probe-model.py was still being written. Re-ran the complete gate after all harness files were ready; the recorded successful run includes all109Pythonchecks.",
+  "jvmEvidenceScope": "XML reports contain138passing cases. In this command core:test reused unchanged UP-TO-DATE results(82cases); both platform JVM tasks freshly executed28cases each(56fresh). All XML failures/errors/skips arezero. Stable CI ran on a fresh disposable checkout, but its JVM XML was not uploaded.",
+  "jvmFreshCasesThisCommand": 56,
+  "jvmReusedUnchangedCoreCases": 82
+}

@@ -1,9 +1,11 @@
 # Compatibility record
 
 As of 25 October 2026. Current source pins LiteRT-LM 0.16.0 for an experimental
-compact Qwen 3 INT4 CPU profile. Production platform Kotlin compilation passed;
-its full host gates and actual 4 GiB Android generation/cancellation probe remain
-pending. This is not a tested minimum or a physical-phone compatibility claim.
+compact Qwen 3 INT4 CPU profile. The full local host gate passed 109 Python and
+138 passing JVM XML cases (82 core UP-TO-DATE, 56 platform fresh), instrumentation compilation, lint, assemblies and static native
+checks. Stable CI 40168429140 passed its full host/68-case Android gate; real
+compact-model generation/cancellation and admission passed on a nominal 4 GiB
+API 36 x86_64 emulator in run 40168449811. Observed process VmHWM was ~2.47 GiB. This is not a tested minimum or a physical-phone compatibility claim.
 
 The earlier delivered code6 / 0.4.1-dev Preview APKs used LiteRT-LM 0.9.0 and
 passed full host checks and 66 Android executions in
@@ -46,13 +48,13 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | Dependency | Purpose | Verified source / remaining evidence |
 | --- | --- | --- |
 | `io.legere:pdfiumandroid:1.0.35` | Memory PDF parsing/rendering | Published artifact resolved/compiled; packaged ABI/64-bit static 16 KiB checks passed; phone parsing pending |
-| `com.google.ai.edge.litertlm:litertlm-android:0.16.0` | M0 probe and compact experimental M4 CPU adapter | Official Maven AAR byte count/SHA-256 independently checked against the published checksum; production platform Kotlin compilation passed with the existing toolchain; new full host/native alignment and actual model execution pending |
+| `com.google.ai.edge.litertlm:litertlm-android:0.16.0` | M0 probe and compact experimental M4 CPU adapter | Official Maven AAR byte count/SHA-256 independently checked against the published checksum; full local host and static native/alignment gates passed with the existing toolchain; actual constrained Android generation/cancellation passed; physical-phone checks pending |
 | `com.google.crypto.tink:tink-android:1.17.0` | Object Streaming AEAD and key envelopes | Official release exists; actual Android primitive probes remain device checks |
 | `androidx.room:room-runtime`, `room-ktx`, `room-compiler` and `androidx.room` plugin `2.7.2` | Encrypted metadata schema | Official release; Kotlin 2.0+/KSP2; plugin isolates per-variant schema outputs and fixes empty schema directory configuration |
-| `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API36 x86_64; physical checks pending |
+| `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API 36 x86_64; physical checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
-| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; actual synthetic recognition passed on API36 x86_64; physical quality/privacy pending |
+| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; actual synthetic recognition passed on API 36 x86_64; physical quality/privacy pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |
 
 The new runtime's official AAR is 20,192,711 bytes, SHA-256
@@ -68,7 +70,8 @@ manifest compatibility checks were bypassed. This compilation is not native
 execution, 16 KiB alignment/loading evidence or a complete transitive audit.
 
 Earlier pinned artifacts resolved and compiled in CI without metadata-version
-bypasses or `tools:overrideLibrary`; the new runtime's full gates remain pending.
+bypasses or `tools:overrideLibrary`; the new runtime's full local host gate also passed,
+with Android/physical gates recorded separately in STATUS.
 Source tags alone are not published artifact metadata evidence. Full resolved
 AAR/POM provenance and native source/licence mapping remain required; host
 compilation does not establish runtime compatibility.
@@ -183,8 +186,9 @@ This is an initial inventory, not a complete notice bundle.
 `config/models.json` registers the compact experimental Qwen 3 0.6B INT4
 no-thinking artifact for 0.16.0 with exact immutable size/hash/licence sources.
 Its 347,251,840-byte download identity is separate from runtime compatibility;
-actual generation/cancellation and memory behavior on the planned 4 GiB Android
-target remain pending. The older Qwen 2.5 1.5B record retains its 0.9.0 identity
+actual generation/cancellation and admission passed on the explicit nominal 4 GiB
+Android target with observed VmHWM 2,653,343,744 bytes. Physical-phone behavior,
+representative accuracy and sustained repeated-use measurements remain pending. The older Qwen 2.5 1.5B record retains its 0.9.0 identity
 to preserve recognition/removal of existing model installations, but is not an
 executable profile under the new runtime. Its prior verified-byte and successful
 native-probe evidence remains historical. See decision 0005 for the legacy

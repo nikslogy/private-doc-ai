@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "repository": "nikslogy/private-doc-ai",
+  "checkpoint": "Stable compact-model development update; experimental synthetic model setup, not document QA",
+  "recordedAtUtc": "2026-10-25T06:26:43Z",
+  "workflow": "Stable development APKs",
+  "run": {
+    "id": 40168429140,
+    "attempt": 1,
+    "jobId": 121094145801,
+    "headSha": "f5c70f231d29c4d0be1993d2630516a66d195b68",
+    "sourceSha": "0d213a5537e4dc7550ac3aadc312284c4efdec32",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-10-25T06:15:03Z",
+    "updatedAt": "2026-10-25T06:24:37Z",
+    "allJobStepsSucceeded": true,
+    "finalJobLogCompletedAtUtc": "2026-10-25T06:24:34Z",
+    "metadataSource": "Actual run-attempt API and final job logs; an earlier jobs endpoint still said in_progress after all steps succeeded."
+  },
+  "host": {
+    "result": "passed",
+    "pythonExecuted": 109,
+    "pythonSuites": [
+      6,
+      22,
+      10,
+      10,
+      9,
+      14,
+      20,
+      6,
+      12
+    ],
+    "sourcePolicyPassed": true,
+    "tesseractReviewedBytesVerified": true,
+    "coreTestTaskPassed": true,
+    "platformUnitTasksPassed": [
+      {
+        "flavor": "offline",
+        "passed": true,
+        "authoredCases": 28
+      },
+      {
+        "flavor": "connected",
+        "passed": true,
+        "authoredCases": 28
+      }
+    ],
+    "authoredCoreCases": 82,
+    "unitCountEvidence": "CI Gradle core and both platform unit tasks passed. 82 core and 28 platform cases per variant are authored source counts; CI JVM XML was not uploaded, so exact executed CI JVM counts were not independently extracted. The separate local full-host result executed 138 actual JVM cases, documented in 2026-10-25-local-host-build.json.",
+    "appUnitTasks": "offline and connected NO-SOURCE; no app JVM coverage claimed",
+    "allFourInstrumentationKotlinTasksPassed": true,
+    "lintBothModulesBothVariantsPassed": true,
+    "assembliesBothVariantsPassed": true,
+    "productionDependencyGatePassed": true,
+    "offlineManifestNoInternet": true,
+    "mlKitProductionPolicyGatePassed": true,
+    "hostGradleBuildDuration": "4m 56s",
+    "separateLocalHostEvidence": {
+      "checkpoint": "2026-10-25-local-host-build.json",
+      "pythonExecuted": 109,
+      "actualJvmExecuted": 138,
+      "coreExecuted": 82,
+      "platformOfflineExecuted": 28,
+      "platformConnectedExecuted": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "f7d5f4f3376019506e716d85a4a7afb04c0b9c1666e5e6c843b5069dd919b531",
+      "scope": "Separate local full-host execution and parsed local XML, not an inferred CI execution count."
+    }
+  },
+  "android": {
+    "target": "emulator-5554",
+    "api": 36,
+    "abi": "x86_64",
+    "nominalRegressionEmulatorRamMiB": 3072,
+    "regressionPerVariant": 33,
+    "variants": 2,
+    "authenticatedLifecyclePerVariant": 1,
+    "totalExecuted": 68,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "regressionXmlIndependentlyParsed": true,
+    "modelStoreTestsPerVariant": 11,
+    "modelImportPrivacyTestsPerVariant": 1,
+    "privacyTest": "wrongModelInputNeverAppearsAsPlaintextWhileStreamingOrAfterRejection",
+    "authenticatedLifecycleEvidence": "Both direct actual instrumentation runs reported OK (1 test), INSTRUMENTATION_CODE -1 and authenticated lifecycle probe passed; emulator PIN credential, not a physical fingerprint.",
+    "notEstablishedByRoutineSuite": [
+      "Physical phone or fingerprint/vendor behavior",
+      "Native inference or 4 GB model compatibility",
+      "Complete filesystem/log/traffic privacy",
+      "General document QA or representative accuracy",
+      "Release readiness"
+    ],
+    "separateNativeEvidence": "Actual compact-model generation/cancellation and measured 4 GiB emulator results are recorded separately in STATUS and its native checkpoint. These 68 routine Android cases do not establish them."
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "file": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.preview",
+      "versionCode": 7,
+      "versionName": "0.4.2-dev",
+      "bytes": 157165902,
+      "sha256": "25cd358284c6ee7c919d47bedf21ffd40fd2bff7841cf68883b04da8db4da0ef",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    },
+    {
+      "flavor": "connected",
+      "file": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "versionCode": 7,
+      "versionName": "0.4.2-dev-connected",
+      "bytes": 157165954,
+      "sha256": "8d291239f343a9450202a15376357bf676d002eb883c01923dc25215bce25b17",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12589662196,
+      "name": "private-document-assistant-stable-apks-40168429140-1",
+      "sizeBytes": 314526647,
+      "sha256": "4533edaecf41d4f020c4a6e2feeedd886dcf4c96db5de5141d8ea7d094e438a0",
+      "expiresAt": "2026-11-01T06:24:32Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196"
+    },
+    {
+      "id": 12589632064,
+      "name": "stable-android-regressions-40168429140-1",
+      "sizeBytes": 142547,
+      "sha256": "ad7bba06a06dbcb3a5f3d33c7e2965728396e2a2048e877db43548d87c61a8b6",
+      "expiresAt": "2026-11-01T06:24:31Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589632064"
+    }
+  ],
+  "reportDownload": {
+    "bytes": 142547,
+    "sha256IndependentlyComputed": "ad7bba06a06dbcb3a5f3d33c7e2965728396e2a2048e877db43548d87c61a8b6",
+    "zipEntries": 96,
+    "xmlSuites": 2,
+    "xmlCases": 66,
+    "xmlFailures": 0,
+    "xmlErrors": 0,
+    "xmlSkipped": 0,
+    "independentReviewers": "Root reviewer and stable-build reviewer each independently downloaded/hash-checked the report and parsed 33 XML cases per variant; two additional direct lifecycle log passes give 68 executions."
+  },
+  "model": {
+    "id": "qwen3-06b-q4-nothink",
+    "runtimeVersion": "0.16.0",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "experimental": true,
+    "evaluatedLanguages": [],
+    "evaluatedTasks": [],
+    "generalDocumentQaEnabled": false,
+    "weightsBundled": false,
+    "scope": "Exact public model identity is reviewed separately; importing it does not establish inference compatibility or answer quality. The retired 0.9.0 legacy record remains identifiable/removable and cannot use this compact profile's memory thresholds."
+  },
+  "signing": {
+    "persistentPreviewIdentityUnchanged": true,
+    "temporarySigningFallback": false,
+    "privateSecretsOrKeysPublished": false
+  },
+  "evidenceScope": "Final actual CI logs, completed/success run-attempt metadata and GitHub artifact metadata. Individual APK identities/signatures/alignment are CI log evidence; the 314,526,647-byte APK ZIP was not independently downloaded in this review. The small regression ZIP was independently downloaded, hashed and parsed. No physical-device support or release-readiness claim.",
+  "localJvmExecutionScope": "Local XML138passingcases includes82unchangedcoreUP-TO-DATEresults and56freshplatformcases(28each). See local-host checkpoint; no claim all138were freshlyexecuted in that command. CI JVM XML not uploaded, authoredcounts and successfultasks separate."
+}
