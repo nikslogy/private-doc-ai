@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "f2f5c9274617111b96001d48a70c4f9d8d8a9947",
-  "request": "Validate 0.4.1-dev CPU memory guard and stable signed APK update",
-  "requestedAtUtc": "2026-10-22T17:06:14Z"
+  "sourceCommit": "0d213a5537e4dc7550ac3aadc312284c4efdec32",
+  "request": "Validate compact INT4 model setup and stable signed 0.4.2-dev update",
+  "requestedAtUtc": "2026-10-25T06:14:42Z"
 }
