@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
+  "versionCode": 8,
+  "versionName": "0.5.0-dev",
+  "command": "source .tooling/env.sh; scripts/check-host.sh",
+  "result": "passed",
+  "pythonCases": 121,
+  "jvmResults": [
+    {
+      "task": "core/build/test-results/test",
+      "tests": 114,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testOfflineDebugUnitTest",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "task": "platform/build/test-results/testConnectedDebugUnitTest",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "jvmTotalXmlCases": 170,
+  "jvmExecutionScope": "Core114cases ran freshly in the focused compile/test command earlier in this task; the fullhostcommand reused unchanged UP-TO-DATE core results. Both platform unit tasks passed; see task markers for execution/cache status. Appunit tasks NO-SOURCE. No claim all170cases reran in the fullhostcommand.",
+  "allFourInstrumentationKotlinCompilations": "passed",
+  "lintAppAndPlatformBothVariants": "passed",
+  "bothAssemblies": "passed",
+  "productionDependencyGate": "passed",
+  "offlineInternetPermissionAbsent": true,
+  "mlKitProductionExcluded": true,
+  "staticNative64Bit16KiBChecks": "passed; no actual16KiBdeviceclaim",
+  "logSha256": "43d94d70cf1417adad4153c573ed4ea3df9d0bcdf87ae47d0ac1ef1ed3b1d483",
+  "gradleBuildResult": [
+    "BUILD SUCCESSFUL in 5m 16s"
+  ],
+  "localApks": "Diagnostic .dev builds, not stable Preview delivery",
+  "androidDeviceExecutionLocally": false,
+  "kvmPresent": false,
+  "focusedCommand": ":core:test :app:compileOfflineDebugKotlin :platform:compileOfflineDebugAndroidTestKotlin",
+  "focusedResult": "BUILD SUCCESSFUL in1m42s",
+  "focusedLogSha256": "83fe995dff716be521394322aa489bbe14da0107bde45194dd698dbc247d3b23"
+}

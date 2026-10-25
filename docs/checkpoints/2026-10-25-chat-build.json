@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "repository": "nikslogy/private-doc-ai",
+  "checkpoint": "First stable actual local-chat and cited printed-document-facts development build",
+  "recordedAtUtc": "2026-10-25T12:08:20Z",
+  "workflow": "Stable development APKs",
+  "run": {
+    "id": 40190793629,
+    "attempt": 1,
+    "jobId": 121161173893,
+    "headSha": "2a12dbb28d9532595258193e9ad89fdc52cef5bd",
+    "sourceSha": "e77945c991fbda8e14248b587d5be03b7547aef4",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-10-25T11:54:02Z",
+    "updatedAt": "2026-10-25T12:04:44Z",
+    "allJobStepsSucceeded": true,
+    "finalJobLogCompletedAtUtc": "2026-10-25T12:04:43Z"
+  },
+  "host": {
+    "result": "passed",
+    "pythonExecuted": 121,
+    "pythonSuites": [
+      6,
+      22,
+      10,
+      10,
+      9,
+      14,
+      20,
+      6,
+      12,
+      12
+    ],
+    "sourcePolicyPassed": true,
+    "tesseractReviewedBytesVerified": true,
+    "coreTestTaskPassed": true,
+    "authoredCoreCases": 114,
+    "platformUnitTasksPassed": [
+      {
+        "flavor": "offline",
+        "passed": true,
+        "authoredCases": 28
+      },
+      {
+        "flavor": "connected",
+        "passed": true,
+        "authoredCases": 28
+      }
+    ],
+    "unitCountEvidence": "CI Gradle core and both platform unit tasks passed. Authored source counts are114core and28platform per variant; CI JVM XML was not uploaded, so exact executed CI JVM counts were not independently extracted.",
+    "appUnitTasks": "offline and connected NO-SOURCE; no app JVM coverage claimed",
+    "allFourInstrumentationKotlinTasksPassed": true,
+    "lintBothModulesBothVariantsPassed": true,
+    "assembliesBothVariantsPassed": true,
+    "productionDependencyGatePassed": true,
+    "offlineManifestNoInternet": true,
+    "mlKitProductionPolicyGatePassed": true,
+    "hostGradleBuildDuration": "5m17s",
+    "separateLocalHostEvidence": {
+      "checkpoint": "2026-10-25-chat-local-host.json",
+      "pythonExecuted": 121,
+      "jvmTotalXmlCases": 170,
+      "jvmResults": [
+        {
+          "task": "core/build/test-results/test",
+          "tests": 114,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "task": "platform/build/test-results/testOfflineDebugUnitTest",
+          "tests": 28,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "task": "platform/build/test-results/testConnectedDebugUnitTest",
+          "tests": 28,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ],
+      "jvmExecutionScope": "Core114cases ran freshly in the focused compile/test command earlier in this task; the fullhostcommand reused unchanged UP-TO-DATE core results. Both platform unit tasks passed; see task markers for execution/cache status. Appunit tasks NO-SOURCE. No claim all170cases reran in the fullhostcommand.",
+      "logSha256": "43d94d70cf1417adad4153c573ed4ea3df9d0bcdf87ae47d0ac1ef1ed3b1d483",
+      "focusedLogSha256": "83fe995dff716be521394322aa489bbe14da0107bde45194dd698dbc247d3b23"
+    }
+  },
+  "android": {
+    "target": "emulator-5554",
+    "api": 36,
+    "abi": "x86_64",
+    "nominalRegressionEmulatorRamMiB": 3072,
+    "variants": 2,
+    "platformRegressionPerVariant": 38,
+    "appChatControllerPerVariant": 9,
+    "authenticatedLifecyclePerVariant": 1,
+    "totalExecuted": 96,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "regressionXmlIndependentlyParsed": true,
+    "chatControllerExactTestNamesVerified": true,
+    "platformExactClassCountsVerified": true,
+    "gatewayTestsPerVariant": 5,
+    "modelStoreTestsPerVariant": 11,
+    "modelImportPrivacyTestsPerVariant": 1,
+    "authenticatedLifecycleEvidence": "Both actual direct instrumentation transcripts reported real credential verification, OK(1test), INSTRUMENTATION_CODE:-1 and no failure; emulator public synthetic PIN, not a physical fingerprint.",
+    "controllerScope": "Actual synthetic Android controller/source/clear/lock/reindex/session tests. This is not Compose tap/navigation or representative document-QA evaluation.",
+    "notEstablishedByRoutineSuite": [
+      "Native model loading, generation, active cancellation or conversation recall",
+      "Physical phone, fingerprint/vendor behavior, update preservation or latency",
+      "Representative language, intent, document-QA precision or summary quality",
+      "Complete filesystem/log/traffic privacy, hard native timeout or release readiness"
+    ],
+    "separateNativeEvidence": "The opt-in actual chat-prompt/gateway/history/model-integrity/cancellation experiment is recorded separately. Helper-only transport fixes after this built source do not change app/core/platform/model/dependency bytes; consult its exact native checkpoint before claiming a native verdict."
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "file": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.preview",
+      "versionCode": 8,
+      "versionName": "0.5.0-dev",
+      "bytes": 157354337,
+      "sha256": "dfa42fb82330ad1960bfa20991ba39cc2166516d148a197a2e097202f1ae3a62",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    },
+    {
+      "flavor": "connected",
+      "file": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "versionCode": 8,
+      "versionName": "0.5.0-dev-connected",
+      "bytes": 157354385,
+      "sha256": "acd00e0ec233451bb0a3576db4d361a9add4bce8ca55361231bf44de34baf716",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12598142402,
+      "name": "private-document-assistant-stable-apks-40190793629-1",
+      "sizeBytes": 314904826,
+      "sha256": "b9bee50220e1460aa5cf35f5895409feed62bb74dbc65ee32fcb750c16641f95",
+      "expiresAt": "2026-11-01T12:04:40Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402"
+    },
+    {
+      "id": 12598022520,
+      "name": "stable-android-regressions-40190793629-1",
+      "sizeBytes": 171861,
+      "sha256": "23a1a65caf2eea706a7f2be5edc6b220f19a2011b2f229fccc69ca417f2495bd",
+      "expiresAt": "2026-11-01T12:04:39Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598022520"
+    }
+  ],
+  "reportDownload": {
+    "bytes": 171861,
+    "sha256IndependentlyComputed": "23a1a65caf2eea706a7f2be5edc6b220f19a2011b2f229fccc69ca417f2495bd",
+    "zipEntries": 150,
+    "xmlSuites": 4,
+    "xmlCases": 94,
+    "xmlFailures": 0,
+    "xmlErrors": 0,
+    "xmlSkipped": 0,
+    "platformCasesPerVariant": 38,
+    "appChatCasesPerVariant": 9,
+    "authenticatedLifecycleLogPasses": 2,
+    "totalAndroidExecutions": 96,
+    "expectedChatNamesVerified": true,
+    "expectedPlatformClassCountsVerified": true,
+    "suites": [
+      {
+        "file": "platform/build/outputs/androidTest-results/connected/debug/flavors/connected/TEST-emulator-5554 - 16-_platform-connected.xml",
+        "module": "platform",
+        "flavor": "connected",
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "file": "platform/build/outputs/androidTest-results/connected/debug/flavors/offline/TEST-emulator-5554 - 16-_platform-offline.xml",
+        "module": "platform",
+        "flavor": "offline",
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "file": "app/build/outputs/androidTest-results/connected/debug/flavors/connected/TEST-emulator-5554 - 16-_app-connected.xml",
+        "module": "app",
+        "flavor": "connected",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "file": "app/build/outputs/androidTest-results/connected/debug/flavors/offline/TEST-emulator-5554 - 16-_app-offline.xml",
+        "module": "app",
+        "flavor": "offline",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "independentReviewers": "Chat build reviewer independently downloaded/hash-checked the exact ZIP and verified all94XMLcases, expected38platform and9named app cases per variant, plus2credential transcript passes. Root independently downloaded/hash-checked/parsed the report separately."
+  },
+  "capabilities": {
+    "actualGeneralChatImplemented": true,
+    "generalModelRepliesMarkedUnverified": true,
+    "selectedDocumentPrintedFactsImplemented": true,
+    "sourceCitationButtonsImplemented": true,
+    "documentSummary": "Bounded extractive printed-fact summary; not unrestricted narrative analysis",
+    "unrestrictedDocumentQaEnabled": false,
+    "mutatingChatToolsEnabled": false,
+    "conversationStorage": "Ephemeral unlocked-session memory only; no plaintext history/draft persistence",
+    "catalogueEvaluatedLanguages": [],
+    "catalogueEvaluatedTasks": [],
+    "sameExistingCompactModelIdentity": true,
+    "requiresNewModelDownloadForVerifiedCode7Installation": false
+  },
+  "signing": {
+    "persistentPreviewIdentityUnchanged": true,
+    "temporarySigningFallback": false,
+    "privateSecretsOrKeysPublished": false
+  },
+  "evidenceScope": "Completed/success actual run-attempt metadata, all successful job steps, final CI logs and GitHub artifact metadata. The small171861-byte regression ZIP was independently downloaded, SHA-256 checked and parsed by this reviewer; root also independently downloaded/verified it. Individual APK identities/signatures/alignment are actual CI log/gate evidence. The314904826-byte APK ZIP was not independently downloaded in this review. No physical-device, representative-model-quality or release-readiness claim."
+}

@@ -213,3 +213,31 @@ marker write; it does not exclude any files from scanning or change production
 startup. The full production startup/filesystem/traffic audit remains pending.
 
 Keep unsupported features marked pending. Do not mark all steps passed because the instrumentation command exits zero; biometric prompts, traffic, leakage, recovery, representative OCR/model evaluation and thermal measurements need their own evidence. Never disable lint/native checks or substitute synthetic successful runtime responses to satisfy a device gate.
+
+## Code8 actual-chat phone checks
+
+Install the matching stable Preview APK over code7 without uninstalling or
+clearing storage; verify old vault documents and the verified compact model
+remain available. Open Assistant, type a synthetic greeting and Send. Follow
+with a synthetic name and a question about that name; record actual output and
+latency without treating one reply as an accuracy benchmark. Confirm only recent
+context is used and chat clears on lock/restart. Cancel during generation and
+initialization, clear while work is pending, change source and lock/unlock;
+old completions must not reappear. Native cleanup can return later.
+
+Choose an imported synthetic labelled policy. Ask its policy number, total
+premium, pre-tax premium, tax and insured value separately; review exact source
+pages. Check leading zeros, Indian grouping, missing/conflicting fields and
+partial OCR evidence. Summarize document facts must label truncation/conflicts;
+unsupported narrative questions must explain the current limit. Reindex/OCR and
+delete the selected synthetic source; prior chat/citations must be invalidated.
+General chat must request a source for obvious private-document questions and
+must never perform or claim app-authorized file actions from generated text.
+No textual answer can authorize export/deletion; use direct controls.
+
+The selected stable CI gate runs nine controller cases and five gateway cases
+per variant in addition to vault/OCR/credential cases (96 Android executions).
+It is not a full Compose tap/keyboard test or physical authentication proof.
+The separate native probe now includes actual chat/history/gateway execution;
+source/model absence, skipped tests, dependency retrieval failure or missing
+reports must never be counted as a passed native or phone suite.

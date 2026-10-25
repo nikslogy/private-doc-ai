@@ -3,37 +3,37 @@
 Native Android encrypted document vault with offline OCR, local search and
 selected-source labelled document facts.
 **Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).
+[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
 Unzip and install the offline APK, then open **Private Vault Preview**.
-Version 0.4.2-dev / code 7 requires Android 12/API31+. Install it as an update to
+Version 0.5.0-dev / code 8 requires Android 12/API31+. Install it as an update to
 the existing Preview app without uninstalling or clearing data. Preview IDs and
 signing identity are unchanged; actual device update-preservation testing remains
 pending. Earlier Test/original apps retain separate vaults; keep their data.
 
-Import PDF/JPEG/PNG/UTF-8 text, open page evidence and choose English or
-Hindi/Marathi OCR for scans/photos. Native PDF text stays preferred. Originals
-remain immutable; page text, coordinates and literal search persist in SQLCipher.
-Tink-encrypted objects, system authentication, explicit original export/delete
-and automatic locking are implemented. Review OCR against originals for important
-values. In Assistant → Document facts, explicitly choose a source to inspect
-supported English labels, exact quotes/page links and conflicting values. Raw
-identifiers/dates and monetary precision are preserved; unsupported layouts may
-not match. AI questions/summaries, conversions, recovery and backups remain unavailable.
+Open **Assistant**, type a message and press **Send** for actual on-device chat
+using the installed compact model. No new model download is needed if code7's
+Qwen3 compact installation remains verified. Recent chat context is bounded;
+messages clear on lock and are not saved. Replies are experimental/unverified.
 
-Experimental model setup adds licence acknowledgement and exact-byte verified
-local import. Its fixed synthetic native diagnostic passed real CPU generation
-and cancellation on an explicit nominal 4 GiB Android emulator. Code7 recommends
-a verified 347 MB INT4 model with model-specific memory checks; observed process
-VmHWM was about 2.47 GiB. Physical-phone execution and universal 4 GB support
-remain unverified. Normal document questions remain disabled. See [model setup](docs/MODEL_SETUP.md).
+Choose **Ask a document** to ask supported printed English policy/invoice fields
+such as total premium or policy number, with exact source-page links. Ambiguous,
+missing/conflicting or incomplete values abstain/clarify. **Summarize document
+facts** produces a bounded extractive facts summary; broader narrative document
+analysis is still under development. [Chat usage and limits](docs/CHAT.md).
 
-[The stable build](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140)
-passed the full host gate and 68 non-skipped Android 16 emulator executions.
-These include real OCR and authenticated Keystore/vault lifecycles, pinned
-revision reads, cited/conflicting fields and original preservation. Phone UI,
-representative accuracy, full privacy/traffic and release gates remain open.
-See [STATUS](docs/STATUS.md) for exact source/artifact identities and limits.
-No cloud OCR, inference, document backend or telemetry was added.
+Import PDF/JPEG/PNG/UTF-8 text and choose English or Hindi/Marathi OCR for scans.
+Originals remain immutable; page text/evidence/search persist in SQLCipher.
+System authentication, encrypted objects, direct confirmed original export/delete
+and automatic locking remain available. Chat cannot execute file operations.
+Conversions, durable chat history and portable recovery/backups remain future work.
+
+[The stable chat build](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629)
+passed full host checks and 96 Android executions, none skipped. Actual chat
+prompt/gateway/history and cancellation evidence is tracked separately in STATUS.
+The compact model's earlier 4 GiB emulator result observed ~2.47 GiB process HWM;
+this is not universal physical-phone support or representative language/accuracy
+proof. No cloud processing, document backend or telemetry was added.
+See [STATUS](docs/STATUS.md) for exact identities/results and remaining gates.
 
 ## Build
 
@@ -110,12 +110,12 @@ python3 scripts/security-check.py
 instrumentation Kotlin compilation, unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
-Core has 82 authored JVM tests; platform has 28 per variant, including model
-metadata and CPU memory-policy cases. The full local code7 host run executed
-138 passing JVM XML cases with no failures/skips, reusing the unchanged core
-82 cases and freshly executing 28 per platform variant. App JVM tasks report NO-SOURCE. The delivered model-setup build passed 33 selected Android
-cases and one real credential-bound lifecycle case per variant on an API36 emulator,
-with no skips: 68 executions. The full device suite and physical fingerprint/UI tests
+Core has 114 authored JVM tests; platform has 28 per variant, including model
+metadata and CPU memory-policy cases. The full local code8 host gate has
+170 passing JVM XML case results with no failures/skips, reusing the unchanged core
+114 cases and freshly executing 28 per platform variant. App JVM tasks report NO-SOURCE. The delivered chat build passed 38 platform cases, nine app chat controller cases and one
+real credential-bound lifecycle case per variant on an API36 emulator,
+with no skips: 96 executions. The full device suite and physical fingerprint/UI tests
 remain pending; see STATUS for the exact scope and earlier failures.
 
 ```bash
@@ -125,10 +125,13 @@ ANDROID_SERIAL=<explicit-device-serial> scripts/check-device.sh
 Device procedures are in [DEVICE_TESTS](docs/DEVICE_TESTS.md). Real Tink,
 SQLCipher/migration/search, Keystore-policy, encrypted-memory PDF/image,
 development OCR and activity tests are authored.
-The [model catalogue](config/models.json) registers a reviewed legacy Qwen
-artifact as experimental, with no evaluated tasks/languages. Normal document QA
-remains disabled. [Model setup](docs/MODEL_SETUP.md) offers verified local import
-and a fixed synthetic runtime diagnostic; actual validation is recorded in STATUS.
+The [model catalogue](config/models.json) registers the compact Qwen3 artifact
+as experimental and retains the retired legacy record for removal. Evaluated
+tasks/languages remain empty. Experimental general chat uses the actual local model; supported printed
+document facts are independently verified by the application. Arbitrary narrative
+document analysis remains unavailable. [Model setup](docs/MODEL_SETUP.md) retains
+verified import and its separate fixed synthetic diagnostic; see [chat](docs/CHAT.md)
+and STATUS for actual capabilities and evidence.
 No inference model or AI API credential is needed for routine host CI.
 Pinned public OCR weights are downloaded/verified during the build. Stable APK
 delivery additionally uses the configured user-owned signing identity.

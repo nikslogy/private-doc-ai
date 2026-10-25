@@ -1,0 +1,926 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": "Actual local chat prompt/history and verified LocalChatGateway generation with active cancellation on a nominal 4 GiB Android emulator",
+  "recordedAtUtc": "2026-10-25T12:15:24.342506Z",
+  "repository": "nikslogy/private-doc-ai",
+  "run": {
+    "id": 40191631336,
+    "attempt": 1,
+    "jobId": 121163655113,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40191631336",
+    "headSha": "509eb4263b99b24065c1253cf246d76e617bf602",
+    "status": "completed",
+    "conclusion": "success",
+    "updatedAtUtc": "2026-10-25T12:12:44Z",
+    "jobStartedAtUtc": "2026-10-25T12:05:53Z",
+    "jobCompletedAtUtc": "2026-10-25T12:12:44Z",
+    "applicationProductionSourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
+    "probeRunnerSourceCommit": "1d3af19784b39a703790a291e183dc36200665dc",
+    "test": "verifiedSyntheticGenerationAndCancellationReturnWithoutPlaintextFiles",
+    "executed": 1,
+    "failures": 0,
+    "skipped": 0,
+    "samplerSyntheticTestsPassed": 19,
+    "downloaderAdmissionSyntheticTestsPassed": 12
+  },
+  "model": {
+    "schemaVersion": 1,
+    "modelId": "qwen3-06b-q4-nothink",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "runtimeVersion": "0.16.0",
+    "sourceUrl": "https://huggingface.co/litert-community/Qwen3-0.6B-int4/resolve/256f33043931947c173d7f3cc1d84ee7a8538cc2/qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm?download=true",
+    "licenseIdentifier": "Apache-2.0",
+    "scope": "Verified public model bytes only; no runtime or document accuracy result implied"
+  },
+  "localPublicFileVerification": {
+    "modelId": "qwen3-06b-q4-nothink",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "runtimeVersion": "0.16.0",
+    "scope": "Actual local public model bytes verified before upload; no model quality claim"
+  },
+  "runtimeConfiguration": {
+    "runtimeVersion": "0.16.0",
+    "backend": "CPU",
+    "cpuThreads": 2,
+    "combinedTokenBudget": 512,
+    "maxOutputTokens": 128,
+    "thinkingEnabled": false,
+    "cacheDir": ":nocache",
+    "tools": [],
+    "automaticToolCalling": false,
+    "operationDeadlineMillis": 300000
+  },
+  "target": {
+    "kind": "Disposable API 36 x86_64 Android emulator",
+    "explicitSerial": "emulator-5554",
+    "nominalRamMiB": 4096,
+    "actualGuestMemory": {
+      "totalKiB": 4014284,
+      "availableBeforeTestKiB": 2407400,
+      "pageSizeBytes": 4096
+    },
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "physicalPhone": false,
+    "hostResources": {
+      "hostTotalBytes": 16766414848,
+      "hostAvailableBytes": 14656589824,
+      "minimumAvailableGuardBytes": 6442450944,
+      "modelId": "qwen3-06b-q4-nothink",
+      "emulatorRamMiB": 4096,
+      "scope": "Fixed small-model experiment on nominal 4 GiB x86_64 emulator; no physical-phone RAM minimum established",
+      "hostFreeDiskBytes": 89110044672
+    },
+    "emulatorVersion": "37.2.12",
+    "emulatorBuildId": "16428233",
+    "systemImageRevision": "7"
+  },
+  "result": {
+    "schemaVersion": 1,
+    "executed": 1,
+    "failures": 0,
+    "skipped": 0,
+    "metrics": {
+      "cancellationOperationMillis": 22475,
+      "chatGatewayElapsedMillis": 16418,
+      "chatGatewayGeneratedUtf16": 47,
+      "generatedUtf16": 15,
+      "generationElapsedMillis": 60364,
+      "nativeCancellationCalls": 80,
+      "nativeSendFailures": 1
+    },
+    "chatHistoryRecallMatched": true,
+    "scope": "Synthetic CPU generation with actual chat prompts/history, actual verified-installation LocalChatGateway response and one-name recall, active cancellation and narrow file-canary scans. No phone latency, representative chat/document/language quality, complete privacy, traffic or hard-timeout claim."
+  },
+  "admission": {
+    "actualModelSpecificPolicyPassed": true,
+    "forcedDenialReturnedBeforeNativeInitialization": true,
+    "freshCheckInsideHeavyWorkGate": true,
+    "configuredMinimumTotalBytes": 3221225472,
+    "configuredMinimumAvailableBytes": 1610612736,
+    "requires64Bit": true,
+    "rejectsLowMemory": true,
+    "scope": "The actual application policy admitted direct generation/cancellation and the real gateway operation in this test. Individual hook memory snapshots were not recorded; pre-test guest values do not prove every admitted state is sufficient."
+  },
+  "executionScope": {
+    "firstGeneration": "The production LocalChatPrompt builder assembled a fixed synthetic question, recent user/assistant history and a file-canary marker; real LocalInferenceRunner returned 15 UTF-16 units.",
+    "cancellation": "A fresh native operation requested cancellation 100 ms after the generation hook; 80 native cancel calls returned, synchronous send failed once, then CancellationException and cleanup returned.",
+    "chatGateway": "Exact public weights were installed into a fresh UUID test-owned model store through InstalledModelStore, gateway readiness verified that installation, and LocalChatGateway generated 47 UTF-16 units from an actual bounded prompt with short synthetic history.",
+    "historyRecall": "The response to one fixed question contained the previously supplied synthetic name Riya. This is one functional smoke assertion, not representative memory/language/answer-accuracy evaluation.",
+    "cleanup": "Only the fresh test-owned installed model slot/root was explicitly removed before final scans. Original probe model remained unchanged and normal installations/vault files were not touched.",
+    "noPrivateDocuments": "No vault key, real private document, personal user message or remote endpoint was used in this opt-in native probe. Actual general-chat and printed-facts UI/controller checks are separate signed-build evidence."
+  },
+  "metricScope": {
+    "generationElapsedMillis": "60,364 ms complete direct chat-prompt generation operation including initialization; emulator observation only.",
+    "cancellationOperationMillis": "22,475 ms complete separate cancellation operation including initialization; not cancellation-request latency.",
+    "chatGatewayElapsedMillis": "16,418 ms from gateway.generate entry through actual response, including its verification/native initialization; preceding public-model installation and isReady verification are excluded.",
+    "generatedUtf16": "15 actual UTF-16 units; generated text not stored or published.",
+    "chatGatewayGeneratedUtf16": "47 actual UTF-16 units; only the synthetic-name containment boolean was retained.",
+    "nativeCancellationCalls": "80 successful native cancellation API returns.",
+    "nativeSendFailures": "One expected send failure in the interrupted operation.",
+    "deadline": "No hard native initialization/hang deadline or isolation guarantee follows."
+  },
+  "phases": [
+    {
+      "phase": "ARGUMENTS_ACCEPTED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 67947
+    },
+    {
+      "phase": "MODEL_PATH_VALIDATED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 68045
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 68046
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 73301
+    },
+    {
+      "phase": "CANARY_BASELINE_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 73303
+    },
+    {
+      "phase": "CANARY_BASELINE_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 73319
+    },
+    {
+      "phase": "ADMISSION_DENIAL_VERIFIED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 73337
+    },
+    {
+      "phase": "NATIVE_GENERATION_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 73341
+    },
+    {
+      "phase": "NATIVE_SEND_STARTED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 105082
+    },
+    {
+      "phase": "NATIVE_GENERATION_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 133699
+    },
+    {
+      "phase": "CANCELLATION_OPERATION_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 133705
+    },
+    {
+      "phase": "CANCELLATION_SEND_STARTED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 153766
+    },
+    {
+      "phase": "NATIVE_CANCEL_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 153875
+    },
+    {
+      "phase": "NATIVE_SEND_FAILED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 155904
+    },
+    {
+      "phase": "CANCELLATION_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 156180
+    },
+    {
+      "phase": "CHAT_GATEWAY_INSTALL_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 156202
+    },
+    {
+      "phase": "CHAT_GATEWAY_START",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 161936
+    },
+    {
+      "phase": "CHAT_GATEWAY_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 178357
+    },
+    {
+      "phase": "CHAT_GATEWAY_CLEANUP_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 178444
+    },
+    {
+      "phase": "POST_MODEL_VERIFY_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 180406
+    },
+    {
+      "phase": "CANARY_FINAL_RETURNED",
+      "pid": 2777,
+      "elapsedRealtimeMillis": 180410
+    }
+  ],
+  "memorySampling": {
+    "schemaVersion": 1,
+    "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
+    "emittedPid": 2777,
+    "sampleIntervalMillis": 1000,
+    "sampleLimit": 900,
+    "sampleCount": 113,
+    "sampleColumns": [
+      "elapsedMillis",
+      "rssBytes",
+      "hwmBytes"
+    ],
+    "samples": [
+      [
+        2308,
+        142893056,
+        142893056
+      ],
+      [
+        3296,
+        149053440,
+        149053440
+      ],
+      [
+        4294,
+        149446656,
+        149446656
+      ],
+      [
+        5280,
+        151281664,
+        151281664
+      ],
+      [
+        6309,
+        151937024,
+        151937024
+      ],
+      [
+        7366,
+        152068096,
+        152068096
+      ],
+      [
+        8360,
+        183525376,
+        183525376
+      ],
+      [
+        9288,
+        202575872,
+        202575872
+      ],
+      [
+        10298,
+        305471488,
+        308604928
+      ],
+      [
+        11289,
+        448733184,
+        448733184
+      ],
+      [
+        12297,
+        470577152,
+        479604736
+      ],
+      [
+        13284,
+        484794368,
+        496054272
+      ],
+      [
+        14311,
+        667877376,
+        693579776
+      ],
+      [
+        15358,
+        835489792,
+        835489792
+      ],
+      [
+        16315,
+        891301888,
+        891301888
+      ],
+      [
+        17295,
+        908857344,
+        908857344
+      ],
+      [
+        18326,
+        935833600,
+        935833600
+      ],
+      [
+        19292,
+        958771200,
+        958771200
+      ],
+      [
+        20293,
+        969388032,
+        972009472
+      ],
+      [
+        21317,
+        1021030400,
+        1021030400
+      ],
+      [
+        22353,
+        1087483904,
+        1087483904
+      ],
+      [
+        23392,
+        1136418816,
+        1136418816
+      ],
+      [
+        24340,
+        1141661696,
+        1143889920
+      ],
+      [
+        25305,
+        1171677184,
+        1171677184
+      ],
+      [
+        26308,
+        1259757568,
+        1269850112
+      ],
+      [
+        27299,
+        1340760064,
+        1340760064
+      ],
+      [
+        28300,
+        1405714432,
+        1405714432
+      ],
+      [
+        29288,
+        1523941376,
+        1523941376
+      ],
+      [
+        30306,
+        1653796864,
+        1653796864
+      ],
+      [
+        31338,
+        1822617600,
+        1822617600
+      ],
+      [
+        32306,
+        1897750528,
+        1897750528
+      ],
+      [
+        33301,
+        1927634944,
+        1927634944
+      ],
+      [
+        34303,
+        1981456384,
+        1981456384
+      ],
+      [
+        35305,
+        1957359616,
+        1995632640
+      ],
+      [
+        36297,
+        1986064384,
+        1995632640
+      ],
+      [
+        37396,
+        2164412416,
+        2166247424
+      ],
+      [
+        38321,
+        2034012160,
+        2166247424
+      ],
+      [
+        39359,
+        1793490944,
+        2204008448
+      ],
+      [
+        40375,
+        1843605504,
+        2204008448
+      ],
+      [
+        41306,
+        1494499328,
+        2204008448
+      ],
+      [
+        42318,
+        1219248128,
+        2204008448
+      ],
+      [
+        43316,
+        1036689408,
+        2204008448
+      ],
+      [
+        44326,
+        1012178944,
+        2204008448
+      ],
+      [
+        45330,
+        739401728,
+        2204008448
+      ],
+      [
+        46325,
+        716959744,
+        2204008448
+      ],
+      [
+        47307,
+        726134784,
+        2204008448
+      ],
+      [
+        48339,
+        681046016,
+        2204008448
+      ],
+      [
+        49306,
+        673443840,
+        2204008448
+      ],
+      [
+        50313,
+        843005952,
+        2204008448
+      ],
+      [
+        51367,
+        965537792,
+        2204008448
+      ],
+      [
+        52310,
+        987217920,
+        2204008448
+      ],
+      [
+        53337,
+        932823040,
+        2204008448
+      ],
+      [
+        54377,
+        943570944,
+        2204008448
+      ],
+      [
+        55405,
+        884576256,
+        2204008448
+      ],
+      [
+        56387,
+        875532288,
+        2204008448
+      ],
+      [
+        57350,
+        840011776,
+        2204008448
+      ],
+      [
+        58351,
+        876322816,
+        2204008448
+      ],
+      [
+        59310,
+        1028276224,
+        2204008448
+      ],
+      [
+        60322,
+        1104228352,
+        2204008448
+      ],
+      [
+        61403,
+        1126092800,
+        2204008448
+      ],
+      [
+        62304,
+        1054658560,
+        2204008448
+      ],
+      [
+        63368,
+        956264448,
+        2204008448
+      ],
+      [
+        64321,
+        951545856,
+        2204008448
+      ],
+      [
+        65311,
+        827158528,
+        2204008448
+      ],
+      [
+        66319,
+        765423616,
+        2204008448
+      ],
+      [
+        67325,
+        174071808,
+        2204008448
+      ],
+      [
+        68333,
+        161095680,
+        2204008448
+      ],
+      [
+        69350,
+        313958400,
+        2204008448
+      ],
+      [
+        70329,
+        404766720,
+        2204008448
+      ],
+      [
+        71346,
+        490643456,
+        2204008448
+      ],
+      [
+        72336,
+        520454144,
+        2204008448
+      ],
+      [
+        73357,
+        579309568,
+        2204008448
+      ],
+      [
+        74357,
+        623349760,
+        2204008448
+      ],
+      [
+        75351,
+        682856448,
+        2204008448
+      ],
+      [
+        76348,
+        716804096,
+        2204008448
+      ],
+      [
+        77338,
+        751669248,
+        2204008448
+      ],
+      [
+        78362,
+        819003392,
+        2204008448
+      ],
+      [
+        79341,
+        868798464,
+        2204008448
+      ],
+      [
+        80331,
+        963694592,
+        2204008448
+      ],
+      [
+        81307,
+        1062916096,
+        2204008448
+      ],
+      [
+        82328,
+        1242243072,
+        2204008448
+      ],
+      [
+        83326,
+        1422467072,
+        2204008448
+      ],
+      [
+        84326,
+        1649483776,
+        2204008448
+      ],
+      [
+        85316,
+        1869983744,
+        2204008448
+      ],
+      [
+        86335,
+        2067038208,
+        2204008448
+      ],
+      [
+        87363,
+        2322542592,
+        2324377600
+      ],
+      [
+        88314,
+        2427133952,
+        2669314048
+      ],
+      [
+        89308,
+        2596257792,
+        2669314048
+      ],
+      [
+        90334,
+        927969280,
+        2669314048
+      ],
+      [
+        91320,
+        220786688,
+        2669314048
+      ],
+      [
+        92343,
+        215736320,
+        2669314048
+      ],
+      [
+        93320,
+        219537408,
+        2669314048
+      ],
+      [
+        94320,
+        213241856,
+        2669314048
+      ],
+      [
+        95309,
+        212594688,
+        2669314048
+      ],
+      [
+        96316,
+        212721664,
+        2669314048
+      ],
+      [
+        97323,
+        217333760,
+        2669314048
+      ],
+      [
+        98324,
+        717651968,
+        2669314048
+      ],
+      [
+        99316,
+        936480768,
+        2669314048
+      ],
+      [
+        100316,
+        1185980416,
+        2669314048
+      ],
+      [
+        101330,
+        1433202688,
+        2669314048
+      ],
+      [
+        102319,
+        1683804160,
+        2669314048
+      ],
+      [
+        103317,
+        1923690496,
+        2669314048
+      ],
+      [
+        104333,
+        2167607296,
+        2669314048
+      ],
+      [
+        105322,
+        2423934976,
+        2692517888
+      ],
+      [
+        106325,
+        2654425088,
+        2692517888
+      ],
+      [
+        107323,
+        2655080448,
+        2692517888
+      ],
+      [
+        108314,
+        2622619648,
+        2692517888
+      ],
+      [
+        109315,
+        2448642048,
+        2692517888
+      ],
+      [
+        110321,
+        2659856384,
+        2692517888
+      ],
+      [
+        111348,
+        2649632768,
+        2692517888
+      ],
+      [
+        112336,
+        728023040,
+        2692517888
+      ],
+      [
+        113334,
+        207433728,
+        2692517888
+      ],
+      [
+        114333,
+        207536128,
+        2692517888
+      ]
+    ],
+    "readErrors": 0,
+    "timeoutErrors": 0,
+    "metadataRejected": 0,
+    "observedMaxRssBytes": 2659856384,
+    "observedMaxHwmBytes": 2692517888
+  },
+  "memoryScope": "113 numeric samples of the single phase-identified test process PID 2777. Observed VmHWM 2,692,517,888 bytes (~2.51 GiB), maximum sampled RSS 2,659,856,384 bytes. Samples can miss peaks and do not establish a hard bound, whole-system peak, minimum RAM or physical-phone guarantee. The sampler covers one fresh test containing three native operations, not sustained app usage.",
+  "canaryScope": {
+    "marker": "Fixed synthetic marker only, included in the first chat-prompt generation.",
+    "roots": [
+      "app files",
+      "app cache",
+      "app no-backup files"
+    ],
+    "timing": "Bounded scans before native operations and after gateway cleanup, not continuous filesystem observation.",
+    "publicExclusion": "Only the separately exact-size/SHA-verified original public probe model was excluded from scan; the temporary gateway model slot was removed first.",
+    "limitations": "No complete filesystem/log/traffic/memory privacy claim, and no representative real-document accuracy evaluation."
+  },
+  "artifact": {
+    "id": 12598467848,
+    "name": "experimental-model-probe-40191631336-1",
+    "byteCount": 8705,
+    "sha256": "7da86f2227f7609fa764c124eba2c58e98a35ccca511515c5046bbc12ed6022e",
+    "createdAtUtc": "2026-10-25T12:12:41Z",
+    "expiresAtUtc": "2026-11-01T12:12:40Z",
+    "expired": false,
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40191631336/artifacts/12598467848",
+    "independentlyDownloadedAndSha256Verified": true,
+    "independentlyVerifiedBy": [
+      "gateway reviewer downloaded and independently checked the 8,705-byte ZIP/hash before parsing",
+      "root reviewer separately downloaded/hash checked and parsed result/memory/target, recorded /tmp/private-doc-ai-chat-native-root-verified.json"
+    ],
+    "generatedOutputIncluded": false,
+    "modelWeightsIncluded": false
+  },
+  "dependencyBootstrap": {
+    "restoredHostGradleCacheHit": false,
+    "cacheImportSuccessClaimed": false,
+    "exactOcrBootstrapPassed": true,
+    "mandatoryGradleOcrAarVerificationPassed": true,
+    "safeEvidenceLines": [
+      "2026-10-25T12:05:57.8998141Z Cache not found for input keys: gradle-model-probe-v1-Linux-X64-jdk21-509eb4263b99b24065c1253cf246d76e617bf602, gradle-v1-Linux-X64-jdk21-",
+      "2026-10-25T12:06:10.2157700Z Verified exact pinned public Tesseract4Android AAR in the ignored local Maven cache.",
+      "2026-10-25T12:07:19.3622071Z Verified exact reviewed Tesseract4Android 4.9.0 AAR byte count and SHA-256."
+    ],
+    "successfulHelperSource": "Success is not source-tagged by helper; record the actual cache MISS and verified bootstrap without inventing a restored-cache/import success.",
+    "runnerFixCommit": "1d3af19784b39a703790a291e183dc36200665dc",
+    "runnerFixFiles": [
+      ".github/workflows/model-runtime-probe.yml",
+      "scripts/prepare-ocr-runtime.py",
+      "scripts/test-ocr-runtime.py"
+    ],
+    "applicationProductionCodeChangedByRunnerFix": false
+  },
+  "priorFailedAttempts": [
+    {
+      "schemaVersion": 1,
+      "runId": 40190815726,
+      "attempt": 1,
+      "jobId": 121161241713,
+      "headSha": "99f72b345649a99083adeb8b77711bd1cdc4e02b",
+      "sourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
+      "conclusion": "failure",
+      "startedAtUtc": "2026-10-25T11:54:24Z",
+      "completedAtUtc": "2026-10-25T11:54:45Z",
+      "failedStep": "Compile the real offline instrumentation APK",
+      "failureBeforeGradle": true,
+      "observedFailure": "prepare-ocr-runtime.py --download: OCR runtime unavailable: Pinned OCR runtime download unavailable; no artifact published",
+      "samplerSyntheticTestsPassed": 19,
+      "downloadAdmissionSyntheticTestsPassed": 12,
+      "kotlinCompilationExecuted": false,
+      "androidTestsExecuted": 0,
+      "modelDownloadExecuted": false,
+      "modelLoadPassed": false,
+      "chatGatewayPassed": false,
+      "artifactsUploaded": false,
+      "scope": "Pinned OCR AAR retrieval failed before Gradle, KVM provisioning, model download and instrumentation; no chat/native verdict."
+    },
+    {
+      "schemaVersion": 1,
+      "runId": 40190815726,
+      "attempt": 2,
+      "jobId": 121161629382,
+      "headSha": "99f72b345649a99083adeb8b77711bd1cdc4e02b",
+      "sourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
+      "conclusion": "failure",
+      "startedAtUtc": "2026-10-25T11:56:18Z",
+      "completedAtUtc": "2026-10-25T11:56:36Z",
+      "failedStep": "Compile the real offline instrumentation APK",
+      "failureBeforeGradle": true,
+      "observedFailure": "prepare-ocr-runtime.py --download: OCR runtime unavailable: Pinned OCR runtime download unavailable; no artifact published",
+      "samplerSyntheticTestsPassed": 19,
+      "downloadAdmissionSyntheticTestsPassed": 12,
+      "kotlinCompilationExecuted": false,
+      "androidTestsExecuted": 0,
+      "modelDownloadExecuted": false,
+      "modelLoadPassed": false,
+      "chatGatewayPassed": false,
+      "artifactsUploaded": false,
+      "scope": "Pinned OCR AAR retrieval failed before Gradle, KVM provisioning, model download and instrumentation; no chat/native verdict."
+    }
+  ],
+  "historicalEvidence": [
+    "2026-10-25-compact-native-probe.json",
+    "2026-10-22-native-model-probe.json"
+  ],
+  "limits": [
+    "One actual non-skipped native test and one synthetic-name recall case; no representative conversational/document/English-Hindi-Marathi benchmark.",
+    "No Compose UI/physical-fingerprint/vendor/phone thermal/battery/performance result is established by this platform self-targeting test.",
+    "4096-byte page target; actual 16 KiB native loading remains unverified.",
+    "No claim of universal nominal 4 GB-phone support or sufficiency at every admitted memory state.",
+    "No native hard-timeout/process-isolation/complete privacy/traffic/recovery/release-readiness claim.",
+    "General model output remains unverified; document/model text has no mutation authority."
+  ]
+}

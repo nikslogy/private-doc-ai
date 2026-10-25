@@ -1,40 +1,38 @@
 # Development APK delivery
 
-## Current stable Preview build
+## Current stable Preview chat build
 
-[Download stable-signed model-setup APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).
-Use the offline APK and open **Private Vault Preview**. Both APKs passed the full
-host gate, pinned signer checks and 68 non-skipped Android test executions in
-[run 40168429140](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140).
-Version 0.4.2-dev / code 7 retains permanent IDs com.privateassistant.app.preview
-and com.privateassistant.app.connected.preview. The connected launcher is
-**Private Vault Connected Preview**. Install over the existing Preview apps
-without uninstalling or clearing data. Earlier Test/original apps retain separate
-vaults. Keep their data; no automatic migration or recovery is available.
+[Download stable-signed v0.5.0-dev chat APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
+Unzip/install the offline APK over **Private Vault Preview**, without uninstalling
+or clearing data. Code8 keeps com.privateassistant.app.preview and
+com.privateassistant.app.connected.preview with the same public signing pin.
+Android 12/API31+ is required. Earlier Test/original apps keep separate vaults;
+no automatic migration/recovery exists. Physical update-preservation remains a
+separate phone check; keep original source files outside the app.
 
-Open Assistant → Document facts and choose one source. Supported English labels
-produce literal values, exact source quotes/page links and unresolved conflict
-warnings. OCR may change digits and unsupported layouts may not match. AI
-questions/summaries remain disabled. Set up on-device AI offers verified import
-and a fixed synthetic diagnostic. Real CPU generation/cancellation passed on an
-explicit nominal 4 GiB emulator, with observed process high-water memory around
-2.47 GiB. Choose the new recommended Qwen 3 0.6B entry and import its 347 MB file;
-the old 1.6 GB file is a different retired model. Code7 checks model-specific
-total/available memory inside the heavy-work gate before native loading. This
-does not prove physical-phone compatibility or universal 4 GB support. Consult MODEL_SETUP.md and STATUS.md before running it.
-This is experimental setup, not a completed AI assistant.
+Open **Assistant**, type a message and press **Send**. The already installed
+compact Qwen3 model is reused after receipt/hash verification. Chat uses bounded
+recent history and clears when the vault locks; it is not a saved transcript.
+General model replies are labelled unverified and cannot operate on files.
+For supported policy/invoice questions choose **Ask a document**; printed values
+come with source-page links. Summary means a bounded extractive summary of those
+facts, not unrestricted generated document analysis. See [CHAT.md](CHAT.md).
 
-The persistent user-owned signing key is held in repository Actions secrets;
-only its public certificate is committed. Stable delivery checks the input key
-and both final APKs against that pin and has no temporary-signing fallback.
-The main-only **Stable development APKs** workflow publishes artifacts only after
-all checks pass. Default Host checks .dev APKs remain diagnostic builds; use the
-stable Preview artifact for phone testing. The disposable-key build test never
-publishes its synthetic Preview APKs.
+[Stable run 40190793629](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629)
+passed full host checks, signer/package/native checks and 96 actual Android test
+executions, none skipped. Those include nine controller lifecycle cases and five
+gateway cases per variant, existing vault/OCR regressions and real credential
+lifecycle probes. The separate actual model-chat/history/cancel verdict is in
+STATUS and its native checkpoint. These do not establish representative accuracy,
+full Compose tapping/keyboard behavior, physical 4 GB support or release readiness.
 
-Exact APK hashes, ZIP hash, expiry and remaining physical/privacy checks are in
-[STATUS.md](STATUS.md). Actual same-key update-preservation testing remains
-pending. AI questions/summaries and portable recovery remain unavailable.
+The persistent user-owned signing key stays in repository Actions secrets;
+only its public certificate is committed. Stable delivery has no temporary-key
+fallback and uploads only after all build/regression gates pass. Ordinary Host
+checks .dev APKs remain diagnostic builds. The compact model catalogue/receipt
+identity is unchanged; no new model file is bundled or needed after a verified
+code7 import. Exact APK/ZIP hashes, report identities and seven-day expiry are
+recorded in [STATUS.md](STATUS.md). No private key was read locally or regenerated.
 
 ## Historical repair build
 

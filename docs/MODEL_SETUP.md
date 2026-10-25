@@ -1,8 +1,10 @@
 # Experimental compact on-device model setup (M4)
 
-Code7 / 0.4.2-dev adds a compact, verified public model for the 4 GB device
-target. This development slice offers a fixed synthetic CPU generation test;
-it does not enable document questions/summaries. See STATUS for actual
+Code7 / 0.4.2-dev added the compact model for the 4 GB device target. Code8 /
+0.5.0-dev reuses the same verified installation for actual chat in Assistant.
+This setup screen retains its separate fixed synthetic CPU diagnostic. Supported
+printed-document questions and extractive fact summaries are in the Assistant
+source picker; unrestricted document synthesis remains unavailable. See STATUS for actual
 Android build/runtime results and pending physical-phone checks. A RAM target
 is not a guarantee for every phone with that advertised capacity.
 
@@ -110,7 +112,14 @@ After the signed update and explicit emulator results, perform the phone import/
 tamper/cancel/lock/restart and same-key update procedure in DEVICE_TESTS.md. Record
 exact APK/model/device identities, actual total/available RAM, latency and
 resource behavior. The user's iQOO Neo 10 has 12 GB physical RAM and 256 GB storage,
-but no successful native result on that phone has been recorded here. Model-based
-document QA remains gated until device evidence and the M5 citation/evaluation
-layer exist. Narrow synthetic file-canary checks do not establish complete
+and reports the compact synthetic test completed. Actual typed-chat/source use
+and independently measured phone memory/latency remain to be checked. General chat and supported printed-document fact questions are implemented in
+code8; see [CHAT.md](CHAT.md). Model-based arbitrary document synthesis remains
+gated on its future citation/evaluation layer. Narrow synthetic file-canary checks do not establish complete
 filesystem, logs, traffic, memory, thermal, accuracy or release readiness.
+
+The code8 native chat experiment 40191631336 separately passed actual chat prompts,
+short-history recall through LocalChatGateway and native cancellation on the
+4 GiB emulator; measured process VmHWM was ~2.51 GiB. This preserves the exact same
+model/runtime/receipt identity. Use [CHAT.md](CHAT.md) for normal conversation;
+repeating the setup diagnostic is not the normal chat flow.

@@ -1,44 +1,141 @@
 # Development status
 
-## In progress — actual local chat and cited document facts (code8)
+## Checkpoint 12 — actual local chat and cited document facts
 
-The user reports that the compact-model synthetic test completed on their
-12 GB iQOO Neo 10 / Android16. This is a manual runtime confirmation, not an
-independently measured phone benchmark or full privacy/update-preservation suite.
-They correctly report that the delivered code7 still had no chat input. Code8 /
-0.5.0-dev implements the first actual Assistant chat interface and gateway.
+[Download stable-signed v0.5.0-dev chat APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
+Unzip/install the offline APK over **Private Vault Preview**, without uninstalling
+or clearing data. Code8 retains the Preview IDs and signer. The already imported
+compact Qwen3 model is reused after receipt/hash verification; no model reimport
+or download is needed for an intact installation in the same Preview app.
 
-General chat accepts the user's own bounded message and recent conversation
-context, verifies the already-installed compact model and executes the real
-local adapter. It has no vault reader, remote endpoint, cache, action executor
-or durable chat storage. Model replies are explicitly unverified. Chat is kept
-only in the unlocked session's memory and clears on lock. Clear/cancel/source
-switch revoke pending work; old callbacks cannot publish into a new conversation.
-The existing model catalogue/receipt identity is unchanged, so no new model file
-is needed when the installed compact model remains verified.
+Open **Assistant**, type a message and press **Send**. This executes the actual
+local model with bounded recent conversation context. Generated replies are
+explicitly unverified; chat is memory-only and clears on lock. There are no file
+mutation tools or remote fallback. Choose a document in the source selector for
+supported printed English policy/invoice questions, exact source-page quotes and
+links. **Summarize document facts** gives a bounded extractive facts summary,
+with conflict/partial warnings. Arbitrary narrative document analysis remains
+under development. See [CHAT.md](CHAT.md) for actual capabilities and limits.
 
-An explicit source picker enables supported English printed policy/invoice
-questions, with immutable revision/page quotes and source buttons. Ambiguous,
-missing, conflicting or incomplete evidence clarifies/abstains. A summary is a
-bounded extractive summary of printed facts, not unrestricted generated document
-analysis. General chat redirects obvious private-document questions to source
-selection and file-action requests to existing explicit controls. Neither model
-output nor document text authorizes an action. OCR/reindex and deletion invalidate
-chat sources/citations; messages never mix selected sources or vault sessions.
+The user confirms code7's compact-model synthetic test completed on their
+12 GB iQOO Neo 10 / Android16. This is a useful manual runtime confirmation,
+not an independently measured phone benchmark, new-chat test or full security
+suite. The user correctly reported that code7 had no actual chat input; this
+build adds the missing interface and actual user-prompt gateway.
 
-Actual so far: the focused :core:test, production app Kotlin and platform
-instrumentation Kotlin compilation passed. The full host gate, selected Android
-controller/gateway regressions and actual chat-prompt/history/gateway native
-experiment remain pending. No code8 APK is delivered until the signed build gate
-passes. The current code7 artifact below is historical setup capability only.
+### Implemented boundaries and validation
 
-Next: finish full host validation, run all96 selected Android cases and the
-constrained native chat/gateway/short-history/cancel/hash/canary experiment, then
-publish the stable-signed code8 APK as an update. Record exact results and all
-remaining physical/representative-language/accuracy/privacy limits.
+General chat receives only the current user message and bounded recent chat
+history. LocalChatGateway re-verifies the exact installed model, holds its lease
+through native cleanup and rechecks memory inside the heavy-work gate. It has no
+vault reader, URI, database key, action executor, network or durable transcript.
+Obvious private-document questions request an explicit source; file-action
+requests point to existing direct controls. Neither document nor model text
+is treated as an authorization. Language/intent rules are limited English rules.
 
+DocumentChatEngine reads explicit printed labels from the selected immutable
+revision and independently validates exact page/spans. Amount meanings remain
+distinct, formatting/leading zeros survive, and missing/conflicting/partial facts
+cannot turn into an invented unique amount. Source changes, clear/cancel, lock,
+deletion and OCR/reindex invalidate state and reject late replies/citations.
+A summary is at most eight printed facts, not a model-generated interpretation.
+No schema or private plaintext storage was added; originals remain immutable.
 
-## Checkpoint 11 — compact model passes a 4 GiB Android experiment
+| Gate | Actual result |
+| --- | --- |
+| Local full host gate | PASS: 121 Python checks; 170 passing JVM XML cases (114 core + 28 per platform variant); lint, all instrumentation compilation, dependency gates and both assemblies |
+| JVM execution scope | Core 114 ran freshly in the focused command and was reused UP-TO-DATE in full host; see exact local checkpoint. App JVM tasks remain NO-SOURCE |
+| Stable run 40190793629 | PASS complete gate and 96 Android executions, none skipped: 38 platform +9 app controller +1 real-credential lifecycle per variant |
+| App chat lifecycle | Nine cases/variant passed: exact premium citations, missing/conflict/partial abstention, clear/source-switch/lock stale-result rejection, source invalidation and no-model notices |
+| Chat gateway | Five synthetic cases/variant passed: missing/retired model, verification/revocation and prompt boundaries |
+| Actual native chat run 40191631336 | PASS one fresh non-skipped test; chat prompt/history, real verified-installation gateway, one-name recall, native cancellation, unchanged model hash and narrow canary checks |
+| Signing/packages/manifests | PASS both pinned Preview IDs/certificate/v2 signatures/official zipalign; offline has no INTERNET; ML Kit excluded from production |
+| Native static inventory | PASS: 18 64-bit libraries per APK; 16 32-bit libraries remain unverified for 16 KiB behavior; no actual 16 KiB device result |
+
+### Real chat experiment
+
+Run 40191631336 used the reviewed 347,251,840-byte Qwen3 INT4 model with the pinned
+0.16.0 CPU runtime on a fresh API 36 x86_64 emulator with 4096 MiB nominal RAM.
+Android reported 4,014,284 KiB total and 2,407,400 KiB available before testing,
+with 4096-byte pages. The actual application memory policy admitted the native
+operations, and a forced-denial check returned before native initialization.
+
+The first real chat prompt with recent synthetic history generated 15 UTF-16
+units in 60,364 ms, including initialization. A separate deliberately cancelled
+operation took 22,475 ms including its own initialization, with 80 successful native
+cancel calls and one failing synchronous send. The third operation installed the
+verified public model into a fresh test-only store, verified readiness and called
+LocalChatGateway with an actual follow-up question. It returned 47 UTF-16 units
+in 16,418 ms, including verification/native work, and recalled the synthetic name
+Riya. The test then removed only its owned temporary model slot and passed final
+model-hash/canary checks. No generated response text was logged or stored.
+
+Numeric sampling captured 113 samples of PID 2777, with zero read/timeout/metadata
+errors. Maximum sampled RSS was 2,659,856,384 bytes; observed kernel VmHWM was
+2,692,517,888 bytes (~2.51 GiB). These are emulator operation/process observations,
+not phone latency, a cancellation-request deadline, a hard memory bound, a
+universal 4 GB-phone guarantee or representative conversational/document accuracy.
+One short-name recall smoke is not a language/task evaluation.
+
+### Exact delivered identity
+
+- Application source: e77945c991fbda8e14248b587d5be03b7547aef4.
+- Built stable commit: 2a12dbb28d9532595258193e9ad89fdc52cef5bd.
+- Stable run 40190793629, attempt 1, job 121161173893; final logs 25 October 2026
+  12:04:43 UTC; completed/success with all steps passed.
+- APK artifact 12598142402: 314,904,826 bytes, SHA-256
+  b9bee50220e1460aa5cf35f5895409feed62bb74dbc65ee32fcb750c16641f95;
+  expires 1 November 2026 at 12:04:40 UTC.
+- Regression report 12598022520: 171,861 bytes, SHA-256
+  23a1a65caf2eea706a7f2be5edc6b220f19a2011b2f229fccc69ca417f2495bd.
+  Independently downloaded/hash checked/parsed: 150 entries, 4 XML suites,
+  94 cases (38+38+9+9), zero failures/errors/skips; 2 credential passes are direct logs.
+- Existing signer certificate SHA-256:
+  0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467.
+- Native runner marker: 509eb4263b99b24065c1253cf246d76e617bf602;
+  bootstrap-only source: 1d3af19784b39a703790a291e183dc36200665dc.
+  App/core/platform/model/dependency bytes match the built application source.
+- Native report 12598467848: 8,705 bytes, SHA-256
+  7da86f2227f7609fa764c124eba2c58e98a35ccca511515c5046bbc12ed6022e;
+  independently downloaded/hash checked/parsed; expires 1 November at 12:12:40 UTC.
+
+| APK | Bytes | SHA-256 |
+| --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | 157354337 | dfa42fb82330ad1960bfa20991ba39cc2166516d148a197a2e097202f1ae3a62 |
+| private-document-assistant-connected-debug.apk | 157354385 | acd00e0ec233451bb0a3576db4d361a9add4bce8ca55361231bf44de34baf716 |
+
+Large APK ZIP bytes were not independently downloaded locally; individual APK
+identity/signature/alignment evidence is actual CI logs plus GitHub metadata.
+Small regression/native ZIPs were independently downloaded and verified. No
+signing key was read locally, regenerated or committed. No temporary signing
+fallback or inference weights were added to source/APKs/workflow artifacts.
+
+Two earlier native attempts of 40190815726 failed pinned OCR dependency retrieval
+before Gradle/Kotlin, model download or any Android/native test. The runner-only
+fix added safe same-origin request headers/diagnostics and exact-coordinate
+Gradle cache import, retaining size/hash checks before/after bounded copy and
+atomic publication. The final cache restore reported MISS; the verified bootstrap
+then passed and actual Kotlin/native execution completed. No cache-import success
+is claimed. Seven new helper cases passed; the subsequent local full host gate
+passed 128 Python checks and unchanged 170 passing JVM XML results. Stable delivery
+itself used 121 Python checks. No app/core/platform code, model pin or AAR bytes
+changed in this runner fix. All attempts remain in the native/bootstrap records.
+
+Evidence: [chat build](checkpoints/2026-10-25-chat-build.json),
+[chat native](checkpoints/2026-10-25-chat-native-probe.json),
+[local host](checkpoints/2026-10-25-chat-local-host.json),
+[runner bootstrap](checkpoints/2026-10-25-chat-runner-bootstrap.json).
+
+Next: phone-check actual typed chat/follow-ups, source selection/citation links,
+clear/cancel/lock/restart and existing vault/model preservation in code8. Continue
+M5 with bounded retrieval and evaluated broader cited document synthesis; current
+summaries stay extractive. Durable encrypted chat, file-operation tools, portable
+backup/recovery, process isolation/hard native interruption, representative held-
+out language/accuracy/injection evaluation, full traffic/privacy/thermal checks,
+two physical tiers and real 16 KiB loading remain open. This is a development
+preview, not a release or a claim of completed full M5.
+
+## Historical checkpoint 11 — compact model passes a 4 GiB Android experiment
 
 [Download the stable-signed 0.4.2-dev APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40168429140/artifacts/12589662196).
 Unzip and install the offline APK over **Private Vault Preview**, without

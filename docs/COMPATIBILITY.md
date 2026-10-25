@@ -1,11 +1,15 @@
 # Compatibility record
 
-As of 25 October 2026. Current source pins LiteRT-LM 0.16.0 for an experimental
-compact Qwen 3 INT4 CPU profile. The full local host gate passed 109 Python and
-138 passing JVM XML cases (82 core UP-TO-DATE, 56 platform fresh), instrumentation compilation, lint, assemblies and static native
-checks. Stable CI 40168429140 passed its full host/68-case Android gate; real
-compact-model generation/cancellation and admission passed on a nominal 4 GiB
-API 36 x86_64 emulator in run 40168449811. Observed process VmHWM was ~2.47 GiB. This is not a tested minimum or a physical-phone compatibility claim.
+As of 25 October 2026, code8 / 0.5.0-dev adds actual local chat and cited printed
+fact questions using the same compact Qwen3 model and pinned LiteRT-LM 0.16.0.
+[Stable 40190793629](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629)
+passed 121 Python/fullhost and 96 Android executions. The local host reports have
+170 passing JVM XML cases (114 core, 28 per platform variant; exact execution/cache
+scope is recorded separately). Native 40191631336 passed actual chat/history,
+verified-installation gateway response, cancellation/hash/canary checks on a
+nominal 4 GiB API 36 x86_64 emulator, with observed VmHWM ~2.51 GiB. This is not a
+minimum-RAM guarantee, representative dialogue/document evaluation or physical-
+phone chat verification. [Chat scope](CHAT.md) and [STATUS](STATUS.md) record limits.
 
 The earlier delivered code6 / 0.4.1-dev Preview APKs used LiteRT-LM 0.9.0 and
 passed full host checks and 66 Android executions in

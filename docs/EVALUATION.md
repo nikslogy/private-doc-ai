@@ -1,5 +1,18 @@
 # Evaluation and evidence
 
+Code8 adds functional development checks for actual chat: bounded prompts and
+recent history, conservative source/action routing, literal document questions
+and extractive facts summaries. Core adds 32 cases across prompt 8, document 16
+and route 8, bringing authored core cases to 114. Nine actual Android controller
+lifecycle cases and five gateway cases per variant are required by stable CI.
+The explicit real-model probe additionally checks a user-style chat prompt and
+one synthetic short-history name recall through the verified installation
+gateway, alongside native cancellation, hashes and narrow file canaries. See
+STATUS/checkpoints for the actual run verdicts. These functional smoke cases
+do not establish representative dialogue quality, task/language evaluation,
+arbitrary document QA or the 120-question release targets. The catalogue
+continues to record no evaluated languages/tasks.
+
 The M3 selected-source label reader adds synthetic core extraction cases and
 augments the real authenticated vault lifecycle probe with pinned reads, exact
 field citations, conflicting premiums and unchanged original bytes/ciphertext.

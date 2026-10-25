@@ -68,3 +68,19 @@ Consult STATUS/checkpoints for the actual completed/failed/unrun verdicts. This 
 functional development evidence, not the 120-question release evaluation, a full
 Compose tapping/keyboard test, representative multilingual quality, comprehensive
 privacy, physical-phone performance or release readiness.
+
+## Recorded development build
+
+Stable run 40190793629 delivered code8 after 121 Python checks/fullhost and 96
+actual Android executions, none skipped. Separately, native run 40191631336 passed
+one fresh test on the nominal 4 GiB API 36 x86_64 emulator: user-style chat prompt,
+real verified-installation gateway reply, one synthetic recent-name recall,
+active native cancellation, model integrity and bounded file-canary scans.
+The gateway operation returned 47 UTF-16 units in 16,418 ms including verification
+and native work. Observed process VmHWM was 2,692,517,888 bytes (~2.51 GiB), from 113
+samples with zero sampler errors. These are specific emulator observations, not
+phone speed, broad conversational accuracy or a universal 4 GB support claim.
+See the [build checkpoint](checkpoints/2026-10-25-chat-build.json) and
+[native checkpoint](checkpoints/2026-10-25-chat-native-probe.json). The user
+previously reported the compact synthetic model test completing on their 12 GB
+iQOO Neo 10; actual typed chat/source usage on that phone is the next manual check.
