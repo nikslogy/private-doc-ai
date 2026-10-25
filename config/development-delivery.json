@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "0d213a5537e4dc7550ac3aadc312284c4efdec32",
-  "request": "Validate compact INT4 model setup and stable signed 0.4.2-dev update",
-  "requestedAtUtc": "2026-10-25T06:14:42Z"
+  "sourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
+  "request": "Validate actual local chat and cited document facts in stable signed 0.5.0-dev update",
+  "requestedAtUtc": "2026-10-25T11:53:40Z"
 }
