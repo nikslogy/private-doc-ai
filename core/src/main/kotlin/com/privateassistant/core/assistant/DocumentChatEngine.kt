@@ -40,7 +40,7 @@ sealed interface DocumentChatAnswer {
 class DocumentChatEngine {
     fun answer(question: String, source: RevisionText, complete: Boolean): DocumentChatAnswer {
         val normalized = normalize(question) ?: return DocumentChatAnswer.Unsupported
-        val summary = summaryQuestion.matches(normalized)
+        val summary = summaryQuestion.matches(normalized) || DocumentPassageRetriever.isSummaryQuestion(normalized)
         val field = if (summary) null else fieldQuestion(normalized)
         if (!summary && field == null) return if (ambiguousQuestion(normalized)) {
             DocumentChatAnswer.Clarify

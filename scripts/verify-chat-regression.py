@@ -17,6 +17,15 @@ EXPECTED_TESTS = {
     "reindexInvalidationClearsCitationsAndRevokesSourceRead",
     "mismatchedSourceRevisionCannotPublishCitations",
     "removedSourceClearsChatAndSelection",
+    "actualResourcePresetsReturnSourceAnswersInsteadOfUnsupportedNotice",
+    "typedGeneralQuestionsKeepCurrentInputAndStructuredHistory",
+    "broaderDocumentQuestionUsesRetrievedTextAndCheckedSource",
+    "invalidGeneratedCitationsAndNumbersFallBackToActualExcerpts",
+    "allDocumentsSearchFindsMatchingSourceBeyondInitialReadLimit",
+    "allDocumentsInvalidationRevokesPendingGeneratedReply",
+    "unavailableModelStillShowsRelevantDocumentExcerpts",
+    "generatedSubsetKeepsOriginalSourceReferenceNumber",
+    "uncitedExplanationShowsAllSuppliedContextWithoutClaimingVerifiedMeaning",
 }
 MAX_REPORT_BYTES = 8 * 1024 * 1024
 

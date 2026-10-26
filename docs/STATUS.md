@@ -1,6 +1,29 @@
 # Development status
 
-## Checkpoint 12 — actual local chat and cited document facts
+## Checkpoint 13 — phone-reported chat failures; repair in progress
+
+The user tested code8 on the iQOO Neo 10 / Android 16 and reports that general
+chat repeats a greeting for different questions, while selected-document questions,
+including the suggestions, repeatedly return the unsupported-question notice.
+The code8 model-load, one-name recall and controller fixtures did not establish
+usable phone conversation or broader document QA. Those earlier passes remain
+historical evidence, not proof this report is resolved.
+
+Code9 / 0.5.1-dev repair work replaces the handwritten conversation transcript
+with native role-separated messages and adds bounded passage retrieval over
+readable document text. It keeps exact labelled numeric/identifier answers,
+introduces model-assisted document explanations with visible source excerpts,
+and adds an explicit bounded all-documents scope. Generated explanations are
+not semantically verified by matching a citation or number; exact quotes and
+raw printed fields remain distinct. Source text has no action authority.
+
+Validation and new APK delivery are pending. No phone fix or broad accuracy claim
+is made from source implementation alone. Next: complete regression fixtures
+using the actual Android suggestion resources, varied native questions, broader
+source questions, missing evidence and all-documents invalidation; run the full
+host gate and actual constrained-Android model probe before publishing an update.
+
+## Historical checkpoint 12 — actual local chat and cited document facts
 
 [Download stable-signed v0.5.0-dev chat APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
 Unzip/install the offline APK over **Private Vault Preview**, without uninstalling

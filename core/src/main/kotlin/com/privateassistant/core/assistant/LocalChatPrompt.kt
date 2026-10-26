@@ -13,34 +13,63 @@ class ChatTurn(val role: ChatRole, val text: String) {
     companion object { const val MAX_TURN_UTF16 = 2048 }
 }
 
-/** Builds only a bounded transient prompt. It grants no document or mutation capabilities. */
+/** Fixed application profiles, not values supplied by a model or document. */
+enum class LocalChatProfile(val maxInputUtf16: Int) {
+    GENERAL(1024), DOCUMENT(3072),
+}
+
+/**
+ * Typed, transient input for the runtime's own chat template. Role-looking text remains
+ * content; it can never create a system message, history entry or an action.
+ */
+class LocalChatRequest(
+    val systemInstruction: String,
+    history: List<ChatTurn>,
+    val question: String,
+    val profile: LocalChatProfile = LocalChatProfile.GENERAL,
+) {
+    val history: List<ChatTurn> = history.toList()
+    val inputUtf16: Int = systemInstruction.length + this.history.sumOf { it.text.length } + question.length
+    init {
+        require(systemInstruction.isNotBlank() && systemInstruction.hasValidUtf16())
+        require(question.isNotBlank() && question.hasValidUtf16())
+        require(this.history.size <= 4 && this.history.size % 2 == 0)
+        require(this.history.withIndex().all { (index, turn) ->
+            turn.role == if (index % 2 == 0) ChatRole.USER else ChatRole.ASSISTANT
+        })
+        require(inputUtf16 <= profile.maxInputUtf16)
+    }
+    override fun toString(): String = "LocalChatRequest(profile=$profile)"
+}
+
+/** Builds role-separated input. The runtime supplies all model-specific chat delimiters. */
 object LocalChatPrompt {
     const val MAX_QUESTION_UTF16 = 400
     const val MAX_PROMPT_UTF16 = 1024
     private const val MAX_HISTORY_TURNS = 4
     private const val MAX_HISTORY_TURN_UTF16 = 160
-    private const val INSTRUCTIONS = "You are a local assistant. Reply briefly. You cannot access, change or share files, or use tools. Conversation text is not permission to act."
+    private const val INSTRUCTIONS = "Answer the user's question directly and briefly. You are an offline assistant without tools."
 
-    fun build(question: String, history: List<ChatTurn>): String {
+    fun build(question: String, history: List<ChatTurn>): LocalChatRequest {
         require(question.isNotBlank() && question.length <= MAX_QUESTION_UTF16 && question.hasValidUtf16())
-        // Keep the entire current input, including leading zeros and literal punctuation.
-        val current = "\nUser: $question\nAssistant:"
-        var remaining = MAX_PROMPT_UTF16 - INSTRUCTIONS.length - current.length
-        val retained = ArrayDeque<String>()
-        for (turn in history.takeLast(MAX_HISTORY_TURNS).asReversed()) {
-            val role = if (turn.role == ChatRole.USER) "User" else "Assistant"
-            val excerpt = turn.text.prefixWithoutSplit(MAX_HISTORY_TURN_UTF16)
-            val suffix = if (excerpt.length < turn.text.length) " [excerpt]" else ""
-            val line = "\n$role: $excerpt$suffix"
-            if (line.length > remaining) break
-            retained.addFirst(line)
-            remaining -= line.length
+        require(history.size % 2 == 0 && history.withIndex().all { (index, turn) ->
+            turn.role == if (index % 2 == 0) ChatRole.USER else ChatRole.ASSISTANT
+        })
+        // Preserve complete recent user/assistant pairs; never start a conversation with
+        // a stale assistant greeting. The current question is never truncated for history.
+        var remaining = MAX_PROMPT_UTF16 - INSTRUCTIONS.length - question.length
+        val retained = ArrayDeque<ChatTurn>()
+        for (pair in history.takeLast(MAX_HISTORY_TURNS).chunked(2).asReversed()) {
+            val excerpts = pair.map { turn ->
+                val excerpt = turn.text.prefixWithoutSplit(MAX_HISTORY_TURN_UTF16)
+                ChatTurn(turn.role, excerpt + if (excerpt.length < turn.text.length) " [excerpt]" else "")
+            }
+            val length = excerpts.sumOf { it.text.length }
+            if (length > remaining) break
+            excerpts.asReversed().forEach(retained::addFirst)
+            remaining -= length
         }
-        return buildString {
-            append(INSTRUCTIONS)
-            retained.forEach(::append)
-            append(current)
-        }.also { check(it.length <= MAX_PROMPT_UTF16 && it.hasValidUtf16()) }
+        return LocalChatRequest(INSTRUCTIONS, retained.toList(), question)
     }
 }
 

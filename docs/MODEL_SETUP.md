@@ -1,3 +1,11 @@
+# Code9 context update
+
+The compact model identity and existing import remain unchanged. Code9 repairs
+chat roles and adds a fixed document1024-context/192-output-token profile; general
+chat stays512/128. Source excerpts remain on device. This does not improve model
+knowledge by itself or establish universal4GB compatibility. See [CHAT](CHAT.md)
+and [STATUS](STATUS.md) for capability and actual validation.
+
 # Experimental compact on-device model setup (M4)
 
 Code7 / 0.4.2-dev added the compact model for the 4 GB device target. Code8 /

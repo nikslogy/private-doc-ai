@@ -1,86 +1,68 @@
-# Local chat and document facts — first M5 slice
+# Local chat and document questions
 
-Code8 / 0.5.0-dev replaces the Assistant tab's unavailable screen with a chat
-composer. Use the same compact model installed for code7; its catalogue and
-receipt identity are unchanged. The setup screen still offers its diagnostic,
-but normal conversation starts in **Assistant**, with your own message and Send.
-Consult STATUS for actual build/native results before choosing a download.
+Code9 / 0.5.1-dev repairs the code8 conversation format and expands document
+questions beyond a small set of printed policy/invoice fields. Consult STATUS
+for actual validation and APK availability. The exact compact model and receipt
+are unchanged; an intact existing installation can be reused.
 
 ## General chat
 
-Keep the source set to **General chat**. The real on-device Qwen3 model answers
-your message and can use recent conversation context. A verified compact model
-installation is required. Replies are labelled **Local AI · unverified** and may
-be wrong; there is no claim of representative language or document accuracy.
-The model cannot inspect the vault, manipulate files, share, delete or call tools.
-Obvious questions about an unselected private policy/invoice ask for a source;
-obvious file-action requests point to existing direct controls instead of
-claiming that an operation completed. These bounded English routing rules are
-not an evaluated general-language intent classifier.
+Choose **General chat**, type a message, then Send. System instructions, recent
+user/assistant pairs and the current question are separate native messages.
+User text that resembles a role delimiter remains user text. Recent history is
+bounded to two complete pairs, with excerpts at160 UTF-16 units per turn; the
+current question remains complete up to400 units. General input totals at most
+1024 units, with512 native context tokens and128 output tokens. UTF-16 length
+is not token count; some scripts can exhaust context earlier.
 
-Messages are limited to 400 UTF-16 units, with a 1024-unit total prompt. Up to four
-recent turns contribute at most 160 units each; older/long content is excluded
-or marked as an excerpt. Visible history is bounded to 20 messages. Replies have
-a native 128-token bound and a 2048-unit post-allocation text check. The current
-512-token context is deliberately small for memory use; some languages may hit
-the token budget with shorter text. Operations allow up to five minutes, but
-native initialization/hangs still have no hard interruption guarantee.
+Generated replies are labelled unverified. The small local model can give wrong
+answers. General chat has no vault reader or file tools. Select a document or
+**All documents** to supply source evidence. Obvious file-action requests point
+to the existing direct controls; chat cannot share, delete or modify originals.
 
-## Ask a selected document
+## Document questions
 
-Choose **Ask a document**, then one imported source. This starts a fresh chat;
-source selection does not follow import order or an inferred current policy.
-Try **What is the policy number?**, **What is the total premium?** or
-**Summarize document facts**. Replies contain supported printed English facts
-and source-page buttons. Original formatting, leading zeros and exact decimal
-text are retained. OCR can still have misread the original; review source pages.
+Choose one document for a specific source, or **All documents** to search a
+bounded authorized scope. Ask a normal question about readable content, such as
+**What does it say about cancellation?**, or **Summarise it** for an overview.
+Relevant exact passages enter the same local model in a separate document
+request. Its generated answer is displayed with numbered source excerpts and
+page links. Matching references and printed numbers are checked, but this does
+not prove the model interpreted a passage correctly. Check the displayed quotes.
+Invalid references or unsupported numbers fall back to real source excerpts.
+Model absence, memory denial or generation failure also shows retrieved source
+text with an explanation. A source with no readable text needs indexing/OCR.
 
-Supported fields include policy number, vehicle registration, policyholder,
-owner, printed coverage dates, total/pre-tax premium, tax, insured value, sum
-insured, deductible, invoice number/date/total/subtotal and generic labelled
-total/subtotal. A bare amount or premium asks for clarification. Missing labels,
-conflicts and incomplete reading do not produce invented unique answers. Dates
-remain printed text rather than proof a policy is valid or current.
+Recognized printed-field questions still take the direct exact-value path in a
+selected document: policy number, premium, tax, insured value, dates and invoice
+fields retain original formatting and citations. Missing/conflicting/incomplete
+facts cannot become an invented unique amount. A bare premium/amount asks for
+clarification. These English label rules are limited and OCR may misread values.
 
-A summary is at most eight distinct printed facts with exact citations. It is
-labelled partial when evidence or the returned facts are truncated, and conflicts
-remain visible. This first slice does not provide arbitrary narrative document
-analysis, comparison, arithmetic, language-general extraction or model-based
-semantic summarization. No supported fact answer depends on an LLM inventing or
-correcting a value. Questions outside the conservative grammar explain the limit.
+Retrieval retains at most16 source revisions and200,000 UTF-16 units, with at
+most50 pages per source. For larger libraries, bounded queries to the existing
+encrypted lexical index prioritize matching documents before source reads.
+At most four480-unit source excerpts enter one model request. The document
+profile uses at most3072 input units,1024 native context tokens and192 output
+tokens, within the artifact's1280-token export. This remains a small context.
+Summaries sample passages across sources/pages and state when they are partial;
+they are not a guarantee every page or document was analyzed. Questions with no
+useful retrieved evidence abstain. Selecting a specific document reaches sources
+that a bounded all-documents pass omitted. Lexical retrieval and multilingual
+semantic accuracy remain development limitations.
 
-## Session and validation boundary
+## Session and source authority
 
-Clear chat, source changes and lock discard chat/history; messages are not
-restored after locking or restarting. Cancellation revokes publication even if
-native processing is still returning. Deletion and reindex/OCR invalidate source
-messages and citations, including changes under the same original revision ID.
-Nothing is sent to a server and the offline APK has no INTERNET permission.
-JVM/native copies cannot be perfectly zeroized, and native memory may outlive
-UI clearing while cleanup finishes. Durable encrypted chat history is future work.
+Chat and retrieved plaintext live only in unlocked-session memory. No saved UI
+state, plaintext transcript, native KV cache or remote processing is added.
+Clear, lock, source changes, deletion and reindex/OCR revoke pending work and
+remove stale messages/citations. All-documents changes invalidate its scope.
+General history excludes document answers and notices. Source buttons are owned
+by the app and revalidate current document/revision/page authorization; generated
+text cannot create a navigation callback or authorize a file operation.
 
-Host tests cover prompt bounds, field meaning/integrity and intent rules. Selected
-Android regressions cover nine actual controller lifecycle cases and five gateway
-availability/cancellation cases. The explicit real-model probe exercises actual
-chat prompts with short history, a verified installation through LocalChatGateway,
-one synthetic name recall, active cancellation and bounded hash/file-canary checks.
-Consult STATUS/checkpoints for the actual completed/failed/unrun verdicts. This is
-functional development evidence, not the 120-question release evaluation, a full
-Compose tapping/keyboard test, representative multilingual quality, comprehensive
-privacy, physical-phone performance or release readiness.
-
-## Recorded development build
-
-Stable run 40190793629 delivered code8 after 121 Python checks/fullhost and 96
-actual Android executions, none skipped. Separately, native run 40191631336 passed
-one fresh test on the nominal 4 GiB API 36 x86_64 emulator: user-style chat prompt,
-real verified-installation gateway reply, one synthetic recent-name recall,
-active native cancellation, model integrity and bounded file-canary scans.
-The gateway operation returned 47 UTF-16 units in 16,418 ms including verification
-and native work. Observed process VmHWM was 2,692,517,888 bytes (~2.51 GiB), from 113
-samples with zero sampler errors. These are specific emulator observations, not
-phone speed, broad conversational accuracy or a universal 4 GB support claim.
-See the [build checkpoint](checkpoints/2026-10-25-chat-build.json) and
-[native checkpoint](checkpoints/2026-10-25-chat-native-probe.json). The user
-previously reported the compact synthetic model test completing on their 12 GB
-iQOO Neo 10; actual typed chat/source usage on that phone is the next manual check.
+Native cancellation is cooperative; initialization/hangs still lack a hard
+interruption guarantee. JVM/native copies cannot be perfectly zeroized. The
+same compact model is reused, but phone memory/performance and repeated use need
+actual measurement. This development update is not a release or a claim of
+complete document comprehension. STATUS records actual tests and remaining work.

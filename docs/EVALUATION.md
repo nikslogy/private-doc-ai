@@ -1,17 +1,29 @@
 # Evaluation and evidence
 
-Code8 adds functional development checks for actual chat: bounded prompts and
-recent history, conservative source/action routing, literal document questions
-and extractive facts summaries. Core adds 32 cases across prompt 8, document 16
-and route 8, bringing authored core cases to 114. Nine actual Android controller
-lifecycle cases and five gateway cases per variant are required by stable CI.
-The explicit real-model probe additionally checks a user-style chat prompt and
-one synthetic short-history name recall through the verified installation
-gateway, alongside native cancellation, hashes and narrow file canaries. See
-STATUS/checkpoints for the actual run verdicts. These functional smoke cases
-do not establish representative dialogue quality, task/language evaluation,
-arbitrary document QA or the 120-question release targets. The catalogue
-continues to record no evaluated languages/tasks.
+Code9 responds to user-reported code8 repeated greetings and rejected document
+questions. The native adapter now receives separate system/history/current-user
+messages. A retained desktop experiment reproduced greeting-like legacy responses
+on4/5 questions after greeting history; role separation produced distinct replies
+but still factually wrong general answers. Seven fresh desktop spot checks passed
+varied/general/source/missing/summary cases. These are synthetic exploratory checks,
+not representative quality or Android evidence. Forcing citation formatting caused
+a fabricated owner, so the accepted prompt retains missing-evidence abstention;
+uncited model explanations show all exact supplied excerpts as unverified context.
+
+Core adds20 retrieval/prompt/validator cases and expands role-prompt cases, reaching
+136 core tests. The focused core command passed all136 freshly, with no failures
+or skips. New Android controller fixtures use actual suggestion resources, distinct
+typed input/history, broader source questions, invalid model output, bounded
+all-documents search beyond the initial read cap, source invalidation and uncited
+context disclosure. Stable CI requires18 controller cases per variant. The real
+model probe additionally requires5 actual varied/source/missing/summary semantic
+checks through the verified gateway, alongside history recall, cancellation, model
+hashes and bounded file canaries. STATUS records which checks actually executed.
+
+A valid source span or supported numeric token does not establish field meaning
+or entailment of generated prose. General/dialogue quality, multilingual retrieval,
+long documents, adversarial source instructions and cross-document ambiguity need
+separate held-out evaluation. No catalogue task/language accuracy is claimed.
 
 The M3 selected-source label reader adds synthetic core extraction cases and
 augments the real authenticated vault lifecycle probe with pinned reads, exact

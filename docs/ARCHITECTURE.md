@@ -39,17 +39,27 @@ has no vault reader, network or mutation capability; generated replies are marke
 unverified. Chat lives only in unlocked-session memory. It is never saved through
 Compose saved state, a plaintext file, database chat table or native KV cache.
 
-Document mode reads only the explicitly chosen immutable revision through the
-unlocked VaultController. DocumentChatEngine recognizes supported English printed
-policy/invoice questions and verifies the existing labelled-field evidence. Exact
-raw identifiers/dates/decimals and page quotes survive. Missing, ambiguous,
-conflicting or incomplete sources abstain/clarify; summaries are explicitly
-bounded extractive facts, not unrestricted model-generated document analysis.
-Model replies do not become citations. App-owned citation objects can open only a
-still-current authorized document/page; text cannot synthesize a source callback.
-Changing source clears conversation/history. Lock, clear, cancellation, deletion
-and OCR/reindex invalidate pending results, source quotes and generation epochs.
-No schema change, durable chat history or extracted-field plaintext is added.
+Document mode pins explicitly selected authorized revisions through the unlocked
+VaultController. Recognized printed-field questions in one document retain exact
+labelled extraction with independently checked spans, raw values and conflict/
+incomplete abstention. Other questions and summaries use bounded lexical passage
+retrieval over readable text. An explicit all-documents scope prioritizes matching
+sources using existing encrypted lexical search, then sequentially reads a bounded
+subset. At most16 revisions/200,000 UTF-16 units are retained and four480-unit
+excerpts enter a DOCUMENT request. Its1024-token context/192-output-token budget
+is fixed by the application; the general profile stays512/128.
+
+The local model receives source text as untrusted data without tools or repository
+access. Supplied source spans are verified independently. Generated numeric
+literals and references are checked; uncited explanations attach all supplied
+excerpts as context. This does not prove semantic entailment, and generated prose
+is labelled AI rather than verified facts. Invalid output falls back to actual
+source excerpts; missing/unreadable evidence does not become an invented answer.
+Summaries explicitly disclose partial scope. Document replies do not enter general
+conversation history. Source changes, lock, clear, cancellation, deletion and
+OCR/reindex revoke state/epochs; all-documents scope invalidates when its sources
+change. App-owned source callbacks still require current authorized revision/page.
+No schema change, durable chat history or private plaintext file is added.
 
 The UI combines name/type matches with content hits and opens a page-text
 evidence viewer showing page, revision and extraction method. It does not yet
@@ -110,8 +120,8 @@ Qwen 3 INT4 artifact is experimental with no evaluated languages/tasks or QA.
 The old runtime-0.9 record and fingerprint stay intact for recognition and
 explicit removal; it has no load profile under the upgraded runtime.
 
-The real LiteRT-LM 0.16.0 CPU adapter uses a 512-token combined context, native
-128-token output limit, thinking disabled, no cache/tools, bounded input,
+The real LiteRT-LM 0.16.0 CPU adapter uses fixed general512/128 or document1024/192
+context/output-token profiles, thinking disabled, no cache/tools, bounded input,
 post-allocation output checks and synchronous send with a joined native
 cancellation watchdog. Model-specific admission runs inside the heavy-work gate
 immediately before allocation. Lock clears UI state and requests cancellation. Native
@@ -120,7 +130,7 @@ fixed synthetic diagnostic; the separate chat gateway accepts actual user chat
 prompts. General-chat intent rules offer source selection or existing controls
 for obvious private-document/action requests, and never execute a model action.
 Actual validation is recorded in STATUS. Synthetic OCR Android verification
-passed; physical checks remain open. Unrestricted document synthesis, full PDF
+passed; physical checks remain open. Comprehensive document accuracy, full PDF
 viewer, derivative execution, portable backup and recovery remain future work.
 
 See [CRYPTO_DESIGN](CRYPTO_DESIGN.md), [PRIVACY](PRIVACY.md),

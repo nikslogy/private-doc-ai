@@ -9,6 +9,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.privateassistant.core.assistant.ChatRole
 import com.privateassistant.core.assistant.ChatTurn
 import com.privateassistant.core.assistant.LocalChatPrompt
+import com.privateassistant.core.DocumentId
+import com.privateassistant.core.PageText
+import com.privateassistant.core.RevisionId
+import com.privateassistant.core.RevisionRef
+import com.privateassistant.core.RevisionText
+import com.privateassistant.core.assistant.DocumentAnswerValidator
+import com.privateassistant.core.assistant.DocumentPassageRetriever
+import com.privateassistant.core.assistant.DocumentQuestionPrompt
+import com.privateassistant.core.assistant.DocumentRetrievalSource
 import java.io.File
 import java.nio.file.Files
 import java.util.UUID
@@ -149,6 +158,9 @@ class LocalInferenceInstrumentedTest {
         var gatewayMillis = 0L
         var gatewayGeneratedUtf16 = 0
         var historyRecallMatched = false
+        var semanticCasesPassed = 0
+        var semanticGeneratedUtf16 = 0
+        var semanticElapsedMillis = 0L
         phase("CHAT_GATEWAY_INSTALL_START")
         try {
             file.inputStream().use { gatewayStore.install(model.id, it, licenseAccepted = true) }
@@ -167,6 +179,59 @@ class LocalInferenceInstrumentedTest {
             assertEquals(LiteRtLmLoadProbe.RUNTIME_VERSION, chatResult.runtimeVersion)
             assertEquals("CPU", chatResult.backend)
             phase("CHAT_GATEWAY_RETURNED")
+            // Unlike a nonempty-output smoke, these cases fail if different current
+            // questions are replaced by the same earlier assistant greeting.
+            val greetingHistory = listOf(ChatTurn(ChatRole.USER, "Hi"),
+                ChatTurn(ChatRole.ASSISTANT, "Hello! I am your assistant and how can I help you?"))
+            val semanticStarted = SystemClock.elapsedRealtime()
+            phase("CHAT_SEMANTIC_CASES_START")
+            val arithmetic = gateway.generate(LocalChatPrompt.build("What is 2 plus 3? Reply briefly.", greetingHistory))
+            assertTrue("Current arithmetic question must be answered after an assistant greeting",
+                Regex("\\b(?:5|five)\\b", RegexOption.IGNORE_CASE).containsMatchIn(arithmetic.text))
+            semanticGeneratedUtf16 += arithmetic.text.length
+            semanticCasesPassed++
+            phase("CHAT_ARITHMETIC_VERIFIED")
+            val banana = gateway.generate(LocalChatPrompt.build("What color is a ripe banana? Reply briefly.", greetingHistory))
+            assertTrue("A different current question must change the generated answer",
+                Regex("\\byellow\\b", RegexOption.IGNORE_CASE).containsMatchIn(banana.text))
+            assertFalse("Varied requests must not repeat a greeting", arithmetic.text == banana.text)
+            semanticGeneratedUtf16 += banana.text.length
+            semanticCasesPassed++
+            phase("CHAT_DISTINCT_ANSWER_VERIFIED")
+
+            val syntheticSource = RevisionText(RevisionRef(DocumentId("synthetic-workshop"), RevisionId("synthetic-workshop-r1")),
+                listOf(PageText(1, "The Violet Workshop closes on Tuesday. Visitors must bring a blue badge.")))
+            val source = DocumentRetrievalSource(syntheticSource, complete = true)
+            val documentQuestions = listOf("What must visitors bring?", "Who owns the workshop?", "Summarise it.")
+            for ((index, question) in documentQuestions.withIndex()) {
+                val evidence = DocumentPassageRetriever.retrieve(question, listOf(source))
+                assertTrue("Actual document request requires retrieved source text", evidence.passages.isNotEmpty())
+                val documentReply = gateway.generate(DocumentQuestionPrompt.build(question, evidence))
+                val checked = DocumentAnswerValidator.validate(documentReply.text, evidence)
+                assertTrue("Source reference/numeric checks must accept the actual native document response", checked.accepted)
+                when (index) {
+                    0 -> assertTrue("Native answer must use the actual private-style source passage",
+                        Regex("blue\\s+badge", RegexOption.IGNORE_CASE).containsMatchIn(documentReply.text))
+                    1 -> {
+                        assertTrue("Missing ownership must not become an invented owner",
+                            Regex("not (?:be )?(?:found|provided|mentioned|specified|stated|available)|missing|cannot be answered|can(?:not|'t) (?:determine|answer)",
+                                RegexOption.IGNORE_CASE).containsMatchIn(documentReply.text))
+                        assertFalse("A missing owner must not be replaced with an ownership claim",
+                            Regex("owned by|belongs to", RegexOption.IGNORE_CASE).containsMatchIn(documentReply.text))
+                    }
+                    2 -> assertTrue("Native summary must mention source-specific content",
+                        documentReply.text.contains("Tuesday", ignoreCase = true) &&
+                            documentReply.text.contains("badge", ignoreCase = true))
+                }
+                assertTrue("Accepted context must refer only to supplied revision spans",
+                    checked.citations.isNotEmpty() && checked.citations.all { it in evidence.passages })
+                semanticGeneratedUtf16 += documentReply.text.length
+                semanticCasesPassed++
+                phase(when (index) { 0 -> "DOCUMENT_ANSWER_VERIFIED"; 1 -> "DOCUMENT_MISSING_VERIFIED"; else -> "DOCUMENT_SUMMARY_VERIFIED" })
+            }
+            semanticElapsedMillis = SystemClock.elapsedRealtime() - semanticStarted
+            assertEquals("All varied general/document semantic cases must really execute", 5, semanticCasesPassed)
+            phase("CHAT_SEMANTIC_CASES_RETURNED")
         } finally {
             withContext(NonCancellable) {
                 // Only this fresh test-owned slot is removed. Preserve the original probe
@@ -195,6 +260,9 @@ class LocalInferenceInstrumentedTest {
             putLong("chatGatewayElapsedMillis", gatewayMillis)
             putInt("chatGatewayGeneratedUtf16", gatewayGeneratedUtf16)
             putBoolean("chatHistoryRecallMatched", historyRecallMatched)
+            putInt("chatSemanticCasesPassed", semanticCasesPassed)
+            putInt("chatSemanticGeneratedUtf16", semanticGeneratedUtf16)
+            putLong("chatSemanticElapsedMillis", semanticElapsedMillis)
         })
     }
 

@@ -1,39 +1,32 @@
 # Private Document Assistant
 
 Native Android encrypted document vault with offline OCR, local search and
-selected-source labelled document facts.
-**Stable-signed development APKs are ready to test.**
-[Download APKs, checksums and reports](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
-Unzip and install the offline APK, then open **Private Vault Preview**.
-Version 0.5.0-dev / code 8 requires Android 12/API31+. Install it as an update to
-the existing Preview app without uninstalling or clearing data. Preview IDs and
-signing identity are unchanged; actual device update-preservation testing remains
-pending. Earlier Test/original apps retain separate vaults; keep their data.
+on-device chat over stored document passages.
 
-Open **Assistant**, type a message and press **Send** for actual on-device chat
-using the installed compact model. No new model download is needed if code7's
-Qwen3 compact installation remains verified. Recent chat context is bounded;
-messages clear on lock and are not saved. Replies are experimental/unverified.
+Code9 / 0.5.1-dev repairs conversation formatting after the user reported repeated
+greetings in code8, and adds broader document questions and summaries. **The new
+build is being validated; see [STATUS](docs/STATUS.md) for current APK availability
+and actual evidence.** Existing Preview IDs, signing identity and the compact
+model receipt remain unchanged. Android12/API31+ is required.
 
-Choose **Ask a document** to ask supported printed English policy/invoice fields
-such as total premium or policy number, with exact source-page links. Ambiguous,
-missing/conflicting or incomplete values abstain/clarify. **Summarize document
-facts** produces a bounded extractive facts summary; broader narrative document
-analysis is still under development. [Chat usage and limits](docs/CHAT.md).
+Use **General chat** for ordinary conversation, **Ask a document** for one source,
+or **Ask my documents** for bounded local retrieval across stored text. Printed
+policy/invoice fields retain exact extraction and source-page links. Broader
+questions use relevant excerpts with the local model; AI explanations and supplied
+quotes are shown separately. Summaries state when scope is partial. Generated
+prose remains unverified and the small model can be wrong. [Chat usage/limits](docs/CHAT.md).
 
-Import PDF/JPEG/PNG/UTF-8 text and choose English or Hindi/Marathi OCR for scans.
-Originals remain immutable; page text/evidence/search persist in SQLCipher.
-System authentication, encrypted objects, direct confirmed original export/delete
-and automatic locking remain available. Chat cannot execute file operations.
-Conversions, durable chat history and portable recovery/backups remain future work.
+Chat clears on lock and is not saved. Import PDF/JPEG/PNG/UTF-8 text and choose
+English or Hindi/Marathi OCR for scans. Originals remain immutable; page evidence
+and search persist in SQLCipher. System authentication, encrypted objects, direct
+confirmed original export/delete and automatic locking remain available. Chat
+has no file tools, cloud processing, document backend or telemetry. Conversions,
+durable chat history and portable recovery remain future work.
 
-[The stable chat build](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629)
-passed full host checks and 96 Android executions, none skipped. Actual chat
-prompt/gateway/history and cancellation evidence is tracked separately in STATUS.
-The compact model's earlier 4 GiB emulator result observed ~2.47 GiB process HWM;
-this is not universal physical-phone support or representative language/accuracy
-proof. No cloud processing, document backend or telemetry was added.
-See [STATUS](docs/STATUS.md) for exact identities/results and remaining gates.
+Synthetic desktop checks reproduced the old greeting-history bug and exercised
+new role-separated/source questions. These are not representative accuracy or
+phone performance results. The larger document-context profile still requires
+its own Android memory experiment. See STATUS for actual completed checks.
 
 ## Build
 
@@ -110,13 +103,13 @@ python3 scripts/security-check.py
 instrumentation Kotlin compilation, unit-test tasks and lint, production dependency inventory, both app assemblies,
 merged APK checks, and native ELF/ZIP alignment checks. It fails when prerequisites are
 missing; passing the Python checks alone does not establish Android correctness.
-Core has 114 authored JVM tests; platform has 28 per variant, including model
-metadata and CPU memory-policy cases. The full local code8 host gate has
-170 passing JVM XML case results with no failures/skips, reusing the unchanged core
-114 cases and freshly executing 28 per platform variant. App JVM tasks report NO-SOURCE. The delivered chat build passed 38 platform cases, nine app chat controller cases and one
-real credential-bound lifecycle case per variant on an API36 emulator,
-with no skips: 96 executions. The full device suite and physical fingerprint/UI tests
-remain pending; see STATUS for the exact scope and earlier failures.
+Core has136 authored JVM cases and platform has28 per variant. The focused core
+command passed136 freshly. Stable CI now requires38 platform regression cases,
+18 app chat-controller cases and one actual credential lifecycle per variant;
+a separate opt-in actual-model probe requires varied answers, source response,
+missing-evidence abstention, summary, history recall and cancellation. Authored
+checks do not imply they executed: see STATUS for actual run results and scope.
+Physical phone UI/fingerprint/accuracy checks remain separate.
 
 ```bash
 ANDROID_SERIAL=<explicit-device-serial> scripts/check-device.sh

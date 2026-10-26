@@ -1,6 +1,14 @@
 # Development APK delivery
 
-## Current stable Preview chat build
+## Code9 chat repair
+
+Version0.5.1-dev/code9 is being validated after user-reported repeated greetings
+and rejected document questions in code8. The update keeps the existing Preview
+IDs/signing pin and exact compact model receipt. Consult [STATUS](STATUS.md) for
+new delivery results. Install a verified stable-signed update over Preview without
+uninstalling or clearing data; local diagnostic .dev APKs are a separate app.
+
+## Historical code8 Preview chat build
 
 [Download stable-signed v0.5.0-dev chat APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40190793629/artifacts/12598142402).
 Unzip/install the offline APK over **Private Vault Preview**, without uninstalling

@@ -50,6 +50,21 @@ class ChatRegressionGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             GATE.verify(self.directory)
 
+    def test_previous_nine_case_suite_cannot_replace_answering_regressions(self):
+        self.report([
+            "selectedDocumentQuestionReturnsExactCitedPremium",
+            "missingConflictingAndPartialFactsNeverInventAUniqueValue",
+            "clearConversationRevokesInFlightSourceAndClearsPrivateDraft",
+            "sourceChangeRejectsLateCompletionFromPreviousDocument",
+            "lockRejectsOldCompletionInNewUnlockedSession",
+            "unselectedPrivateQuestionsAndActionRequestsUseNoticesWithoutNativeModel",
+            "reindexInvalidationClearsCitationsAndRevokesSourceRead",
+            "mismatchedSourceRevisionCannotPublishCitations",
+            "removedSourceClearsChatAndSelection",
+        ])
+        with self.assertRaises(ValueError):
+            GATE.verify(self.directory)
+
     def test_duplicate_case_cannot_replace_missing_execution(self):
         names = sorted(GATE.EXPECTED_TESTS)
         self.report(names + [names[0]])

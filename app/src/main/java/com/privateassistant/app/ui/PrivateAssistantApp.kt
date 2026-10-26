@@ -158,6 +158,7 @@ fun PrivateAssistantApp(
                             onDraft = model.assistant::setDraft, onSend = model.assistant::send,
                             onCancel = model.assistant::cancel, onClear = model.assistant::clearConversation,
                             onSelectDocument = model.assistant::selectDocument,
+                            onSelectAllDocuments = model.assistant::selectAllDocuments,
                             onViewSource = model::viewChatSource, onOpenModels = model::openModels,
                             onRefreshModel = model.assistant::refreshModel)
                         AppPage.PRIVACY -> PrivacyScreen(onLock)

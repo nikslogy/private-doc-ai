@@ -56,6 +56,7 @@ internal fun AssistantChatScreen(
     onCancel: () -> Unit,
     onClear: () -> Unit,
     onSelectDocument: (VaultDocument?) -> Unit,
+    onSelectAllDocuments: () -> Unit,
     onViewSource: (AssistantCitationUi) -> Unit,
     onOpenModels: () -> Unit,
     onRefreshModel: () -> Unit,
@@ -63,8 +64,9 @@ internal fun AssistantChatScreen(
     var choosingSource by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val selected = state.selectedDocument
+    val documentMode = selected != null || state.allDocuments
     val canSend = !state.busy && state.draft.isNotBlank() && state.draft.length <= MAX_DRAFT_UTF16 &&
-        (selected != null || state.modelReady == true)
+        (documentMode || state.modelReady == true)
 
     LaunchedEffect(Unit) { onRefreshModel() }
     LaunchedEffect(state.messages.size, state.busy, state.message) {
@@ -88,14 +90,14 @@ internal fun AssistantChatScreen(
             OutlinedButton(onClick = { choosingSource = true }, enabled = !state.busy,
                 modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(stringResource(if (selected == null) R.string.chat_general_mode else R.string.chat_document_mode),
+                    Text(stringResource(if (state.allDocuments) R.string.chat_all_documents_mode else if (selected == null) R.string.chat_general_mode else R.string.chat_document_mode),
                         style = MaterialTheme.typography.labelSmall)
-                    Text(selected?.displayName ?: stringResource(R.string.chat_general_source),
+                    Text(selected?.displayName ?: stringResource(if (state.allDocuments) R.string.chat_all_documents_source else R.string.chat_general_source),
                         maxLines = 2, overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.labelLarge)
                 }
             }
-            Text(stringResource(if (selected == null) R.string.chat_general_note else R.string.chat_document_note),
+            Text(stringResource(if (documentMode) R.string.chat_document_note else R.string.chat_general_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -104,7 +106,7 @@ internal fun AssistantChatScreen(
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (state.messages.isEmpty()) item(key = "welcome") {
-                if (selected == null) {
+                if (!documentMode) {
                     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
                         Column(Modifier.fillMaxWidth().padding(18.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(stringResource(R.string.chat_welcome), style = MaterialTheme.typography.titleMedium,
@@ -117,8 +119,9 @@ internal fun AssistantChatScreen(
                 } else {
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(stringResource(R.string.chat_document_examples), style = MaterialTheme.typography.titleSmall)
-                        listOf(R.string.chat_example_premium, R.string.chat_example_policy_number,
-                            R.string.chat_example_summary).forEach { exampleId ->
+                        (if (state.allDocuments) listOf(R.string.chat_example_search, R.string.chat_example_summary)
+                            else listOf(R.string.chat_example_premium, R.string.chat_example_policy_number,
+                            R.string.chat_example_summary)).forEach { exampleId ->
                             val example = stringResource(exampleId)
                             OutlinedButton(onClick = { onDraft(example) }, enabled = !state.busy,
                                 modifier = Modifier.fillMaxWidth()) {
@@ -149,7 +152,7 @@ internal fun AssistantChatScreen(
 
         Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (selected == null && state.modelReady != true) {
+            if (state.modelReady != true) {
                 if (state.modelReady == null) {
                     Text(stringResource(R.string.chat_checking_model), style = MaterialTheme.typography.bodySmall)
                 } else {
@@ -167,8 +170,8 @@ internal fun AssistantChatScreen(
             OutlinedTextField(value = state.draft, onValueChange = onDraft,
                 modifier = Modifier.fillMaxWidth(), minLines = 2, maxLines = 4,
                 label = { Text(stringResource(R.string.chat_question)) },
-                placeholder = { Text(stringResource(if (selected == null)
-                    R.string.chat_general_hint else R.string.chat_document_hint)) },
+                placeholder = { Text(stringResource(if (documentMode)
+                    R.string.chat_document_hint else R.string.chat_general_hint)) },
                 isError = state.draft.length > MAX_DRAFT_UTF16,
                 supportingText = { Text(stringResource(R.string.chat_input_count, state.draft.length, MAX_DRAFT_UTF16)) },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -192,6 +195,10 @@ internal fun AssistantChatScreen(
                     Text(stringResource(R.string.chat_general_mode), modifier = Modifier.fillMaxWidth())
                 }
                 if (state.documents.isEmpty()) Text(stringResource(R.string.chat_no_documents))
+                else TextButton(onClick = { choosingSource = false; onSelectAllDocuments() }, enabled = !state.busy,
+                    modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.chat_all_documents_mode), modifier = Modifier.fillMaxWidth())
+                }
                 state.documents.forEach { document ->
                     TextButton(onClick = { choosingSource = false; onSelectDocument(document) }, enabled = !state.busy,
                         modifier = Modifier.fillMaxWidth()) {
@@ -218,6 +225,7 @@ private fun ChatMessageCard(message: AssistantMessageUi, onViewSource: (Assistan
                     AssistantMessageKind.USER -> R.string.chat_you
                     AssistantMessageKind.MODEL -> R.string.chat_model_reply
                     AssistantMessageKind.DOCUMENT -> R.string.chat_document_reply
+                    AssistantMessageKind.DOCUMENT_MODEL -> R.string.chat_document_model_reply
                     AssistantMessageKind.NOTICE -> R.string.chat_notice
                 }), style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)

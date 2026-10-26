@@ -2,6 +2,7 @@ package com.privateassistant.platform.inference
 
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
+import com.google.ai.edge.litertlm.Contents
 import com.google.ai.edge.litertlm.ConversationConfig
 import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
@@ -9,6 +10,9 @@ import com.google.ai.edge.litertlm.LogSeverity
 import com.google.ai.edge.litertlm.Message
 import com.google.ai.edge.litertlm.SamplerConfig
 import com.google.ai.edge.litertlm.ThinkingConfig
+import com.privateassistant.core.assistant.ChatRole
+import com.privateassistant.core.assistant.LocalChatProfile
+import com.privateassistant.core.assistant.LocalChatRequest
 import com.privateassistant.platform.documents.HeavyWorkGate
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.CancellationException
@@ -30,8 +34,23 @@ class LocalInferenceRunner(private val maxDurationMillis: Long = 300_000) {
         cancellationRequested: () -> Boolean = { false }, onGenerationStarted: () -> Unit = {},
         onNativeCancellationRequested: () -> Unit = {}, onNativeSendFailed: () -> Unit = {},
         beforeNativeLoad: () -> Boolean = { true },
+    ): LocalInferenceResult = generateInternal(artifact, prompt, null, cancellationRequested, onGenerationStarted,
+        onNativeCancellationRequested, onNativeSendFailed, beforeNativeLoad)
+
+    suspend fun generate(artifact: VerifiedModelArtifact, request: LocalChatRequest,
+        cancellationRequested: () -> Boolean = { false }, onGenerationStarted: () -> Unit = {},
+        onNativeCancellationRequested: () -> Unit = {}, onNativeSendFailed: () -> Unit = {},
+        beforeNativeLoad: () -> Boolean = { true },
+    ): LocalInferenceResult = generateInternal(artifact, request.question, request, cancellationRequested, onGenerationStarted,
+        onNativeCancellationRequested, onNativeSendFailed, beforeNativeLoad)
+
+    private suspend fun generateInternal(artifact: VerifiedModelArtifact, prompt: String, request: LocalChatRequest?,
+        cancellationRequested: () -> Boolean = { false }, onGenerationStarted: () -> Unit = {},
+        onNativeCancellationRequested: () -> Unit = {}, onNativeSendFailed: () -> Unit = {},
+        beforeNativeLoad: () -> Boolean = { true },
     ): LocalInferenceResult = withContext(Dispatchers.IO) {
-        if (prompt.isBlank() || prompt.length > MAX_INPUT_UTF16) throw LocalInferenceException(LocalInferenceFailure.INPUT_LIMIT)
+        if (prompt.isBlank() || (request == null && prompt.length > MAX_INPUT_UTF16) ||
+            (request != null && request.inputUtf16 > request.profile.maxInputUtf16)) throw LocalInferenceException(LocalInferenceFailure.INPUT_LIMIT)
         val context = currentCoroutineContext()
         val started = System.nanoTime()
         fun cancelled() = !context.isActive || cancellationRequested()
@@ -48,14 +67,20 @@ class LocalInferenceRunner(private val maxDurationMillis: Long = 300_000) {
             checkRequest()
             Engine.setNativeMinLogSeverity(LogSeverity.INFINITY)
             val engine = Engine(EngineConfig(modelPath = artifact.file.absolutePath,
-                backend = Backend.CPU(threadCount = 2), maxNumTokens = 512, cacheDir = ":nocache"))
+                backend = Backend.CPU(threadCount = 2),
+                maxNumTokens = if (request?.profile == LocalChatProfile.DOCUMENT) 1024 else 512, cacheDir = ":nocache"))
             try {
                 // The runtime has no interruptible initialize entry point. Recheck after return.
                 engine.initialize()
                 check(engine.isInitialized())
                 checkRequest()
-                engine.createConversation(ConversationConfig(automaticToolCalling = false,
-                    tools = emptyList(), maxOutputToken = 128, thinkingConfig = ThinkingConfig(enableThinking = false),
+                engine.createConversation(ConversationConfig(
+                    systemInstruction = request?.let { Contents.of(it.systemInstruction) },
+                    initialMessages = request?.history?.map { turn ->
+                        if (turn.role == ChatRole.USER) Message.user(turn.text) else Message.model(turn.text)
+                    } ?: emptyList(),
+                    automaticToolCalling = false, tools = emptyList(),
+                    maxOutputToken = if (request?.profile == LocalChatProfile.DOCUMENT) 192 else 128, thinkingConfig = ThinkingConfig(enableThinking = false),
                     samplerConfig = SamplerConfig(topK = 1, topP = 1.0, temperature = 0.0))).use { conversation ->
                     val finished = AtomicBoolean(false)
                     val stopFailed = AtomicBoolean(false)
@@ -97,7 +122,7 @@ class LocalInferenceRunner(private val maxDurationMillis: Long = 300_000) {
                         response.contents.contents.any { it !is Content.Text }) {
                         throw LocalInferenceException(LocalInferenceFailure.UNSUPPORTED_OUTPUT)
                     }
-                    // Native context is 512 tokens. This text budget is checked after native allocation.
+                    // The fixed profile bounds native context/output. This text budget is checked after allocation.
                     val output = StringBuilder()
                     for (part in response.contents.contents) {
                         val text = (part as Content.Text).text

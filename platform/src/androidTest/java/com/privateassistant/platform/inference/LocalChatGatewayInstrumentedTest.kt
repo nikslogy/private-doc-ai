@@ -2,6 +2,9 @@ package com.privateassistant.platform.inference
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.privateassistant.core.assistant.LocalChatPrompt
+import com.privateassistant.core.assistant.LocalChatProfile
+import com.privateassistant.core.assistant.LocalChatRequest
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -42,6 +45,16 @@ class LocalChatGatewayInstrumentedTest {
                 assertEquals(LocalChatFailure.MODEL_REQUIRED, failure.reason)
             }
             assertTrue(root.listFiles()!!.isEmpty())
+            for (request in listOf(LocalChatPrompt.build("A synthetic current question", emptyList()),
+                LocalChatRequest("Answer using supplied excerpts", emptyList(), "Synthetic source text and question", LocalChatProfile.DOCUMENT))) {
+                try {
+                    gateway(root).generate(request)
+                    fail("Typed current questions require the verified installation too")
+                } catch (failure: LocalChatException) {
+                    assertEquals(LocalChatFailure.MODEL_REQUIRED, failure.reason)
+                }
+                assertTrue(root.listFiles()!!.isEmpty())
+            }
         } finally { root.deleteRecursively() }
     }
 
@@ -51,6 +64,11 @@ class LocalChatGatewayInstrumentedTest {
             try {
                 gateway(root).generate("Synthetic cancellation request", cancellationRequested = { true })
                 fail("A revoked conversation cannot start model work")
+            } catch (_: CancellationException) { }
+            try {
+                gateway(root).generate(LocalChatPrompt.build("Synthetic typed cancellation", emptyList()),
+                    cancellationRequested = { true })
+                fail("A revoked typed request cannot touch the installation")
             } catch (_: CancellationException) { }
             assertFalse(root.exists())
         } finally { root.deleteRecursively() }

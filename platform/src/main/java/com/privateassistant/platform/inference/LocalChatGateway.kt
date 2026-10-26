@@ -3,6 +3,7 @@ package com.privateassistant.platform.inference
 import android.app.ActivityManager
 import android.content.Context
 import android.os.Process
+import com.privateassistant.core.assistant.LocalChatRequest
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -52,10 +53,22 @@ class LocalChatGateway internal constructor(
     suspend fun generate(
         prompt: String,
         cancellationRequested: () -> Boolean = { false },
+    ): LocalInferenceResult = generateInternal(prompt, null, cancellationRequested)
+
+    suspend fun generate(
+        request: LocalChatRequest,
+        cancellationRequested: () -> Boolean = { false },
+    ): LocalInferenceResult = generateInternal(request.question, request, cancellationRequested)
+
+    private suspend fun generateInternal(
+        prompt: String,
+        request: LocalChatRequest?,
+        cancellationRequested: () -> Boolean = { false },
     ): LocalInferenceResult = withContext(Dispatchers.IO) {
         currentCoroutineContext().ensureActive()
         if (cancellationRequested()) throw CancellationException("Local chat revoked")
-        if (prompt.length !in 1..LocalInferenceRunner.MAX_INPUT_UTF16 || prompt.isBlank()) {
+        if (prompt.isBlank() || (request == null && prompt.length !in 1..LocalInferenceRunner.MAX_INPUT_UTF16) ||
+            (request != null && request.inputUtf16 > request.profile.maxInputUtf16)) {
             throw LocalChatException(LocalChatFailure.GENERATION)
         }
         try {
@@ -71,10 +84,12 @@ class LocalChatGateway internal constructor(
                     CpuModelDiagnosticPolicy.requirements(selected) == null) {
                     throw LocalChatException(LocalChatFailure.MODEL_REQUIRED)
                 }
-                LocalInferenceRunner().generate(artifact, prompt, cancellationRequested,
-                    beforeNativeLoad = {
-                        !cancellationRequested() && hasMemoryHeadroom(selected)
-                    })
+                val admission = { !cancellationRequested() && hasMemoryHeadroom(selected) }
+                if (request == null) {
+                    LocalInferenceRunner().generate(artifact, prompt, cancellationRequested, beforeNativeLoad = admission)
+                } else {
+                    LocalInferenceRunner().generate(artifact, request, cancellationRequested, beforeNativeLoad = admission)
+                }
             }
         } catch (cancelled: CancellationException) {
             throw cancelled

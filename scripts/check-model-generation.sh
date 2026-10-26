@@ -174,6 +174,7 @@ required = {
     'INSTRUMENTATION_STATUS: modelProbeScope=REAL_SYNTHETIC_GENERATION_AND_CANCELLATION',
     'OK (1 test)', 'INSTRUMENTATION_CODE: -1',
     'INSTRUMENTATION_STATUS: chatHistoryRecallMatched=true',
+    'INSTRUMENTATION_STATUS: chatSemanticCasesPassed=5',
 }
 errors = ('INSTRUMENTATION_FAILED:', 'INSTRUMENTATION_ABORTED:',
           'INSTRUMENTATION_RESULT: shortMsg=', 'INSTRUMENTATION_STATUS: Error=')
@@ -183,13 +184,13 @@ if (not required.issubset(lines) or not counts or any(n != 1 for n in counts)
     raise SystemExit('Expected exactly one freshly executed, non-skipped passing real-model test')
 metrics = {}
 for line in lines:
-    if m := re.fullmatch(r'INSTRUMENTATION_STATUS: (generationElapsedMillis|cancellationOperationMillis|generatedUtf16|nativeCancellationCalls|nativeSendFailures|chatGatewayElapsedMillis|chatGatewayGeneratedUtf16)=(\d+)', line):
+    if m := re.fullmatch(r'INSTRUMENTATION_STATUS: (generationElapsedMillis|cancellationOperationMillis|generatedUtf16|nativeCancellationCalls|nativeSendFailures|chatGatewayElapsedMillis|chatGatewayGeneratedUtf16|chatSemanticCasesPassed|chatSemanticGeneratedUtf16|chatSemanticElapsedMillis)=(\d+)', line):
         metrics[m[1]] = int(m[2])
-if len(metrics) != 7 or any(metrics[key] <= 0 for key in ('generatedUtf16', 'nativeCancellationCalls', 'nativeSendFailures', 'chatGatewayGeneratedUtf16', 'chatGatewayElapsedMillis')):
+if len(metrics) != 10 or metrics.get('chatSemanticCasesPassed') != 5 or any(metrics[key] <= 0 for key in ('generatedUtf16', 'nativeCancellationCalls', 'nativeSendFailures', 'chatGatewayGeneratedUtf16', 'chatGatewayElapsedMillis', 'chatSemanticGeneratedUtf16', 'chatSemanticElapsedMillis')):
     raise SystemExit('The actual generation/cancellation metrics were not reported')
 (p.parent / 'result.json').write_text(json.dumps({'schemaVersion': 1, 'executed': 1, 'failures': 0, 'skipped': 0,
-    'metrics': metrics, 'chatHistoryRecallMatched': True, 'scope': 'Synthetic CPU generation with actual chat prompts/history, actual verified-installation LocalChatGateway response and one-name recall, active cancellation and narrow file-canary scans. No phone latency, representative chat/document/language quality, complete privacy, traffic or hard-timeout claim.'}, indent=2) + '\n')
-print('Real-model probe PASS: one actual non-skipped test; actual synthetic chat/gateway recall and native cancellation observations only')
+    'metrics': metrics, 'chatHistoryRecallMatched': True, 'scope': 'Synthetic CPU generation with actual role-separated prompts/history, verified-installation gateway name recall, five actual varied general/document cases including greeting-history arithmetic/color, source answer, missing-source abstention and summary, active cancellation and narrow file-canary scans. No phone latency, representative chat/document/language quality, complete privacy, traffic or hard-timeout claim.'}, indent=2) + '\n')
+print('Real-model probe PASS: one actual non-skipped test; actual synthetic chat/gateway recall, five general/document semantic cases and native cancellation observations only')
 PY
 then
   :

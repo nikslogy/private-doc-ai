@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-26T07:59:14.515192+00:00",
+  "scope": "Desktop Linux C API exploratory synthetic dialogue experiment. Not Android/phone performance, held-out task accuracy, complete privacy or universal 4 GB compatibility.",
+  "model": {
+    "path": ".tooling/model-research/qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139"
+  },
+  "runtime": {
+    "version": "0.16.0",
+    "sharedLibrary": {
+      "path": ".tooling/model-research/capi016/liblitert-lm.so",
+      "byteCount": 130296816,
+      "sha256": "34eb4998b1b3a8b049a6fb24c8069933821abb22680f4737b7f29baae233ae35"
+    },
+    "runnerSource": {
+      "path": ".tooling/model-research/capi016/chatprobe.c",
+      "byteCount": 3638,
+      "sha256": "58bbcb7367b134613c8622870029ead4e19a90e95ffb0cf04bb3904b3700d17a"
+    },
+    "runnerExecutable": {
+      "path": ".tooling/model-research/capi016/chatprobe",
+      "byteCount": 23104,
+      "sha256": "d564e6e78dd5a11b1ba0ecafdf22c9bfbe765fde961de53e630d33de141f3e26"
+    },
+    "configuration": {
+      "backend": "CPU",
+      "threads": 2,
+      "maxNumTokens": 1024,
+      "maxOutputTokens": 96,
+      "topK": 1,
+      "topP": 1.0,
+      "temperature": 0,
+      "thinking": false,
+      "cacheDir": ":nocache",
+      "tools": []
+    }
+  },
+  "retainedGreetingHistoryExperiment": {
+    "input": {
+      "path": "/tmp/general-chat-history-input.jsonl",
+      "byteCount": 4770,
+      "sha256": "af05bcc989f13998c615e7d3f8c76fdc6793efcd6759a26990245b0b5e723751"
+    },
+    "output": {
+      "path": "/tmp/general-chat-history-output.txt",
+      "byteCount": 3207,
+      "sha256": "bf8062270aa80191fb22608d2918f451d76be977696a2d155d23c567ee4779d7"
+    },
+    "timing": {
+      "path": "/tmp/general-chat-history-errors.txt",
+      "byteCount": 197,
+      "sha256": "bd9b190a36d70414ae63d34f05147dfdc2fde21f4fb5ac4df46f9ae90a684028"
+    },
+    "questions": 5,
+    "variantsPerQuestion": 3,
+    "legacyHandwrittenTranscriptGreetingLikeResponses": 4,
+    "legacyHandwrittenTranscriptResponses": 5,
+    "structuredVariantsResponses": 10,
+    "limitations": [
+      "Retained prior local experiment artifacts independently parsed in this continuation; not a second fresh rerun.",
+      "Old prompt after a synthetic assistant greeting reproduced greeting-like failure on 4 of 5 questions. This does not establish all blank-start requests fail.",
+      "Role-separated responses still included wrong capital of France and fabricated barking-animal examples; varied text is not general accuracy."
+    ]
+  },
+  "freshStructuredRoleExperiment": {
+    "input": {
+      "path": "/tmp/native-role-cases.jsonl",
+      "byteCount": 2819,
+      "sha256": "0c121fea1a522776dc40362948924c92b61a8c50a290fc0ecd070cec3b7af835"
+    },
+    "output": {
+      "path": "/tmp/native-role-results.jsonl",
+      "byteCount": 1074,
+      "sha256": "c392ca271bde64074125ceb2d64bd405670435ac3df616e68a0a1ecc73fd8af9"
+    },
+    "timing": {
+      "path": "/tmp/native-role-timing.txt",
+      "byteCount": 91,
+      "sha256": "ca8b4d25c268242b44cb8065fa3b96fe2d47753aef037ba43c94dbef5868eac3"
+    },
+    "cases": 7,
+    "checks": [
+      {
+        "case": "arithmetic",
+        "passed": true
+      },
+      {
+        "case": "rainbowColor",
+        "passed": true
+      },
+      {
+        "case": "greetingHistoryArithmetic",
+        "passed": true
+      },
+      {
+        "case": "syntheticNameRecall",
+        "passed": true
+      },
+      {
+        "case": "documentRequiredItem",
+        "passed": true
+      },
+      {
+        "case": "missingOwner",
+        "passed": true
+      },
+      {
+        "case": "sourceSummary",
+        "passed": true
+      }
+    ],
+    "observedProcessMaxRssKiB": 2640156,
+    "limitations": [
+      "Synthetic documents only. No user material processed.",
+      "Original document prompt omitted model citation indices in all three document replies, although present/missing/summary semantic spot checks passed. App must label generated explanation and attach exact context excerpts, not claim semantic verification.",
+      "All seven cases share an initialized desktop engine, with a fresh conversation for each; Android adapter initializes per operation."
+    ]
+  },
+  "rejectedPromptExperiment": {
+    "input": {
+      "path": "/tmp/native-document-cite-cases.jsonl",
+      "byteCount": 1416,
+      "sha256": "640d8ac7e9802836cd9d9dc002234a1fed9d937f1be15671ee9e0af8fbf7547c"
+    },
+    "output": {
+      "path": "/tmp/native-document-cite-results.jsonl",
+      "byteCount": 376,
+      "sha256": "9e57a3bb28ca1862cc4c5da4819868c843b39f6c2c08bfae57a1d11f29e10467"
+    },
+    "cases": 3,
+    "reason": "Stronger example and forced End with[1] produced indices but hallucinated workshop ownership; original wording retained.",
+    "citedMissingOwnerResponseWasWrong": true
+  },
+  "androidNativeStatus": "Authored five additional actual-model semantic checks and strict numeric transcript gate; not executed locally because no explicit Android target."
+}

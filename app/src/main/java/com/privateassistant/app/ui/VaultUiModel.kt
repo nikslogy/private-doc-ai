@@ -82,9 +82,9 @@ class VaultUiModel(
     private val scope: CoroutineScope,
 ) {
     val models = ModelManagerUiModel(context, scope)
-    val assistant = AssistantChatUiModel(context, scope) { document ->
-        vault.pageEvidence(document.id, document.revisionId)
-    }
+    val assistant = AssistantChatUiModel(context, scope,
+        loadSource = { document -> vault.pageEvidence(document.id, document.revisionId) },
+        searchSources = { query -> vault.searchDocuments(query).map { it.document } })
     // Bundled capability is fixed for this installed APK. Never do asset I/O while locking.
     private val ocrAvailable = vault.ocrAvailable
     private val mutableState = MutableStateFlow(VaultUiState(ocrAvailable = ocrAvailable))

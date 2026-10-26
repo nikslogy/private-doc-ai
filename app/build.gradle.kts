@@ -17,8 +17,8 @@ android {
         applicationId = "com.privateassistant.app"
         minSdk = 31
         targetSdk = 35
-        versionCode = 8
-        versionName = "0.5.0-dev"
+        versionCode = 9
+        versionName = "0.5.1-dev"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     flavorDimensions += "network"

@@ -6,9 +6,16 @@ import android.content.res.AssetManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.privateassistant.app.ui.AssistantChatUiModel
+import com.privateassistant.app.ui.AssistantChatBackend
 import com.privateassistant.app.ui.AssistantChatUiState
 import com.privateassistant.app.ui.AssistantMessageKind
 import com.privateassistant.app.ui.AssistantMessageUi
+import com.privateassistant.core.assistant.ChatRole
+import com.privateassistant.core.assistant.LocalChatProfile
+import com.privateassistant.core.assistant.LocalChatRequest
+import com.privateassistant.platform.inference.LocalChatException
+import com.privateassistant.platform.inference.LocalChatFailure
+import com.privateassistant.platform.inference.LocalInferenceResult
 import com.privateassistant.platform.documents.ExtractionMethod
 import com.privateassistant.platform.documents.SourceSpanKind
 import com.privateassistant.platform.documents.SourceTextSpan
@@ -295,14 +302,222 @@ class AssistantChatLifecycleTest {
         }
     }
 
+    @Test
+    fun actualResourcePresetsReturnSourceAnswersInsteadOfUnsupportedNotice() = runBlocking {
+        val document = document("resource-presets")
+        val source = "Policy number: SYNTHETIC-000123\nTotal premium: INR 456.70\nCancellation requires written notice."
+        val backend = RecordingBackend { "The document describes a policy and cancellation by written notice. [1]" }
+        withModel({ pages(it, source) }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            for (resource in listOf(R.string.chat_example_premium, R.string.chat_example_policy_number,
+                    R.string.chat_example_summary)) {
+                onMain { model.clearConversation() }
+                ask(context.getString(resource))
+                val answer = response()
+                assertFalse(answer.kind == AssistantMessageKind.NOTICE)
+                assertTrue(answer.citations.isNotEmpty())
+                assertTrue(answer.citations.all { source.contains(it.quote) })
+                assertFalse(answer.text == context.getString(R.string.chat_document_unsupported))
+            }
+            assertEquals(1, backend.requests.size)
+            assertEquals(LocalChatProfile.DOCUMENT, backend.requests.single().profile)
+        }
+    }
+
+    @Test
+    fun typedGeneralQuestionsKeepCurrentInputAndStructuredHistory() = runBlocking {
+        val backend = RecordingBackend { request ->
+            if (request.question == "Which animal says meow?") "A cat says meow." else "Blue is a primary colour."
+        }
+        withModel({ pages(it, "Unused synthetic source.") }, backend = backend) {
+            unlock(document("general-input"))
+            ask("Which animal says meow?")
+            assertEquals("A cat says meow.", response().text)
+            ask("Name a primary colour.")
+            assertEquals("Blue is a primary colour.", response().text)
+            assertEquals(listOf("Which animal says meow?", "Name a primary colour."), backend.requests.map { it.question })
+            val second = backend.requests.last()
+            assertEquals(listOf(ChatRole.USER, ChatRole.ASSISTANT), second.history.map { it.role })
+            assertEquals(listOf("Which animal says meow?", "A cat says meow."), second.history.map { it.text })
+            assertTrue(second.systemInstruction.isNotBlank())
+            assertTrue(second.profile == LocalChatProfile.GENERAL)
+        }
+    }
+
+    @Test
+    fun broaderDocumentQuestionUsesRetrievedTextAndCheckedSource() = runBlocking {
+        val document = document("narrative")
+        val source = "To cancel a booking, send written notice to the booking office. A refund is issued after review."
+        val backend = RecordingBackend { "Send written notice to the booking office to cancel. [1]" }
+        withModel({ pages(it, source) }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            ask("How can I cancel my booking?")
+            val answer = response()
+            assertEquals(AssistantMessageKind.DOCUMENT_MODEL, answer.kind)
+            assertTrue(answer.text.contains("written notice"))
+            assertEquals(source, answer.citations.single().quote)
+            val request = backend.requests.single()
+            assertEquals(LocalChatProfile.DOCUMENT, request.profile)
+            assertTrue(request.question.contains(source))
+            assertTrue(request.question.endsWith("How can I cancel my booking?"))
+            assertTrue(request.history.isEmpty())
+        }
+    }
+
+    @Test
+    fun invalidGeneratedCitationsAndNumbersFallBackToActualExcerpts() = runBlocking {
+        val document = document("invalid-generation")
+        val source = "Cancellation requires written notice. The refund is INR 100.00."
+        var generated = "The refund is INR 999.99. [1]"
+        val backend = RecordingBackend { generated }
+        withModel({ pages(it, source) }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            for (invalid in listOf("The refund is INR 999.99. [1]", "Send written notice. [9]",
+                    "Hello! I am your assistant and how can I help you?")) {
+                generated = invalid
+                onMain { model.clearConversation() }
+                ask("How does cancellation work?")
+                val answer = response()
+                assertEquals(AssistantMessageKind.DOCUMENT, answer.kind)
+                assertTrue(answer.text.startsWith(context.getString(R.string.chat_answer_unverified)))
+                assertEquals(source, answer.citations.single().quote)
+                assertFalse(answer.text.contains(invalid))
+            }
+        }
+    }
+
+    @Test
+    fun allDocumentsSearchFindsMatchingSourceBeyondInitialReadLimit() = runBlocking {
+        val documents = (0 until 20).map { document("all-documents-$it") }
+        val target = documents.last()
+        val reads = ArrayList<String>()
+        val searches = ArrayList<String>()
+        val source = "Cancellation requires written notice to the booking office."
+        val backend = RecordingBackend { "Send written notice to the booking office. [1]" }
+        withModel({ selected ->
+            reads += selected.id
+            pages(selected, if (selected.id == target.id) source else "Gardening notes about flowers and sunny weather.")
+        }, backend = backend, searchSources = { query ->
+            searches += query
+            if (query == "cancellation") listOf(target) else emptyList()
+        }) {
+            unlock(*documents.toTypedArray())
+            onMain { model.selectAllDocuments() }
+            ask("What are the cancellation requirements?")
+            val answer = response()
+            assertTrue(model.state.value.allDocuments)
+            assertEquals(AssistantMessageKind.DOCUMENT_MODEL, answer.kind)
+            assertEquals(target.id, answer.citations.single().documentId)
+            assertEquals(target.id, reads.first())
+            assertTrue(reads.size <= 16)
+            assertTrue(searches.contains("cancellation"))
+            assertTrue(answer.text.contains(context.getString(R.string.chat_ai_passages_partial)))
+        }
+    }
+
+    @Test
+    fun allDocumentsInvalidationRevokesPendingGeneratedReply() = runBlocking {
+        val document = document("all-documents-revoke")
+        val entered = CompletableDeferred<Job>()
+        val release = CompletableDeferred<Unit>()
+        val backend = RecordingBackend {
+            entered.complete(requireNotNull(currentCoroutineContext()[Job]))
+            withContext(NonCancellable) { release.await() }
+            "Cancellation requires written notice. [1]"
+        }
+        try {
+            withModel({ pages(it, "Cancellation requires written notice.") }, backend = backend) {
+                releaseOnClose(release)
+                unlock(document)
+                onMain { model.selectAllDocuments() }
+                ask("How does cancellation work?")
+                val oldJob = withTimeout(TIMEOUT_MILLIS) { entered.await() }
+                onMain { model.invalidateDocument(document.id) }
+                assertCleared(model.state.value)
+                release.complete(Unit)
+                withTimeout(TIMEOUT_MILLIS) { oldJob.join() }
+                assertCleared(model.state.value)
+                assertTrue(model.state.value.allDocuments)
+            }
+        } finally { release.complete(Unit) }
+    }
+
+    @Test
+    fun unavailableModelStillShowsRelevantDocumentExcerpts() = runBlocking {
+        val document = document("no-model-excerpts")
+        val source = "Cancellation requires written notice to the booking office."
+        val backend = RecordingBackend { throw LocalChatException(LocalChatFailure.MODEL_REQUIRED) }
+        withModel({ pages(it, source) }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            ask("How does cancellation work?")
+            val answer = response()
+            assertEquals(AssistantMessageKind.DOCUMENT, answer.kind)
+            assertTrue(answer.text.startsWith(context.getString(R.string.chat_passages_model_needed)))
+            assertEquals(source, answer.citations.single().quote)
+            assertFalse(model.state.value.modelReady == true)
+        }
+    }
+
+    @Test
+    fun generatedSubsetKeepsOriginalSourceReferenceNumber() = runBlocking {
+        val document = document("citation-subset").copy(pageCount = 2)
+        val backend = RecordingBackend { "Cancellation requires written notice. [2]" }
+        withModel({ selected ->
+            pages(selected, "Cancellation is covered by the booking terms.") +
+                pages(selected, "Cancellation requires written notice.").map { it.copy(pageNumber = 2) }
+        }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            ask("How does cancellation work?")
+            val answer = response()
+            assertEquals(AssistantMessageKind.DOCUMENT_MODEL, answer.kind)
+            assertEquals(2, answer.citations.single().pageNumber)
+            assertTrue(answer.citations.single().label.startsWith("[2]"))
+        }
+    }
+
+    @Test
+    fun uncitedExplanationShowsAllSuppliedContextWithoutClaimingVerifiedMeaning() = runBlocking {
+        val document = document("uncited-context")
+        val source = "Cancellation requires written notice to the booking office."
+        val backend = RecordingBackend { "Send written notice to the booking office to cancel." }
+        withModel({ pages(it, source) }, backend = backend) {
+            unlock(document)
+            onMain { model.selectDocument(document) }
+            ask("How does cancellation work?")
+            val answer = response()
+            assertEquals(AssistantMessageKind.DOCUMENT_MODEL, answer.kind)
+            assertTrue(answer.text.contains(context.getString(R.string.chat_ai_uncited_context_note)))
+            assertEquals(source, answer.citations.single().quote)
+            assertFalse(answer.text.contains(context.getString(R.string.chat_ai_passages_note)))
+        }
+    }
+
+    private class RecordingBackend(private val respond: suspend (LocalChatRequest) -> String) : AssistantChatBackend {
+        val requests = ArrayList<LocalChatRequest>()
+        override suspend fun isReady() = true
+        override suspend fun generate(request: LocalChatRequest, cancellationRequested: () -> Boolean): LocalInferenceResult {
+            requests += request
+            return LocalInferenceResult(respond(request), "synthetic-controller-only", "TEST")
+        }
+    }
+
     private suspend fun withModel(loader: suspend (VaultDocument) -> List<VaultPageEvidence>,
+        backend: AssistantChatBackend? = null,
+        searchSources: suspend (String) -> List<VaultDocument> = { emptyList() },
         block: suspend Fixture.() -> Unit,
     ) {
-        val fixture = Fixture(loader)
+        val fixture = Fixture(loader, backend, searchSources)
         try { fixture.block() } finally { withContext(NonCancellable) { fixture.close() } }
     }
 
-    private class Fixture(loader: suspend (VaultDocument) -> List<VaultPageEvidence>) {
+    private class Fixture(loader: suspend (VaultDocument) -> List<VaultPageEvidence>, backend: AssistantChatBackend?,
+        searchSources: suspend (String) -> List<VaultDocument>,
+    ) {
         private val instrumentation = InstrumentationRegistry.getInstrumentation()
         private val root = File(instrumentation.targetContext.cacheDir,
             "synthetic-chat-lifecycle-${UUID.randomUUID()}").apply { check(mkdir()) }
@@ -317,7 +532,8 @@ class AssistantChatLifecycleTest {
         private val lifetime = SupervisorJob()
         private val scope = CoroutineScope(lifetime + Dispatchers.Main.immediate)
         private val releases = ArrayList<CompletableDeferred<Unit>>()
-        val model = AssistantChatUiModel(context, scope, loader)
+        val model = if (backend == null) AssistantChatUiModel(context, scope, loader, searchSources)
+            else AssistantChatUiModel(context, scope, loader, backend, searchSources)
 
         fun releaseOnClose(release: CompletableDeferred<Unit>) { releases.add(release) }
         suspend fun <T> onMain(block: () -> T): T = withContext(Dispatchers.Main.immediate) { block() }
