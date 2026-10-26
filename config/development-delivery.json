@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "e77945c991fbda8e14248b587d5be03b7547aef4",
-  "request": "Validate actual local chat and cited document facts in stable signed 0.5.0-dev update",
-  "requestedAtUtc": "2026-10-25T11:53:40Z"
+  "sourceCommit": "5dbbcc3f48d128a00de146fa74de60db6fa4543e",
+  "request": "Validate role-separated chat and local document passage answers in stable signed 0.5.1-dev update",
+  "requestedAtUtc": "2026-10-26T08:13:40Z"
 }
