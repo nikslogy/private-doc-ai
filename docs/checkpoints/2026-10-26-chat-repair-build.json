@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "repository": "nikslogy/private-doc-ai",
+  "checkpoint": "Stable code9 role-separated chat and bounded local document-answer repair development build",
+  "recordedAtUtc": "2026-10-26T08:29:42.456099+00:00",
+  "workflow": "Stable development APKs",
+  "run": {
+    "id": 40290851665,
+    "attempt": 1,
+    "jobId": 121465296317,
+    "headSha": "f1c15403461f286be5c6094ef6c96238c84b8f88",
+    "sourceSha": "5dbbcc3f48d128a00de146fa74de60db6fa4543e",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-10-26T08:14:10Z",
+    "updatedAt": "2026-10-26T08:25:20Z",
+    "allJobStepsSucceeded": true,
+    "jobSteps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-10-26T08:14:14Z",
+        "completed_at": "2026-10-26T08:14:15Z"
+      },
+      {
+        "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-10-26T08:14:15Z",
+        "completed_at": "2026-10-26T08:14:16Z"
+      },
+      {
+        "name": "Use runner JDK 21",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-10-26T08:14:16Z",
+        "completed_at": "2026-10-26T08:14:17Z"
+      },
+      {
+        "name": "Set up pinned Android and Gradle tools",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-10-26T08:14:17Z",
+        "completed_at": "2026-10-26T08:14:28Z"
+      },
+      {
+        "name": "Enable KVM for the disposable Android regression target",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-10-26T08:14:28Z",
+        "completed_at": "2026-10-26T08:14:28Z"
+      },
+      {
+        "name": "Verify stable signing, build both APKs and run Android regressions",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-10-26T08:14:28Z",
+        "completed_at": "2026-10-26T08:25:10Z"
+      },
+      {
+        "name": "Upload Android regression reports",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-10-26T08:25:10Z",
+        "completed_at": "2026-10-26T08:25:13Z"
+      },
+      {
+        "name": "Upload APKs signed by the pinned development identity",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-10-26T08:25:13Z",
+        "completed_at": "2026-10-26T08:25:17Z"
+      },
+      {
+        "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-10-26T08:25:17Z",
+        "completed_at": "2026-10-26T08:25:17Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-10-26T08:25:17Z",
+        "completed_at": "2026-10-26T08:25:17Z"
+      }
+    ],
+    "finalJobLogCompletedAtUtc": "2026-10-26T08:25:17.8907610Z"
+  },
+  "host": {
+    "result": "passed",
+    "pythonExecuted": 129,
+    "pythonSuites": [
+      6,
+      22,
+      10,
+      10,
+      9,
+      14,
+      27,
+      6,
+      12,
+      13
+    ],
+    "coreTestTaskPassed": true,
+    "authoredCoreCases": 136,
+    "platformUnitTasksPassed": [
+      {
+        "flavor": "offline",
+        "passed": true,
+        "authoredCases": 28
+      },
+      {
+        "flavor": "connected",
+        "passed": true,
+        "authoredCases": 28
+      }
+    ],
+    "unitCountEvidence": "CI core and both platform JVM test tasks executed and passed. CI JVM XML was not uploaded, so exact executed JVM case counts were not independently extracted. Authored source/local result counts remain separate.",
+    "appUnitTasks": "offline and connected NO-SOURCE; no app JVM coverage claimed",
+    "allFourInstrumentationKotlinTasksPassed": true,
+    "lintBothModulesBothVariantsPassed": true,
+    "assembliesBothVariantsPassed": true,
+    "productionDependencyGatePassed": true,
+    "offlineManifestNoInternet": true,
+    "mlKitProductionPolicyGatePassed": true,
+    "hostGradleBuildDuration": "5m29s",
+    "separateLocalHostEvidence": {
+      "checkpoint": "2026-10-26-chat-repair-host.json",
+      "pythonExecuted": 129,
+      "jvmTotalXmlCases": 192,
+      "coreCases": 136,
+      "platformCasesPerVariant": 28,
+      "jvmExecutionScope": "136 core cases ran in focused verification and were reused UP-TO-DATE in final full host gate; both28-case platform unit tasks executed freshly. No claim192 JVM cases reran in final full host invocation.",
+      "fullHostDuration": "5m27s"
+    }
+  },
+  "android": {
+    "target": "emulator-5554",
+    "api": 36,
+    "abi": "x86_64",
+    "nominalRegressionEmulatorRamMiB": 3072,
+    "variants": 2,
+    "platformRegressionPerVariant": 38,
+    "appChatControllerPerVariant": 18,
+    "authenticatedLifecyclePerVariant": 1,
+    "totalExecuted": 114,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "regressionXmlIndependentlyParsed": true,
+    "chatControllerExactTestNamesVerified": true,
+    "platformExactClassCountsVerified": true,
+    "authenticatedLifecycleEvidence": "Both independently downloaded direct instrumentation transcripts prove actual emulator credential verification, the one named lifecycle test, OK(1test), passing runner result and no skips. This uses the public synthetic emulator PIN, not a physical fingerprint.",
+    "controllerScope": "Actual synthetic Android controller tests exercise Android resource preset strings, current user input/role-separated history, broad document prompt/source context, numeric/reference rejection, all-document lexical prioritization beyond initial16-source cap, cancellation/reindex/session revocation, context-only uncited explanations and original citation index retention. Injected synthetic test backend checks controller behavior, not native answer quality.",
+    "notEstablishedByRoutineSuite": [
+      "Native model quality, loading, generation, or active cancellation",
+      "Complete Compose tapping/keyboard/navigation behavior",
+      "Physical phone latency, vendor fingerprint behavior or same-key update preservation",
+      "Representative multilingual document QA/summary accuracy or complete semantic entailment",
+      "Full filesystem/log/traffic privacy, hard native interruption, universal4GB compatibility or release readiness"
+    ],
+    "separateNativeEvidence": "2026-10-26-chat-repair-native.json records the separately opt-in actual reviewed model probe. Consult that exact checkpoint for native pass/failure and memory evidence."
+  },
+  "apks": [
+    {
+      "flavor": "offline",
+      "file": "private-document-assistant-offline-debug.apk",
+      "applicationId": "com.privateassistant.app.preview",
+      "versionCode": 9,
+      "versionName": "0.5.1-dev",
+      "bytes": 157459145,
+      "sha256": "2dbe1bcb093b5816a0d0cb43527dddb1c6c9aea3ee6a39df74352d9eea809373",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    },
+    {
+      "flavor": "connected",
+      "file": "private-document-assistant-connected-debug.apk",
+      "applicationId": "com.privateassistant.app.connected.preview",
+      "versionCode": 9,
+      "versionName": "0.5.1-dev-connected",
+      "bytes": 157459193,
+      "sha256": "67c5c64ca325a069b08572f91df57df2d48ce267fe44d2f163642156207fcbaa",
+      "minSdk": 31,
+      "targetSdk": 35,
+      "compileSdk": 36,
+      "signature": {
+        "v2Verified": true,
+        "certificateSha256": "0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467"
+      },
+      "officialZipalign16KiBPassed": true,
+      "nativeInventory": {
+        "total": 34,
+        "arm64": 9,
+        "x86_64": 9,
+        "armeabi_v7a": 8,
+        "x86": 8,
+        "static64Bit16KiBPassed": 18,
+        "static32Bit16KiBUnverified": 16
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12636443758,
+      "name": "stable-android-regressions-40290851665-1",
+      "sizeBytes": 210254,
+      "sha256": "c6512e8c0e4547fe642e65b3c1244cf6b4f6401b0c2163f56175487fde2923fd",
+      "createdAt": "2026-10-26T08:25:12Z",
+      "expiresAt": "2026-11-02T08:25:11Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665/artifacts/12636443758"
+    },
+    {
+      "id": 12636309160,
+      "name": "private-document-assistant-stable-apks-40290851665-1",
+      "sizeBytes": 315114444,
+      "sha256": "d5989414d89a78e299614d43f224db60903242d4ffd1deeb92fd550c885dbb2a",
+      "createdAt": "2026-10-26T08:25:17Z",
+      "expiresAt": "2026-11-02T08:25:13Z",
+      "expired": false,
+      "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665/artifacts/12636309160"
+    }
+  ],
+  "reportDownload": {
+    "bytes": 210254,
+    "sha256IndependentlyComputed": "c6512e8c0e4547fe642e65b3c1244cf6b4f6401b0c2163f56175487fde2923fd",
+    "suites": [
+      {
+        "file": "platform/build/outputs/androidTest-results/connected/debug/flavors/connected/TEST-emulator-5554 - 16-_platform-connected.xml",
+        "module": "platform",
+        "flavor": "connected",
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classCounts": {
+          "com.privateassistant.platform.vault.SqlCipherInstrumentedTest": 3,
+          "com.privateassistant.platform.vault.VaultEvidenceMigrationInstrumentedTest": 3,
+          "com.privateassistant.platform.vault.StreamingCryptoInstrumentedTest": 4,
+          "com.privateassistant.platform.vault.DurableFilesInstrumentedTest": 2,
+          "com.privateassistant.platform.documents.OcrBoundaryInstrumentedTest": 3,
+          "com.privateassistant.platform.documents.TesseractOcrInstrumentedTest": 6,
+          "com.privateassistant.platform.inference.InstalledModelStoreInstrumentedTest": 11,
+          "com.privateassistant.platform.inference.ModelImportPrivacyInstrumentedTest": 1,
+          "com.privateassistant.platform.inference.LocalChatGatewayInstrumentedTest": 5
+        }
+      },
+      {
+        "file": "platform/build/outputs/androidTest-results/connected/debug/flavors/offline/TEST-emulator-5554 - 16-_platform-offline.xml",
+        "module": "platform",
+        "flavor": "offline",
+        "tests": 38,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classCounts": {
+          "com.privateassistant.platform.vault.SqlCipherInstrumentedTest": 3,
+          "com.privateassistant.platform.vault.VaultEvidenceMigrationInstrumentedTest": 3,
+          "com.privateassistant.platform.vault.StreamingCryptoInstrumentedTest": 4,
+          "com.privateassistant.platform.vault.DurableFilesInstrumentedTest": 2,
+          "com.privateassistant.platform.documents.OcrBoundaryInstrumentedTest": 3,
+          "com.privateassistant.platform.documents.TesseractOcrInstrumentedTest": 6,
+          "com.privateassistant.platform.inference.InstalledModelStoreInstrumentedTest": 11,
+          "com.privateassistant.platform.inference.ModelImportPrivacyInstrumentedTest": 1,
+          "com.privateassistant.platform.inference.LocalChatGatewayInstrumentedTest": 5
+        }
+      },
+      {
+        "file": "app/build/outputs/androidTest-results/connected/debug/flavors/connected/TEST-emulator-5554 - 16-_app-connected.xml",
+        "module": "app",
+        "flavor": "connected",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classCounts": {
+          "com.privateassistant.app.AssistantChatLifecycleTest": 18
+        }
+      },
+      {
+        "file": "app/build/outputs/androidTest-results/connected/debug/flavors/offline/TEST-emulator-5554 - 16-_app-offline.xml",
+        "module": "app",
+        "flavor": "offline",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "classCounts": {
+          "com.privateassistant.app.AssistantChatLifecycleTest": 18
+        }
+      }
+    ],
+    "zipEntries": 168,
+    "xmlSuites": 4,
+    "xmlCases": 112,
+    "xmlFailures": 0,
+    "xmlErrors": 0,
+    "xmlSkipped": 0,
+    "expectedChatNamesVerified": true,
+    "expectedPlatformClassCountsVerified": true,
+    "authenticatedLifecycleReports": [
+      {
+        "flavor": "offline",
+        "file": "artifacts/unlock-regression/authenticated-offline.txt",
+        "executed": 1,
+        "failures": 0,
+        "skipped": 0,
+        "realCredentialVerified": true
+      },
+      {
+        "flavor": "connected",
+        "file": "artifacts/unlock-regression/authenticated-connected.txt",
+        "executed": 1,
+        "failures": 0,
+        "skipped": 0,
+        "realCredentialVerified": true
+      }
+    ],
+    "totalAndroidExecutions": 114
+  },
+  "capabilities": {
+    "generalChatInput": "Structured system instruction, user/model history and current user message, using the runtime template rather than a nested handwritten transcript",
+    "sourceScope": "Explicit selected immutable revision or explicit Ask my documents scope; bounded encrypted lexical shortlist when >16 documents, sequential read<=16sources/200000UTF16, <=4passages of480UTF16",
+    "exactPrintedFields": "Existing selected-document literal field reader preserves raw values and refuses missing/conflicting/incomplete unique facts",
+    "broaderDocumentAnswers": "On-device model explanation of selected source excerpts. Exact source spans are independently checked; generated meaning is not proven entailed. Invalid reference or unsupported printed number falls back to actual excerpts.",
+    "uncitedExplanation": "Accepted only as AI explanation with all supplied excerpts and explicit context-only note; no fabricated generated citation. Narrow reported canned greeting is rejected as invalid document output.",
+    "summaries": "Bounded excerpt overview, partial when text/context cannot all be included; no full-document completeness claim",
+    "documentFollowups": "Current document question plus retrieved passages; earlier document dialogue is not supplied as model history, so broad contextual followup quality is not claimed",
+    "mutatingChatToolsEnabled": false,
+    "conversationStorage": "Unlocked-session transient memory only; no plaintext history/draft persistence",
+    "sameExistingCompactModelIdentity": true,
+    "requiresNewModelDownloadForIntactVerifiedCompactInstallation": false,
+    "catalogueEvaluatedLanguages": [],
+    "catalogueEvaluatedTasks": []
+  },
+  "signing": {
+    "persistentPreviewIdentityUnchanged": true,
+    "temporarySigningFallback": false,
+    "privateSecretsOrKeysPublished": false
+  },
+  "evidenceScope": "Completed success run-attempt metadata, all successful job steps, final CI logs and GitHub artifact metadata. This reviewer independently downloaded, hash-checked and parsed the210254-byte Android report ZIP, including112XMLcases and2credential transcripts. Individual APK identities/signatures/alignment are actual CI log/gate evidence. The315114444-byte APK ZIP was not independently downloaded here. No physical-device, broad assistant-accuracy or release-readiness claim.",
+  "localReviewArtifacts": {
+    "jobLogPath": "/tmp/chat-repair-stable-job.log",
+    "jobLogSha256": "46e40f202dc6396d12a99dfa8336787fd697aeece139bc2687604124db04e762",
+    "reportZipPath": "/tmp/chat-repair-stable-android.zip",
+    "parsedReportPath": "/tmp/chat-repair-stable-android.verified.json"
+  }
+}

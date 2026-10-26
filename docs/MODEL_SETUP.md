@@ -59,14 +59,14 @@ before reimport.
 
 ## Bounded compact CPU test
 
-The real pinned LiteRT-LM 0.16.0 adapter uses two CPU threads, a 512-token combined
-context, 128 output tokens, thinking disabled, :nocache, no tools and automatic
+The real pinned LiteRT-LM 0.16.0 adapter uses two CPU threads, fixed general512/128
+or document1024/192 context/output-token budgets, thinking disabled, :nocache, no tools and automatic
 tool calling disabled. The INT4 artifact has an exported 1280-token context and
 several prefill signatures, instead of the old INT8 artifact's 4096. Smaller
 configured context alone does not establish smaller native allocation; measure
 the actual model/runtime/backend. GPU acceleration is not implemented here.
 
-Input is at most 1024 UTF-16 units; output is at most 2048, checked after native
+Input totals at most1024 general or3072 document UTF-16 units; output is at most2048, checked after native
 allocation. Operations allow up to five minutes for slower phones. A fresh
 conversation/engine is closed per operation, and a joined watchdog repeatedly
 requests cooperative native cancellation. Synchronous send must return before
@@ -120,10 +120,10 @@ After the signed update and explicit emulator results, perform the phone import/
 tamper/cancel/lock/restart and same-key update procedure in DEVICE_TESTS.md. Record
 exact APK/model/device identities, actual total/available RAM, latency and
 resource behavior. The user's iQOO Neo 10 has 12 GB physical RAM and 256 GB storage,
-and reports the compact synthetic test completed. Actual typed-chat/source use
-and independently measured phone memory/latency remain to be checked. General chat and supported printed-document fact questions are implemented in
-code8; see [CHAT.md](CHAT.md). Model-based arbitrary document synthesis remains
-gated on its future citation/evaluation layer. Narrow synthetic file-canary checks do not establish complete
+and reports the compact synthetic test completed. The user reports code8 repeated greetings and rejected document questions.
+Code9 repairs role handling and adds bounded model-assisted source questions and
+summaries; see [CHAT.md](CHAT.md). Independently measured phone behavior/memory/
+latency and representative source accuracy remain to be checked. Narrow synthetic file-canary checks do not establish complete
 filesystem, logs, traffic, memory, thermal, accuracy or release readiness.
 
 The code8 native chat experiment 40191631336 separately passed actual chat prompts,

@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "scope": "Local host validation of code9. No physical device, local Android instrumentation, native model Android or signing-secret access. CI device/model results tracked separately.",
+  "command": "JAVA_HOME=<verified JDK21> source .tooling/env.sh; scripts/check-host.sh",
+  "log": {
+    "path": "/tmp/assistant-repair-host-final2.log",
+    "sha256": "8b74b2b4f094860cce5b216d5e593c2f83e660892a50230d64828adc1bcf70f1"
+  },
+  "buildSummary": [
+    "BUILD SUCCESSFUL in 5m 27s"
+  ],
+  "pythonChecks": 129,
+  "jvmResults": [
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.search.LiteralSearchQueryTest.xml",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.EvidenceValidationTest.xml",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.SensitiveActionAuthorizerTest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.assistant.GeneralChatRequestPolicyTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.FileActionValidationTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.HeavyJobGateTest.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.assistant.DocumentQuestionPromptTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.search.GroundedLexicalSearchTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.facts.LabelledFieldExtractorTest.xml",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.assistant.DocumentPassageRetrieverTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.assistant.LocalChatPromptTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.ImportValidationTest.xml",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.ActionValidationTest.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "core/build/test-results/test/TEST-com.privateassistant.core.assistant.DocumentChatEngineTest.xml",
+      "tests": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testOfflineDebugUnitTest/TEST-com.privateassistant.platform.inference.ModelMetadataValidationTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testOfflineDebugUnitTest/TEST-com.privateassistant.platform.inference.CpuModelDiagnosticPolicyTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testOfflineDebugUnitTest/TEST-com.privateassistant.platform.documents.OcrResultValidatorTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testConnectedDebugUnitTest/TEST-com.privateassistant.platform.inference.ModelMetadataValidationTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testConnectedDebugUnitTest/TEST-com.privateassistant.platform.inference.CpuModelDiagnosticPolicyTest.xml",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "platform/build/test-results/testConnectedDebugUnitTest/TEST-com.privateassistant.platform.documents.OcrResultValidatorTest.xml",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "jvmTotals": {
+    "tests": 192,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "reuse": "Core136 freshly passed focused47s command, UP-TO-DATE in full host; platform28 per variant freshly executed; app JVM tasks NO-SOURCE.",
+  "gates": [
+    "all core/platform/flavor unit tasks",
+    "all platform/app offline/connected instrumentation Kotlin compile",
+    "lint",
+    "production dependency inventory excluding MLKit",
+    "both assemblies",
+    "offline merged APK without INTERNET",
+    "native static inventory/alignment"
+  ],
+  "earlierFailures": [
+    {
+      "log": "/tmp/assistant-repair-host.log",
+      "reason": "One core summary grammar AN article regression; fixed and all136 passed."
+    },
+    {
+      "log": "/tmp/assistant-repair-host-final.log",
+      "reason": "Sandbox socket creation denied before Gradle initialization; rerun with sandboxed network grant."
+    }
+  ],
+  "notEstablished": [
+    "physical iQOO bug resolution",
+    "representative assistant accuracy",
+    "universal4GBphone compatibility",
+    "full privacy/traffic/recovery",
+    "actual16KiB loading"
+  ]
+}

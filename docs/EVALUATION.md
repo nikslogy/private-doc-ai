@@ -25,6 +25,17 @@ or entailment of generated prose. General/dialogue quality, multilingual retriev
 long documents, adversarial source instructions and cross-document ambiguity need
 separate held-out evaluation. No catalogue task/language accuracy is claimed.
 
+Actual code 9 validation completed: stable run 40290851665 passed 114 Android
+executions (38 platform +18 controller +1 credential per variant). The report ZIP was
+independently downloaded, hashed and parsed. Native run 40290851638 attempt 2 passed
+one fresh test with 5 actual varied/general/source/missing/summary operations,
+short-name recall, native cancellation, model hash and narrow canary checks.
+The nominal 4 GiB emulator observed process VmHWM 2,708,688,896 bytes (~2.52 GiB).
+Attempt 1 failed dependency download before Android and remains recorded. See the
+exact checkpoints/STATUS for denominators, prompts/scope, timing and limitations.
+These passes do not establish representative language/source accuracy, sustained
+physical-phone behavior, full privacy or release readiness.
+
 The M3 selected-source label reader adds synthetic core extraction cases and
 augments the real authenticated vault lifecycle probe with pinned reads, exact
 field citations, conflicting premiums and unchanged original bytes/ciphertext.

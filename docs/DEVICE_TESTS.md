@@ -6,6 +6,31 @@ in [STATUS.md](STATUS.md), with permanent ID com.privateassistant.app.preview
 and install the same-key update. The unlock repair below is historical evidence;
 its Test app IDs and temporary signing identity differ from current Preview builds.
 
+## Code9 conversation and document repair
+
+Code8 failed the user's phone check: general chat repeated a greeting and document
+questions returned an unsupported notice. Its prior narrow smoke passes do not
+resolve that report. Test the new exact stable APK only after STATUS lists its
+completed validation and identity. Keep the existing compact model installation.
+
+1. Update Preview without uninstalling; verify originals/model/unlock are retained.
+2. In General chat send Hi, then What is 2 plus 3?, then What color is a ripe banana?
+   Confirm each visible input is correct and later replies answer the current
+   question instead of repeating the greeting. Try a short name follow-up.
+3. Select a synthetic policy and use the actual premium/policy-number suggestions.
+   Compare raw formatting with source text and open each page link.
+4. Select a synthetic prose document with a cancellation clause; ask a normal
+   clause question, Summarise it, and a fact absent from its text. Compare AI
+   explanations with displayed exact excerpts; absent facts must not be invented.
+5. Choose Ask my documents with multiple distinguishable sources. Test a relevant
+   source beyond the first16 when present; check source identity/partial disclosure.
+6. Cancel, change source, clear, lock during a slow reply, reindex/delete a cited
+   source, then unlock/restart. Old text or source links must not reappear. Record
+   actual latency/available memory and exact APK/model/device identities.
+
+No physical pass is recorded until these actions and results are observed. Broad
+knowledge quality, source comprehension and accuracy need representative testing.
+
 ## Historical first-unlock repair
 
 The original version 0.1.0 APKs install on the user's iQOO Neo 10 / Android 16,

@@ -1,27 +1,141 @@
 # Development status
 
-## Checkpoint 13 — phone-reported chat failures; repair in progress
+## Checkpoint 13 — chat roles and local document passage answers
 
-The user tested code8 on the iQOO Neo 10 / Android 16 and reports that general
-chat repeats a greeting for different questions, while selected-document questions,
-including the suggestions, repeatedly return the unsupported-question notice.
-The code8 model-load, one-name recall and controller fixtures did not establish
-usable phone conversation or broader document QA. Those earlier passes remain
-historical evidence, not proof this report is resolved.
+[Stable-signed v0.5.1-dev / code 9 APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665/artifacts/12636309160)
+passed the complete build and 114 Android executions, with no failures/skips.
+Install the offline APK over **Private Vault Preview**, without uninstalling or
+clearing data. Preview IDs/signer and the exact compact model receipt remain
+unchanged. An intact existing model installation needs no reimport/download.
+The separate real-model code 9 Android verdict is tracked below.
 
-Code9 / 0.5.1-dev repair work replaces the handwritten conversation transcript
-with native role-separated messages and adds bounded passage retrieval over
-readable document text. It keeps exact labelled numeric/identifier answers,
-introduces model-assisted document explanations with visible source excerpts,
-and adds an explicit bounded all-documents scope. Generated explanations are
-not semantically verified by matching a citation or number; exact quotes and
-raw printed fields remain distinct. Source text has no action authority.
+The user reports code 8 repeated a greeting for different general questions and
+rejected selected-document questions, including suggestions. Its earlier model
+load/name-recall/controller passes did not establish usable phone conversation.
+The old handwritten prompt with greeting history reproduced greeting-like replies
+on 4/5 retained desktop questions. Native role-separated messages produced distinct
+answers; general factual errors remained. Code 9 keeps system/history/user roles
+separate and preserves complete recent pairs/current input.
 
-Validation and new APK delivery are pending. No phone fix or broad accuracy claim
-is made from source implementation alone. Next: complete regression fixtures
-using the actual Android suggestion resources, varied native questions, broader
-source questions, missing evidence and all-documents invalidation; run the full
-host gate and actual constrained-Android model probe before publishing an update.
+Document chat now retrieves bounded relevant passages from readable source text,
+with an explicit **Ask my documents** scope as well as one-document selection.
+Existing encrypted lexical search prioritizes sources for larger libraries;
+reads retain at most 16 revisions/200,000 UTF-16 units and four 480-unit excerpts
+enter the local model. A fixed document 1024/192 context/output-token profile
+complements general 512/128. Broader questions and summaries no longer depend on
+a tiny policy/invoice question list. Selected-document printed numeric/identifier
+questions keep direct literal extraction, raw formatting, conflict/partial rules.
+
+Generated explanations are labelled AI and shown beside exact quoted context and
+page links. Invalid generated references/numbers or known canned greetings fall
+back to actual excerpts. Uncited explanations show every supplied excerpt with a
+specific context-only note. A matching quote/number does not prove generated
+meaning. Forcing citation formatting in a desktop trial invented ownership;
+that prompt was rejected. Missing-evidence abstention remains required. Summaries
+state partial scope; current document questions do not receive prior document
+chat history. Large libraries, lexical paraphrases and small-model understanding
+remain limitations, with no representative accuracy claim.
+
+Chat/source plaintext remains in unlocked memory only. General history excludes
+document replies. Lock/clear/source changes/delete/reindex revoke work and
+citations; all-documents scope changes invalidate pending results. Native tools,
+remote processing, plaintext persistence and model action authority remain absent.
+Originals are immutable. See [CHAT](CHAT.md), [PRIVACY](PRIVACY.md).
+
+| Gate | Actual result |
+| --- | --- |
+| Focused core | 136 fresh passing JVM cases,0 failures/errors/skips, 47s |
+| Local full host | PASS in 5m27s; 129 Python checks, 192 passing JVM XML cases (136 focused core reused UP-TO-DATE + 28 fresh platform per variant); app JVM NO-SOURCE |
+| Local Android compile/lint/assembly | All app/platform instrumentation Kotlin, lint, production dependency gates and both assemblies passed |
+| Stable CI 40290851665 | Complete PASS; 129 Python checks/fullhost, actual 114 Android executions, none skipped |
+| Controller suggestions/input/source flow | 18 actual Android cases per variant; actual resource presets, distinct typed requests/history, source questions, invalid output, >16-source shortlist, uncited context, citation numbering and stale-work rejection |
+| Platform + credential lifecycle | 38 platform and 1 actual emulator credential lifecycle per variant, passed |
+| Real-model Android code 9 | PASS run 40290851638 attempt 2: one fresh test, five actual varied/source/missing/summary checks plus history recall, cancellation, hashes and narrow file canaries |
+| Identity/permissions/native inventory | Both pinned Preview IDs/signer/v2/official zipalign passed; offline no INTERNET; no production ML Kit; 18 64-bit libraries/APK static 16 KiB pass, 16 32-bit unverified |
+
+Initial local fullhost caught an unsupported AN-overview summary variant; fixed
+and all 136 core cases freshly passed. A later host launch hit sandbox socket
+creation denial before Gradle; the sandboxed network-grant run above passed.
+No local device/KVM was available and no missing hardware suite is called a pass.
+
+### Exact delivered identity
+
+- Production source 5dbbcc3f48d128a00de146fa74de60db6fa4543e.
+- Built stable/model marker f1c15403461f286be5c6094ef6c96238c84b8f88.
+- Stable run 40290851665 attempt 1, job 121465296317, completed/success 26 October 2026
+  08:25:20 UTC; all job steps passed.
+- APK ZIP 12636309160, 315,114,444 bytes, SHA-256
+  d5989414d89a78e299614d43f224db60903242d4ffd1deeb92fd550c885dbb2a;
+  expires 2 November 2026 at 08:25:13 UTC.
+- Android report 12636443758, 210,254 bytes, SHA-256
+  c6512e8c0e4547fe642e65b3c1244cf6b4f6401b0c2163f56175487fde2923fd.
+  Downloaded/hash checked/parsed: 168 entries, 4 XMLs, 112 cases (38+38+18+18),
+  zero failures/skips, plus 2 independently parsed real-credential transcripts.
+- Public signer SHA-256 unchanged:
+  0a4f0f2f8fa9f25b20d43c3d2c407f05fd757e4b6cd080548146e5e1ca182467.
+
+| APK | Bytes | SHA-256 |
+| --- | ---: | --- |
+| private-document-assistant-offline-debug.apk | 157459145 | 2dbe1bcb093b5816a0d0cb43527dddb1c6c9aea3ee6a39df74352d9eea809373 |
+| private-document-assistant-connected-debug.apk | 157459193 | 67c5c64ca325a069b08572f91df57df2d48ce267fe44d2f163642156207fcbaa |
+
+Large APK ZIP was not independently downloaded; individual APK/signature/alignment
+identity is actual CI logs/gates plus GitHub artifact metadata. The small Android
+report was independently downloaded and verified. No key/secret was read locally,
+regenerated or committed, and no temporary signing fallback exists.
+
+The model run 40290851638 attempt 1 failed pinned OCR dependency HTTP 404 before
+Gradle/Kotlin/model download/KVM/native. Exact canonical URL independently returned
+200 with the pinned 12,848,454-byte AAR and matching SHA locally; same-origin query
+alternatives returned 404 and were rejected. Existing bounded retries and all pins
+remain unchanged. One unchanged failed-job retry is attempt 2; no inference verdict
+is inferred from the earlier failure. No application/model bytes changed in retry.
+
+### Actual code 9 model experiment
+
+Run 40290851638 attempt 2 passed on the nominal 4096 MiB API36 x86_64 emulator,
+using the exact existing 347,251,840-byte model and pinned 0.16.0 CPU runtime.
+Android reported 4,014,272 KiB total and 2,370,260 KiB available before the test,
+with 4096-byte pages. Application memory admission and forced denial-before-load
+passed. This is constrained-emulator evidence, not universal physical 4 GB support.
+
+The actual gateway recalled the synthetic name in 15,760 ms (5 UTF-16 units).
+Five additional native operations passed: arithmetic after greeting history,
+a different color question, a source-specific answer, missing-owner abstention
+and a source summary. These took 78,291 ms combined, including per-operation
+verification/loading/native work, and generated 317 UTF-16 units. Exact source
+contexts were checked, but this small fixture is not representative accuracy.
+The document 1024/192 profile was actually exercised, not inferred from file size.
+
+The initial chat operation took 72,145 ms including initialization. A separate
+cancellation operation took 26,171 ms including its own initialization, with
+89 actual native cancellation calls and one expected failing send. That total
+is not cancellation-request latency. Final model hash and narrow private-file
+canary scans passed; no response text was logged/stored by the probe.
+
+Sampling captured 204 observations of synthetic PID 2692 with zero read, timeout
+or metadata errors. Maximum sampled RSS was 2,685,435,904 bytes; observed kernel
+VmHWM was 2,708,688,896 bytes (~2.52 GiB). These observations are not hard process
+bounds, phone timing, thermal/endurance or comprehensive privacy evidence.
+
+Native report artifact 12653230125 is 9,822 bytes,SHA-256
+89cd37443cba5d762c94b82dddbda187ad73d97064d7cf77bb0bf41f0fea1bf6,
+expires 2 November 2026 at 13:06:20 UTC. The small ZIP was downloaded/hash checked/parsed;
+its result requires exactly one non-skipped Android test and five real semantic
+cases. Attempt 1's dependency failure remains recorded; the unchanged retry cleared
+that bootstrap failure with no application/model pin or byte change.
+
+Evidence: [stable build](checkpoints/2026-10-26-chat-repair-build.json),
+[local host](checkpoints/2026-10-26-chat-repair-host.json),
+[desktop roles](checkpoints/2026-10-26-chat-role-desktop.json),
+[native attempts](checkpoints/2026-10-26-chat-repair-native.json).
+
+Next: phone-check repeated-greeting repair, actual suggestions, broader stored-text
+questions, partial/source links and update-preservation on iQOO Neo 10 / Android 16.
+Continue M5 with representative held-out retrieval/faithfulness/language/injection
+quality; native process isolation/hard interruption, sustained 4 GB physical tiers,
+complete traffic/privacy/thermal checks, real 16 KiB loading, recovery and M6 tools
+remain open. This is a development update, not a release or completed whole M5.
 
 ## Historical checkpoint 12 — actual local chat and cited document facts
 

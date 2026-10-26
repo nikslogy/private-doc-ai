@@ -1,12 +1,19 @@
 # Development APK delivery
 
-## Code9 chat repair
+## Code 9 chat repair
 
-Version0.5.1-dev/code9 is being validated after user-reported repeated greetings
-and rejected document questions in code8. The update keeps the existing Preview
-IDs/signing pin and exact compact model receipt. Consult [STATUS](STATUS.md) for
-new delivery results. Install a verified stable-signed update over Preview without
-uninstalling or clearing data; local diagnostic .dev APKs are a separate app.
+[Download stable-signed 0.5.1-dev / code 9 APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665/artifacts/12636309160).
+Run 40290851665 passed the full host gate and 114 actual Android executions,
+none skipped. This repairs native chat roles and expands document questions and
+summaries to bounded source passages. Choose one document or Ask my documents.
+Generated explanations and exact quotes remain visibly distinct; broad accuracy
+and physical phone behavior remain separate from build/regression evidence.
+
+Install over Private Vault Preview without uninstalling or clearing data. The
+Preview IDs, public signer and exact compact model receipt are unchanged. Local
+diagnostic .dev APKs remain a separate app. Existing verified compact weights do
+not need reimport. See [STATUS](STATUS.md) for APK hashes, artifact expiry and the
+separate actual-model runtime verdict; [CHAT](CHAT.md) explains scope and limits.
 
 ## Historical code8 Preview chat build
 

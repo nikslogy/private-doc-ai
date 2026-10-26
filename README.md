@@ -3,11 +3,16 @@
 Native Android encrypted document vault with offline OCR, local search and
 on-device chat over stored document passages.
 
-Code9 / 0.5.1-dev repairs conversation formatting after the user reported repeated
-greetings in code8, and adds broader document questions and summaries. **The new
-build is being validated; see [STATUS](docs/STATUS.md) for current APK availability
-and actual evidence.** Existing Preview IDs, signing identity and the compact
-model receipt remain unchanged. Android12/API31+ is required.
+**[Download stable-signed v0.5.1-dev / code 9 APKs](https://github.com/nikslogy/private-doc-ai/actions/runs/40290851665/artifacts/12636309160).**
+The signed build passed the full host gate and 114 Android executions, none
+skipped. Install the offline APK over **Private Vault Preview** without
+uninstalling or clearing data. Existing Preview IDs, signing identity and compact
+model receipt are unchanged; no new model import is needed for an intact slot.
+Android 12/API31+ is required. Consult [STATUS](docs/STATUS.md) for the separate
+actual-model verdict and physical-phone limits.
+
+Code 9 repairs conversation formatting after the user reported repeated greetings
+in code 8, and adds broader document questions and summaries.
 
 Use **General chat** for ordinary conversation, **Ask a document** for one source,
 or **Ask my documents** for bounded local retrieval across stored text. Printed
@@ -25,8 +30,8 @@ durable chat history and portable recovery remain future work.
 
 Synthetic desktop checks reproduced the old greeting-history bug and exercised
 new role-separated/source questions. These are not representative accuracy or
-phone performance results. The larger document-context profile still requires
-its own Android memory experiment. See STATUS for actual completed checks.
+phone performance results. The larger document-context profile has a separate Android memory experiment
+recorded in STATUS. See STATUS for actual completed checks.
 
 ## Build
 

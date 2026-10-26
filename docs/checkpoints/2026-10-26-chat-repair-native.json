@@ -1,0 +1,468 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-26T13:08:52.421194+00:00",
+  "applicationSourceCommit": "5dbbcc3f48d128a00de146fa74de60db6fa4543e",
+  "status": "PASS",
+  "attempts": [
+    {
+      "runId": 40290851638,
+      "runAttempt": 1,
+      "jobId": 121465297692,
+      "headSha": "f1c15403461f286be5c6094ef6c96238c84b8f88",
+      "runUrl": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851638",
+      "startedAtUtc": "2026-10-26T08:14:10Z",
+      "completedAtUtc": "2026-10-26T08:14:35Z",
+      "conclusion": "failure",
+      "failureStage": "Pinned OCR dependency bootstrap inside compile step, before Gradle/Kotlin/native/model download",
+      "safeError": "OCR runtime unavailable: Pinned OCR runtime download unavailable (HTTP_404); no artifact published",
+      "errorAtUtc": "2026-10-26T08:14:32.1461101Z",
+      "gradleCacheRestore": "MISS",
+      "artifacts": [],
+      "androidTestsExecuted": 0,
+      "kvmEnableStep": "skipped",
+      "nativeGenerationStep": "skipped",
+      "modelVerdict": "NONE"
+    },
+    {
+      "runId": 40290851638,
+      "runAttempt": 2,
+      "jobId": 121584769805,
+      "headSha": "f1c15403461f286be5c6094ef6c96238c84b8f88",
+      "runUrl": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851638/attempts/2",
+      "conclusion": "success",
+      "retryReason": "Single unchanged failed-job retry after exact canonical public OCR URL succeeded locally with expected size/hash. No query variant, alternate origin, checksum change or application change.",
+      "startedAtUtc": "2026-10-26T12:57:46Z",
+      "runUpdatedAtUtc": "2026-10-26T13:06:25Z",
+      "gradleCacheRestore": "MISS",
+      "ocrBootstrap": "PASS exact reviewed12848454-byteAAR verified; no source/pin/origin change",
+      "androidTestsExecuted": 1,
+      "androidFailures": 0,
+      "androidSkipped": 0,
+      "kvmEnableStep": "success",
+      "nativeGenerationStep": "success",
+      "modelVerdict": "PASS bounded synthetic functional cases only",
+      "artifactId": 12653230125
+    }
+  ],
+  "availabilityFollowup": {
+    "scope": "Fresh managed-workspace urllib GET, not CI runner retry",
+    "originalExactUrlStatus": 200,
+    "byteCount": 12848454,
+    "sha256": "bce5d6413a1a5ae3d7240033fbbc851ba3217d0a08d9769400e17a077f42cb2a",
+    "verifiedExpectedBytes": true,
+    "sameOriginHashQueryStatus": 404,
+    "sameOriginTimestampQueryStatus": 404,
+    "queryVariantsAdopted": false,
+    "limitation": "Different outcomes across environments and query forms; no deterministic upstream/CDN cause established."
+  },
+  "notEstablished": [
+    "Physical iQOO general/document chat after this update",
+    "Representative or held-out dialogue/document/multilingual accuracy",
+    "Semantic entailment of generated prose; only source references/numbers mechanically checked",
+    "Complete-scope large-document/vault summaries",
+    "Full connected traffic/native privacy/thermal evaluation",
+    "Universal4GBphysical-phone compatibility",
+    "Hard native interruption/process isolation",
+    "Actual16KiBpage device loading"
+  ],
+  "run": {
+    "id": 40290851638,
+    "run_attempt": 2,
+    "head_sha": "f1c15403461f286be5c6094ef6c96238c84b8f88",
+    "status": "completed",
+    "conclusion": "success",
+    "run_started_at": "2026-10-26T12:57:46Z",
+    "updated_at": "2026-10-26T13:06:25Z",
+    "html_url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851638"
+  },
+  "model": {
+    "schemaVersion": 1,
+    "modelId": "qwen3-06b-q4-nothink",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "runtimeVersion": "0.16.0",
+    "sourceUrl": "https://huggingface.co/litert-community/Qwen3-0.6B-int4/resolve/256f33043931947c173d7f3cc1d84ee7a8538cc2/qwen3_0.6b_nothink_q4_block32_ekv1280.litertlm?download=true",
+    "licenseIdentifier": "Apache-2.0",
+    "scope": "Verified public model bytes only; no runtime or document accuracy result implied"
+  },
+  "localPublicModelVerification": {
+    "modelId": "qwen3-06b-q4-nothink",
+    "revision": "256f33043931947c173d7f3cc1d84ee7a8538cc2",
+    "byteCount": 347251840,
+    "sha256": "2df6821ec12702dafd33915e7a1a1adc7c4b053f3672fd9555dfaf3a114c4139",
+    "runtimeVersion": "0.16.0",
+    "scope": "Actual local public model bytes verified before upload; no model quality claim"
+  },
+  "runtimeConfiguration": {
+    "runtimeVersion": "0.16.0",
+    "backend": "CPU",
+    "threads": 2,
+    "profiles": {
+      "GENERAL": {
+        "combinedTokens": 512,
+        "maxOutputTokens": 128,
+        "maxInputUtf16": 1024
+      },
+      "DOCUMENT": {
+        "combinedTokens": 1024,
+        "maxOutputTokens": 192,
+        "maxInputUtf16": 3072
+      }
+    },
+    "thinkingEnabled": false,
+    "tools": [],
+    "automaticToolCalling": false,
+    "cacheDir": ":nocache",
+    "operationDeadlineMillis": 300000,
+    "hardNativeInitializationTimeout": false
+  },
+  "target": {
+    "kind": "Disposable nominal4GiB API36 x86_64 emulator",
+    "explicitSerial": "emulator-5554",
+    "nominalRamMiB": 4096,
+    "androidMemTotalKiB": 4014272,
+    "androidMemAvailableBeforeTestKiB": 2370260,
+    "pageSizeBytes": 4096,
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "physicalPhone": false,
+    "hostResources": {
+      "hostTotalBytes": 16766414848,
+      "hostAvailableBytes": 14652309504,
+      "minimumAvailableGuardBytes": 6442450944,
+      "modelId": "qwen3-06b-q4-nothink",
+      "emulatorRamMiB": 4096,
+      "scope": "Fixed small-model experiment on nominal 4 GiB x86_64 emulator; no physical-phone RAM minimum established",
+      "hostFreeDiskBytes": 89109192704
+    },
+    "emulatorMetadata": [
+      "INFO         | Android emulator version 37.2.12.0 (build_id 16428233) (CL:N/A)",
+      "INFO         | Graphics backend: gfxstream",
+      "INFO         | Found systemPath /usr/local/lib/android/sdk/system-images/android-36/google_apis/x86_64/",
+      "INFO         | Saving last run QEMU version for the AVD to 2"
+    ],
+    "systemImageRevision": "7"
+  },
+  "result": {
+    "schemaVersion": 1,
+    "executed": 1,
+    "failures": 0,
+    "skipped": 0,
+    "metrics": {
+      "cancellationOperationMillis": 26171,
+      "chatGatewayElapsedMillis": 15760,
+      "chatGatewayGeneratedUtf16": 5,
+      "chatSemanticCasesPassed": 5,
+      "chatSemanticElapsedMillis": 78291,
+      "chatSemanticGeneratedUtf16": 317,
+      "generatedUtf16": 39,
+      "generationElapsedMillis": 72145,
+      "nativeCancellationCalls": 89,
+      "nativeSendFailures": 1
+    },
+    "chatHistoryRecallMatched": true,
+    "scope": "Synthetic CPU generation with actual role-separated prompts/history, verified-installation gateway name recall, five actual varied general/document cases including greeting-history arithmetic/color, source answer, missing-source abstention and summary, active cancellation and narrow file-canary scans. No phone latency, representative chat/document/language quality, complete privacy, traffic or hard-timeout claim."
+  },
+  "semanticChecks": [
+    {
+      "case": "Different current arithmetic question after synthetic assistant greeting",
+      "assertion": "Actual response contains5/five",
+      "passed": true,
+      "phase": "CHAT_ARITHMETIC_VERIFIED"
+    },
+    {
+      "case": "Different banana-color question with same greeting history",
+      "assertion": "Response containsyellow and differs from arithmetic response",
+      "passed": true,
+      "phase": "CHAT_DISTINCT_ANSWER_VERIFIED"
+    },
+    {
+      "case": "Question over actual retrieved synthetic workshop passage",
+      "assertion": "Response mentionsblue badge and passes numeric/reference checks",
+      "passed": true,
+      "phase": "DOCUMENT_ANSWER_VERIFIED"
+    },
+    {
+      "case": "Owner missing from supplied source",
+      "assertion": "Response abstains and has no ownedby/belongsto claim; passes numeric/reference checks",
+      "passed": true,
+      "phase": "DOCUMENT_MISSING_VERIFIED"
+    },
+    {
+      "case": "Summarise it over same source",
+      "assertion": "Response mentionsTuesday andbadge; passes numeric/reference checks",
+      "passed": true,
+      "phase": "DOCUMENT_SUMMARY_VERIFIED"
+    }
+  ],
+  "operationObservations": {
+    "firstGenerationUtf16": 39,
+    "firstGenerationElapsedMillis": 72145,
+    "gatewayHistoryRecallUtf16": 5,
+    "gatewayHistoryRecallElapsedMillis": 15760,
+    "fiveSemanticOperationsElapsedMillis": 78291,
+    "fiveSemanticOperationsGeneratedUtf16": 317,
+    "perSemanticOperationPhaseDeltaMillis": [
+      17972,
+      13846,
+      15300,
+      15481,
+      15691
+    ],
+    "cancellationFullOperationMillis": 26171,
+    "nativeCancellationCalls": 89,
+    "nativeSendFailures": 1,
+    "scope": "Operations include verification/native initialization/cleanup, phase deltas also include assertions/retrieval; not phone latency or cancellation-request latency. Response text was not logged or retained in artifacts."
+  },
+  "memory": {
+    "schemaVersion": 1,
+    "scope": "Periodic numeric memory of only the phase-identified synthetic CI test PID; observed samples can miss peaks and do not establish a phone RAM minimum.",
+    "emittedPid": 2692,
+    "sampleIntervalMillis": 1000,
+    "sampleLimit": 900,
+    "sampleCount": 204,
+    "sampleColumns": [
+      "elapsedMillis",
+      "rssBytes",
+      "hwmBytes"
+    ],
+    "readErrors": 0,
+    "timeoutErrors": 0,
+    "metadataRejected": 0,
+    "observedMaxRssBytes": 2685435904,
+    "observedMaxHwmBytes": 2708688896,
+    "observedMaxHwmGiB": 2.5227,
+    "independentlyRecomputedSampleCountAndMaxima": true
+  },
+  "phases": [
+    {
+      "phase": "ARGUMENTS_ACCEPTED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 73659
+    },
+    {
+      "phase": "MODEL_PATH_VALIDATED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 73726
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 73728
+    },
+    {
+      "phase": "DEVICE_MODEL_VERIFY_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 77175
+    },
+    {
+      "phase": "CANARY_BASELINE_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 77178
+    },
+    {
+      "phase": "CANARY_BASELINE_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 77188
+    },
+    {
+      "phase": "ADMISSION_DENIAL_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 77215
+    },
+    {
+      "phase": "NATIVE_GENERATION_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 77220
+    },
+    {
+      "phase": "NATIVE_SEND_STARTED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 118085
+    },
+    {
+      "phase": "NATIVE_GENERATION_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 149358
+    },
+    {
+      "phase": "CANCELLATION_OPERATION_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 149365
+    },
+    {
+      "phase": "CANCELLATION_SEND_STARTED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 172816
+    },
+    {
+      "phase": "NATIVE_CANCEL_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 172930
+    },
+    {
+      "phase": "NATIVE_SEND_FAILED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 175236
+    },
+    {
+      "phase": "CANCELLATION_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 175535
+    },
+    {
+      "phase": "CHAT_GATEWAY_INSTALL_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 175571
+    },
+    {
+      "phase": "CHAT_GATEWAY_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 182331
+    },
+    {
+      "phase": "CHAT_GATEWAY_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 198094
+    },
+    {
+      "phase": "CHAT_SEMANTIC_CASES_START",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 198095
+    },
+    {
+      "phase": "CHAT_ARITHMETIC_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 216067
+    },
+    {
+      "phase": "CHAT_DISTINCT_ANSWER_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 229913
+    },
+    {
+      "phase": "DOCUMENT_ANSWER_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 245213
+    },
+    {
+      "phase": "DOCUMENT_MISSING_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 260694
+    },
+    {
+      "phase": "DOCUMENT_SUMMARY_VERIFIED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 276385
+    },
+    {
+      "phase": "CHAT_SEMANTIC_CASES_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 276387
+    },
+    {
+      "phase": "CHAT_GATEWAY_CLEANUP_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 276458
+    },
+    {
+      "phase": "POST_MODEL_VERIFY_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 277632
+    },
+    {
+      "phase": "CANARY_FINAL_RETURNED",
+      "pid": 2692,
+      "elapsedRealtimeMillis": 277635
+    }
+  ],
+  "privacyAndIntegrity": {
+    "deviceModelVerifiedBeforeRun": true,
+    "postRunOriginalModelReverificationPassed": true,
+    "forcedAdmissionDenialBeforeNativeInitializationPassed": true,
+    "actualApplicationAdmissionForGenerationAndGateway": true,
+    "testOwnedGatewayModelSlotAndRootRemoved": true,
+    "originalProbeModelPreserved": true,
+    "boundedPrivateFilesCacheNoBackupCanaryScansPassed": true,
+    "onlyExactVerifiedPublicProbeModelExcludedFromCanaryScan": true,
+    "responseTextInArtifact": false,
+    "scope": "Narrow synthetic canary scans and original hash checks, not full Android privacy/traffic/security evaluation. No real vault or private user documents were used."
+  },
+  "artifact": {
+    "id": 12653230125,
+    "name": "experimental-model-probe-40290851638-2",
+    "byteCount": 9822,
+    "sha256": "89cd37443cba5d762c94b82dddbda187ad73d97064d7cf77bb0bf41f0fea1bf6",
+    "createdAtUtc": "2026-10-26T13:06:21Z",
+    "expiresAtUtc": "2026-11-02T13:06:20Z",
+    "url": "https://github.com/nikslogy/private-doc-ai/actions/runs/40290851638/artifacts/12653230125",
+    "independentlyDownloadedHashCheckedAndParsed": true,
+    "zipIntegrityPassed": true,
+    "entryCount": 10,
+    "entries": [
+      "download-verification.json",
+      "emulator-source.properties",
+      "emulator.txt",
+      "generation.txt",
+      "host-resources.json",
+      "result.json",
+      "local-file-verification.json",
+      "system-image-source.properties",
+      "target.txt",
+      "test-process-memory-samples.json"
+    ],
+    "entryIdentities": [
+      {
+        "path": "download-verification.json",
+        "bytes": 572,
+        "sha256": "d3a1abb1974c58df7925e13aa3c3871fe4475eac780a5920bd271764f510c7e1"
+      },
+      {
+        "path": "emulator-source.properties",
+        "bytes": 103,
+        "sha256": "ba13085f647fb8389a4d06a1de0e4104ac4e841733e50f67223ac230e1ce685a"
+      },
+      {
+        "path": "emulator.txt",
+        "bytes": 9260,
+        "sha256": "a24c67cc82d04ee736be2504c5a4ca4407762515de1162d284f335bd54da22ca"
+      },
+      {
+        "path": "generation.txt",
+        "bytes": 7242,
+        "sha256": "6475597fe2caba0ee98d969e8fd5e38bedf355d2d2ae06d9cf32addc2860b85d"
+      },
+      {
+        "path": "host-resources.json",
+        "bytes": 335,
+        "sha256": "b9aef399dfa127d81b5befe160f9350df1a188449a0e7583cbfcdf01c16e4f12"
+      },
+      {
+        "path": "result.json",
+        "bytes": 919,
+        "sha256": "18c58df23eb5a93fbb6bcb1e1df4e13c8f7b714889ff10ebd46047698b3e1e91"
+      },
+      {
+        "path": "local-file-verification.json",
+        "bytes": 327,
+        "sha256": "2b0f540de7bac8b81a53eac84a69509047bdd7ddb5bd931944711fb5ecf30f3b"
+      },
+      {
+        "path": "system-image-source.properties",
+        "bytes": 356,
+        "sha256": "edfc961bd9128fbfea84b4c61aac3a72ea270ca286425e22b3ed01ac759b1fc3"
+      },
+      {
+        "path": "target.txt",
+        "bytes": 360,
+        "sha256": "af3ac89814920f13f283156be1ad6ad2c59244b271c94fa440eb566897f94451"
+      },
+      {
+        "path": "test-process-memory-samples.json",
+        "bytes": 6577,
+        "sha256": "2b028b8ed1ed5864b399b23bc4b07cb4d941998ebd3526c93d0b51c307b3be1d"
+      }
+    ]
+  },
+  "nextTask": "Record actual phone same-key update and typed varied chat/document/all-documents behavior; broaden held-out source-faithfulness evaluation and bounded multi-pass retrieval/summaries without claiming complete coverage."
+}
