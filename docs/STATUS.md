@@ -49,6 +49,10 @@ the ignored `.tooling` repository; it was deleted afterwards, nothing was
 assembled from it, and it is not in the repository. CI's restored Gradle cache
 may still hold the verified bytes; otherwise the OCR runtime source needs an owner
 decision (e.g. re-pin an official release after review) before APKs can be built.
+Confirmed: CI Host checks run 41234502663 (commit aafa88c, branch
+ccr-0ddcfe16-2fmc7k) failed in its first validation step with the same
+"Pinned OCR runtime download unavailable (HTTP_404)" before any Gradle task; its
+restored cache did not supply the AAR. No APK or Android result was produced.
 
 Not yet evaluated: identifier precision/recall on real cards (OCR errors, layouts,
 Hindi/Marathi labels), PDF compression quality/size on real scans, face-detector
