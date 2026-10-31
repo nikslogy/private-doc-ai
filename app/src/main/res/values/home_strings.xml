@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home and folders -->
+    <string name="tab_home">Home</string>
+    <string name="home_greeting">Your private vault</string>
+    <string name="home_subtitle">Encrypted on this phone. Nothing is uploaded.</string>
+    <string name="home_search">Search documents and text</string>
+    <string name="action_import">Import</string>
+    <string name="action_ask">Ask</string>
+    <string name="action_new_folder">New folder</string>
+    <string name="folders_title">Folders</string>
+    <string name="folders_empty">Create folders like “ID cards”, “Insurance” or “Bills” to keep things tidy.</string>
+    <string name="recent_documents">Recent documents</string>
+    <plurals name="folder_documents">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <string name="folder_empty_title">This folder is empty</string>
+    <string name="folder_empty_body">Import files straight into this folder, or move existing documents here from their ⋮ menu.</string>
+    <string name="import_here">Import here</string>
+    <string name="back">Back</string>
+    <string name="more_options">More options</string>
+    <string name="folder_name">Folder name</string>
+    <string name="create_folder">Create folder</string>
+    <string name="create">Create</string>
+    <string name="save">Save</string>
+    <string name="rename">Rename</string>
+    <string name="rename_folder">Rename folder</string>
+    <string name="rename_document">Rename document</string>
+    <string name="document_name">Document name</string>
+    <string name="delete_folder">Delete folder</string>
+    <string name="delete_folder_title">Delete this folder?</string>
+    <string name="delete_folder_body">Delete “%1$s”? Its documents stay in your vault and move back to All documents.</string>
+    <string name="folder_created">Folder created.</string>
+    <string name="folder_deleted">Folder deleted. Its documents are still in your vault.</string>
+    <string name="document_moved">Document moved.</string>
+    <string name="folder_name_invalid">Enter a folder name of up to 60 characters.</string>
+    <string name="move_to_folder">Move to folder</string>
+    <string name="move_to_new_folder">New folder…</string>
+    <string name="remove_from_folder">Remove from folder</string>
+    <string name="ask_about_document">Ask about this</string>
+    <string name="save_to_phone">Save to phone</string>
+    <string name="open_document">Open</string>
+    <string name="view_details">Details &amp; text</string>
+    <string name="in_folder">in %1$s</string>
+    <string name="derived_copy">Created copy</string>
+
+    <!-- Assistant -->
+    <string name="assistant_scope_documents">Answering from: My documents</string>
+    <string name="assistant_scope_document">Answering from: %1$s</string>
+    <string name="assistant_scope_general">Answering from: General AI chat</string>
+    <string name="assistant_hero_title">Ask anything about your documents</string>
+    <string name="assistant_hero_body">Find ID numbers instantly, get a card as an image, shrink a PDF for an upload form, or make a passport photo. Everything runs on this phone.</string>
+    <string name="assistant_try">Try asking</string>
+    <string name="suggest_pan">What is my PAN number?</string>
+    <string name="suggest_aadhaar">What is my Aadhaar number?</string>
+    <string name="suggest_pan_image">I want my PAN card in image format</string>
+    <string name="suggest_compress">Compress my PDF to less than 200 KB</string>
+    <string name="suggest_passport">Make my photo passport size</string>
+    <string name="suggest_to_pdf">Convert my photo to PDF</string>
+    <string name="suggest_summary">Summarise my documents</string>
+    <string name="assistant_model_missing">On-device AI is not set up. ID lookups and file tools still work; set up AI for open-ended questions.</string>
+    <string name="assistant_message_hint">Ask or tell me what you need…</string>
+    <string name="copy">Copy</string>
+    <string name="copied">Copied. Clipboard contents can be visible to other apps — clear it when done.</string>
+    <string name="as_image">As image</string>
+    <string name="view_source">Source</string>
+    <string name="masked_value">Masked on the document</string>
+
+    <!-- Identifier labels -->
+    <string name="id_pan">PAN</string>
+    <string name="id_aadhaar">Aadhaar number</string>
+    <string name="id_passport">Passport number</string>
+    <string name="id_voter">Voter ID (EPIC)</string>
+    <string name="id_driving_licence">Driving licence number</string>
+    <string name="id_gstin">GSTIN</string>
+    <string name="id_ifsc">IFSC code</string>
+    <string name="id_vehicle">Vehicle registration</string>
+    <string name="id_bank_account">Bank account number</string>
+    <string name="id_uan">UAN</string>
+    <string name="id_email">Email address</string>
+    <string name="id_mobile">Mobile number</string>
+    <string name="id_dob">Date of birth</string>
+    <string name="id_found_single">Here is your %1$s, exactly as printed in your document:</string>
+    <string name="id_found_masked">Your %1$s is masked on the document I found, so only the last digits are available:</string>
+    <string name="id_found_several">I found %1$d different values for %2$s. Check which one you need:</string>
+    <string name="id_not_found">I couldn’t find a %1$s in the readable text of your documents.</string>
+    <plurals name="id_unread_documents">
+        <item quantity="one">%d scanned document hasn’t been read yet. Open it and tap “Read text” so I can search it.</item>
+        <item quantity="other">%d scanned documents haven’t been read yet. Open them and tap “Read text” so I can search them.</item>
+    </plurals>
+
+    <!-- Documents found by the assistant -->
+    <string name="find_single">I found this document:</string>
+    <string name="find_several">These documents match. Pick the one you need:</string>
+    <string name="find_none">I couldn’t find a matching document.</string>
+
+    <!-- Tools -->
+    <string name="tool_compress_title">Make a smaller copy</string>
+    <string name="tool_to_image_title">Convert to image (JPG)</string>
+    <string name="tool_to_pdf_title">Convert to PDF</string>
+    <string name="tool_passport_title">Create a passport-size photo</string>
+    <string name="tool_compress_detail">Target: under %1$s. Current size: %2$s.</string>
+    <string name="tool_compress_pdf_disclosure">The smaller PDF stores each page as a picture: text won’t be selectable or searchable, and links, forms and digital signatures are not kept.</string>
+    <string name="tool_to_image_detail">Each page becomes a JPG image (up to 10 pages).</string>
+    <string name="tool_to_pdf_detail">The image is placed on an A4 page.</string>
+    <string name="tool_passport_detail">%1$d × %2$d mm at 300 DPI (%3$d × %4$d px), centred on the detected face.</string>
+    <string name="tool_private_note">Runs on this phone. The result is saved in your vault as a new file; your original is not changed.</string>
+    <string name="tool_create">Create copy</string>
+    <string name="tool_running">Working on it…</string>
+    <string name="tool_cancelled">Cancelled.</string>
+    <string name="tool_completed">Done.</string>
+    <string name="tool_failed_status">Didn’t complete.</string>
+    <string name="tool_choose_document">Which document should I use?</string>
+    <string name="tool_done">Done! I saved this in your vault:\n%1$s</string>
+    <string name="tool_done_size">Original: %1$s · target: under %2$s.</string>
+    <string name="tool_no_face">No face was detected, so I used a centred crop. Please check it.</string>
+    <string name="tool_passport_check">Background and lighting are not changed. Check your authority’s photo rules before using it.</string>
+    <string name="tool_original_unchanged">Your original is unchanged.</string>
+    <string name="tool_already_fits">This file is already %1$s, under %2$s. No smaller copy is needed.</string>
+    <string name="tool_already_image">“%1$s” is already a JPG image.</string>
+    <string name="tool_already_pdf">“%1$s” is already a PDF.</string>
+    <string name="tool_unreachable">I couldn’t get it under %1$s — the smallest readable version was %2$s. Try a larger limit.</string>
+    <string name="tool_failed">That didn’t work for this file. Your original is unchanged. Try another file, or re-import it if it is damaged.</string>
+    <string name="tool_no_photo">I need a photo (JPG or PNG) for that. Import a clear, front-facing photo first.</string>
+    <string name="tool_no_compatible">That works with PDFs and images (JPG/PNG). Import one first.</string>
+    <string name="tool_need_size">Tell me the size you need, for example “under 200 KB”.</string>
+</resources>

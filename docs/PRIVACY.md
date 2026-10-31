@@ -58,6 +58,25 @@ in the stable development build. These do not establish complete native privacy,
 traffic, memory or real-document accuracy. See the OCR decision and status for
 actual evidence and pending device checks.
 
+Code 10 adds folders, printed-identifier lookup and local file tools. Folder
+names, derivative parent links and new derivative files use the same SQLCipher
+database and Tink object encryption as imports. Identifier lookup is deterministic
+pattern matching over stored page text in unlocked memory; values are displayed
+with their exact cited page and are never logged, saved through UI state or sent
+to the model. Copy is an explicit tap that marks the clip sensitive (Android 13+
+hides previews); other apps with clipboard access can still read it.
+
+Tools (compress to a size, PDF page to JPEG, image to PDF, passport-size photo)
+run only after the user taps **Create copy** on an app-owned card. They decrypt
+one authenticated pinned revision into memory, process it in memory with Android
+framework codecs/face detection and pdfium rendering, encrypt each output as a new
+document and clear the plaintext buffers. No plaintext file, cache, network call
+or model is involved, and the original is never modified. A compressed PDF is
+rebuilt from page images; the card discloses that text, links, forms and
+signatures are not preserved. Chat or document text cannot start, confirm or
+target a tool. Getting a result out of the vault still uses the explicit **Save
+to phone** system picker described below.
+
 Export is a direct user action through the system file picker. The output is an
 unencrypted external copy, possibly in a cloud provider selected by the user.
 The provider or recipient may retain it. Failed/cancelled exports attempt to

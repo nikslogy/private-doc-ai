@@ -15,7 +15,10 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Entity(tableName = "documents", indices = [Index(value = ["sha256"], unique = true)])
+@Entity(
+    tableName = "documents",
+    indices = [Index(value = ["sha256"], unique = true), Index(value = ["folderId"])],
+)
 internal data class DocumentEntity(
     @PrimaryKey val id: String,
     val displayName: String,
@@ -26,11 +29,45 @@ internal data class DocumentEntity(
     val revisionId: String = id,
     @ColumnInfo(defaultValue = "0") val pageCount: Int = 0,
     @ColumnInfo(defaultValue = "'NOT_INDEXED'") val indexState: String = VaultIndexState.NOT_INDEXED.name,
+    /** Null means "not in a folder". Folder names live only in the encrypted database. */
+    val folderId: String? = null,
+    /** A derivative (compressed copy, page image, passport photo) records the document it came from. */
+    val parentDocumentId: String? = null,
 ) {
     fun toDocument() = VaultDocument(
         id, displayName, mimeType, sizeBytes, importedAtEpochMillis, sha256, revisionId,
-        pageCount, enumValueOf(indexState),
+        pageCount, enumValueOf(indexState), folderId, parentDocumentId,
     )
+}
+
+@Entity(tableName = "folders")
+internal data class FolderEntity(
+    @PrimaryKey val id: String,
+    val name: String,
+    val createdAtEpochMillis: Long,
+) {
+    fun toFolder() = VaultFolder(id, name, createdAtEpochMillis)
+}
+
+@Dao
+internal interface FolderDao {
+    @Query("SELECT * FROM folders ORDER BY name COLLATE NOCASE ASC, id ASC")
+    fun all(): List<FolderEntity>
+
+    @Query("SELECT * FROM folders WHERE id = :id LIMIT 1")
+    fun find(id: String): FolderEntity?
+
+    @Query("SELECT COUNT(*) FROM folders")
+    fun count(): Int
+
+    @Insert
+    fun insert(folder: FolderEntity)
+
+    @Query("UPDATE folders SET name = :name WHERE id = :id")
+    fun rename(id: String, name: String)
+
+    @Query("DELETE FROM folders WHERE id = :id")
+    fun delete(id: String)
 }
 
 @Entity(
@@ -112,6 +149,20 @@ internal interface DocumentDao {
 
     @Query("DELETE FROM documents WHERE id = :id")
     fun delete(id: String)
+
+    @Query("UPDATE documents SET folderId = :folderId WHERE id = :id")
+    fun move(id: String, folderId: String?)
+
+    @Query("UPDATE documents SET displayName = :name WHERE id = :id")
+    fun rename(id: String, name: String)
+
+    /** Deleting a folder never deletes its documents; they return to the unfiled list. */
+    @Query("UPDATE documents SET folderId = NULL WHERE folderId = :folderId")
+    fun unfile(folderId: String)
+
+    /** Derivatives stay valid files on their own after the parent is deleted. */
+    @Query("UPDATE documents SET parentDocumentId = NULL WHERE parentDocumentId = :parentId")
+    fun detachChildren(parentId: String)
 }
 
 @Dao
@@ -146,13 +197,15 @@ internal interface EvidenceDao {
 }
 
 @Database(
-    entities = [DocumentEntity::class, PageEvidenceEntity::class, PageSpanEntity::class, PageSearchEntity::class],
-    version = 2,
+    entities = [DocumentEntity::class, PageEvidenceEntity::class, PageSpanEntity::class, PageSearchEntity::class,
+        FolderEntity::class],
+    version = 3,
     exportSchema = true,
 )
 internal abstract class VaultDatabase : RoomDatabase() {
     abstract fun documents(): DocumentDao
     abstract fun evidence(): EvidenceDao
+    abstract fun folders(): FolderDao
 
     companion object {
         /** Adds only encrypted metadata; v1 originals and their immutable identity stay unchanged. */
@@ -172,6 +225,17 @@ internal abstract class VaultDatabase : RoomDatabase() {
                 // Room omits the default SIMPLE tokenizer option; its schema validator compares
                 // FTS option strings, so explicitly adding the equivalent default fails migration.
                 db.execSQL("CREATE VIRTUAL TABLE IF NOT EXISTS page_search USING FTS4(searchTerms TEXT NOT NULL)")
+            }
+        }
+
+        /** Adds folders and derivative parent links. Existing documents stay unfiled and unchanged. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS folders (id TEXT NOT NULL, name TEXT NOT NULL, " +
+                    "createdAtEpochMillis INTEGER NOT NULL, PRIMARY KEY(id))")
+                db.execSQL("ALTER TABLE documents ADD COLUMN folderId TEXT")
+                db.execSQL("ALTER TABLE documents ADD COLUMN parentDocumentId TEXT")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_documents_folderId ON documents(folderId)")
             }
         }
     }

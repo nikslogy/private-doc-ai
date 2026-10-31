@@ -65,11 +65,26 @@ class VaultEvidenceMigrationInstrumentedTest {
                 assertEquals(document.displayName, migrated.displayName)
                 assertEquals(0, migrated.pageCount)
                 assertEquals(VaultIndexState.NOT_INDEXED.name, migrated.indexState)
+                // Schema 3: existing documents are unfiled originals with no parent.
+                assertEquals(null, migrated.folderId)
+                assertEquals(null, migrated.parentDocumentId)
+                assertEquals(0, db.folders().count())
+                db.runInTransaction {
+                    db.folders().insert(FolderEntity("f".repeat(8) + "-0000-0000-0000-" + "0".repeat(12), "PRIVATE_FOLDER_CANARY", 1))
+                    db.documents().move(document.id, "f".repeat(8) + "-0000-0000-0000-" + "0".repeat(12))
+                }
+                assertEquals("PRIVATE_FOLDER_CANARY", db.folders().all().single().name)
+                db.runInTransaction {
+                    db.documents().unfile("f".repeat(8) + "-0000-0000-0000-" + "0".repeat(12))
+                    db.folders().delete("f".repeat(8) + "-0000-0000-0000-" + "0".repeat(12))
+                }
+                assertEquals(null, db.documents().find(document.id)!!.folderId)
                 assertTrue(db.evidence().pages(document.id).isEmpty())
                 assertTrue(db.evidence().searchIds(LiteralSearchQuery.parse("PRIVATE").ftsMatch!!, 50).isEmpty())
             }
             assertArrayEquals(ciphertextCanary, opaqueOriginal.readBytes())
             assertEncrypted(directory, "PRIVATE_MIGRATION_TITLE")
+            assertEncrypted(directory, "PRIVATE_FOLDER_CANARY")
         }
     }
 
@@ -189,7 +204,7 @@ class VaultEvidenceMigrationInstrumentedTest {
     private fun database(context: Context, path: File, key: ByteArray): VaultDatabase =
         Room.databaseBuilder(context, VaultDatabase::class.java, path.absolutePath)
             .openHelperFactory(SupportOpenHelperFactory(key.copyOf()))
-            .addMigrations(VaultDatabase.MIGRATION_1_2)
+            .addMigrations(VaultDatabase.MIGRATION_1_2, VaultDatabase.MIGRATION_2_3)
             .setJournalMode(androidx.room.RoomDatabase.JournalMode.TRUNCATE)
             .addCallback(VaultDatabaseSecurity)
             .allowMainThreadQueries().build()

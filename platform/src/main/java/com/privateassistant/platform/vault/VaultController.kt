@@ -35,8 +35,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.io.FilterOutputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -89,7 +91,7 @@ class VaultController(context: Context) {
                         File(directory, "metadata.db").absolutePath,
                     )
                         .openHelperFactory(factory)
-                        .addMigrations(VaultDatabase.MIGRATION_1_2)
+                        .addMigrations(VaultDatabase.MIGRATION_1_2, VaultDatabase.MIGRATION_2_3)
                         .setJournalMode(androidx.room.RoomDatabase.JournalMode.TRUNCATE)
                         .addCallback(VaultDatabaseSecurity)
                         .build()
@@ -271,10 +273,32 @@ class VaultController(context: Context) {
      * Streams directly from the provider into authenticated ciphertext. The original URI is neither
      * persisted nor granted durable permission. Same-content imports return the existing document.
      */
-    suspend fun importDocument(uri: Uri, mimeType: String?, displayName: String): VaultDocument =
+    suspend fun importDocument(uri: Uri, mimeType: String?, displayName: String, folderId: String? = null): VaultDocument =
+        importStream(mimeType, displayName, folderId, parentDocumentId = null) {
+            applicationContext.contentResolver.openInputStream(uri)
+        }
+
+    /**
+     * Stores an app-created derivative (for example a compressed copy) as a new immutable document.
+     * The caller owns [bytes] and should clear them afterwards. The parent original is not modified.
+     */
+    suspend fun storeDerivative(parent: VaultDocument, bytes: ByteArray, mimeType: String, displayName: String): VaultDocument {
+        require(bytes.isNotEmpty())
+        return importStream(mimeType, displayName, parent.folderId, parent.id) { ByteArrayInputStream(bytes) }
+    }
+
+    private suspend fun importStream(
+        mimeType: String?,
+        displayName: String,
+        folderId: String?,
+        parentDocumentId: String?,
+        openInput: () -> InputStream?,
+    ): VaultDocument =
         withContext(Dispatchers.IO) {
             operations.withLock {
                 val active = requireSession()
+                val folder = folderId?.let { id -> active.database.folders().find(validId(id))?.id }
+                val parent = parentDocumentId?.let { id -> active.database.documents().find(validId(id))?.id }
                 val normalizedMime = DocumentMimeType.fromWireValue(mimeType)
                     ?: throw VaultImportException("Choose a PDF, JPEG, PNG, or UTF-8 text document.", reason = VaultImportFailure.UNSUPPORTED_TYPE)
                 val safeName = sanitizeName(displayName)
@@ -289,7 +313,7 @@ class VaultController(context: Context) {
                     var size = 0L
                     val buffer = ByteArray(BUFFER_SIZE)
                     try {
-                        val input = applicationContext.contentResolver.openInputStream(uri)
+                        val input = openInput()
                             ?: throw VaultImportException("The selected document could not be opened.", reason = VaultImportFailure.READ_FAILED)
                         input.use { source ->
                             FileOutputStream(staging).use { file ->
@@ -341,6 +365,8 @@ class VaultController(context: Context) {
                         sha256 = sha256,
                         revisionId = revisionId,
                         pageCount = parsed.pageCount,
+                        folderId = folder,
+                        parentDocumentId = parent,
                     )
                     val pages = VaultEvidenceStore.parsed(entity, parsed)
                     val terms = VaultEvidenceStore.prepareTerms(pages)
@@ -442,6 +468,7 @@ class VaultController(context: Context) {
             ensureSession(active)
             // Commit the removal before unlinking ciphertext. Recovery cleans an interrupted unlink.
             commit(active, currentCoroutineContext()) {
+                active.database.documents().detachChildren(validatedId)
                 active.database.evidence().deleteSearch(validatedId)
                 // Foreign-key cascades remove page evidence and source geometry in this transaction.
                 active.database.documents().delete(validatedId)
@@ -450,6 +477,82 @@ class VaultController(context: Context) {
             DurableFiles.syncDirectory(objectDirectory)
             refreshState(active)
         }
+    }
+
+    suspend fun folders(): List<VaultFolder> = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val folders = active.database.folders().all().map(FolderEntity::toFolder)
+            ensureSession(active)
+            folders
+        }
+    }
+
+    suspend fun createFolder(name: String): VaultFolder = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            if (active.database.folders().count() >= MAX_FOLDERS) throw VaultFolderException()
+            val entity = FolderEntity(UUID.randomUUID().toString(), folderName(name), System.currentTimeMillis())
+            commit(active, currentCoroutineContext()) { active.database.folders().insert(entity) }
+            entity.toFolder()
+        }
+    }
+
+    suspend fun renameFolder(id: String, name: String) = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val folder = active.database.folders().find(validId(id)) ?: throw VaultFolderException()
+            commit(active, currentCoroutineContext()) { active.database.folders().rename(folder.id, folderName(name)) }
+        }
+    }
+
+    /** Removes only the folder. Its documents remain in the vault, unfiled. */
+    suspend fun deleteFolder(id: String) = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val folder = active.database.folders().find(validId(id)) ?: return@withLock
+            commit(active, currentCoroutineContext()) {
+                active.database.documents().unfile(folder.id)
+                active.database.folders().delete(folder.id)
+            }
+        }
+    }
+
+    /** A null folder moves the document back to the unfiled list. */
+    suspend fun moveDocument(documentId: String, folderId: String?) = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val document = active.database.documents().find(validId(documentId)) ?: throw VaultSourceUnavailableException()
+            val folder = folderId?.let { active.database.folders().find(validId(it)) ?: throw VaultFolderException() }
+            commit(active, currentCoroutineContext()) { active.database.documents().move(document.id, folder?.id) }
+        }
+    }
+
+    suspend fun renameDocument(documentId: String, name: String) = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val document = active.database.documents().find(validId(documentId)) ?: throw VaultSourceUnavailableException()
+            commit(active, currentCoroutineContext()) { active.database.documents().rename(document.id, sanitizeName(name)) }
+        }
+    }
+
+    /**
+     * Authenticated plaintext of one pinned revision for an explicit, user-confirmed local tool.
+     * The caller must clear the returned array in finally and must not write it to disk.
+     */
+    suspend fun readOriginal(documentId: String, expectedRevisionId: String): ByteArray = withContext(Dispatchers.IO) {
+        operations.withLock {
+            val active = requireSession()
+            val document = active.database.documents().find(validId(documentId)) ?: throw VaultSourceUnavailableException()
+            if (document.revisionId != validId(expectedRevisionId)) throw VaultSourceUnavailableException()
+            readOriginal(active, document)
+        }
+    }
+
+    private fun folderName(name: String): String {
+        val clean = name.filterNot { it.isISOControl() || it == '/' || it == '\\' }.trim().take(MAX_FOLDER_NAME)
+        if (clean.isBlank()) throw VaultFolderException()
+        return clean
     }
 
     private fun requireSession(): Session = session ?: throw VaultLockedException()
@@ -604,6 +707,8 @@ class VaultController(context: Context) {
         // All application components currently run in one Android process.
         private val operations = Mutex()
         const val MAX_DOCUMENT_BYTES = 25L * 1024L * 1024L
+        const val MAX_FOLDERS = 200
+        const val MAX_FOLDER_NAME = 60
         private const val BUFFER_SIZE = 64 * 1024
         /** Deterministic limits, not a claim of exhaustive retrieval or semantic relevance. */
         private const val SEARCH_CANDIDATE_LIMIT = 200

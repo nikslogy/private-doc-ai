@@ -17,7 +17,13 @@ data class VaultDocument(
     /** Zero means an existing revision has not yet been explicitly indexed. */
     val pageCount: Int = 0,
     val indexState: VaultIndexState = VaultIndexState.NOT_INDEXED,
+    val folderId: String? = null,
+    /** Set for app-created derivatives; the parent original is never modified. */
+    val parentDocumentId: String? = null,
 )
+
+/** Encrypted-database folder metadata, available only while unlocked. */
+data class VaultFolder(val id: String, val name: String, val createdAtEpochMillis: Long)
 
 enum class VaultIndexState { NOT_INDEXED, NEEDS_OCR, INDEXING, INDEXED, PARTIAL, FAILED }
 enum class VaultPageState { READY, EMPTY, NEEDS_OCR, FAILED }
@@ -73,5 +79,7 @@ class VaultIndexException(cause: Throwable? = null) :
     VaultException("The document could not be indexed. Its original and previous evidence have been preserved.", cause)
 class VaultSearchException(cause: Throwable? = null) :
     VaultException("Enter up to 512 characters and 24 search terms.", cause)
+class VaultFolderException :
+    VaultException("Enter a folder name of up to 60 characters.")
 class VaultSourceUnavailableException :
     VaultException("The selected source revision is unavailable. Select a document again.")

@@ -20,6 +20,11 @@ import com.privateassistant.platform.vault.VaultAuthenticationRequiredException
 import com.privateassistant.platform.vault.VaultController
 import com.privateassistant.platform.vault.VaultDocument
 import com.privateassistant.platform.vault.VaultExportException
+import com.privateassistant.platform.vault.VaultFolder
+import com.privateassistant.platform.vault.VaultFolderException
+import com.privateassistant.platform.vault.VaultSourceUnavailableException
+import com.privateassistant.platform.tools.DocumentToolExecutor
+import com.privateassistant.platform.tools.ToolResult
 import com.privateassistant.platform.vault.VaultImportException
 import com.privateassistant.platform.vault.VaultImportFailure
 import com.privateassistant.platform.vault.VaultIntegrityException
@@ -46,12 +51,18 @@ import kotlinx.coroutines.withContext
 
 enum class AppPage { DOCUMENTS, ASSISTANT, PRIVACY }
 
+/** Encrypted-database folder plus its current document count, in unlocked memory only. */
+data class FolderUi(val folder: VaultFolder, val documentCount: Int)
+
 data class VaultUiState(
     val unlocked: Boolean = false,
     val authenticating: Boolean = false,
     val busy: Boolean = false,
     val requiresDeviceSecurity: Boolean = false,
     val documents: List<VaultDocument> = emptyList(),
+    val folders: List<VaultFolder> = emptyList(),
+    /** Null shows the home overview; otherwise the open folder's documents. */
+    val openFolderId: String? = null,
     val query: String = "",
     val searching: Boolean = false,
     val searchFailed: Boolean = false,
@@ -84,7 +95,8 @@ class VaultUiModel(
     val models = ModelManagerUiModel(context, scope)
     val assistant = AssistantChatUiModel(context, scope,
         loadSource = { document -> vault.pageEvidence(document.id, document.revisionId) },
-        searchSources = { query -> vault.searchDocuments(query).map { it.document } })
+        searchSources = { query -> vault.searchDocuments(query).map { it.document } },
+        tools = VaultToolHost())
     // Bundled capability is fixed for this installed APK. Never do asset I/O while locking.
     private val ocrAvailable = vault.ocrAvailable
     private val mutableState = MutableStateFlow(VaultUiState(ocrAvailable = ocrAvailable))
@@ -98,6 +110,7 @@ class VaultUiModel(
     private var factsGeneration = 0L
     private var session = 0L
     private var pendingImports: List<Uri> = emptyList()
+    private var pendingImportFolder: String? = null
     private var pendingExport: VaultDocument? = null
 
     fun beginAuthentication(): Boolean {
@@ -122,9 +135,13 @@ class VaultUiModel(
             vault.unlock()
             requireSession(expectedSession)
             val documents = vault.documents()
-            publish(expectedSession) { it.copy(unlocked = true, documents = documents, requiresDeviceSecurity = false) }
+            val folders = vault.folders()
+            publish(expectedSession) { it.copy(unlocked = true, documents = documents, folders = folders,
+                requiresDeviceSecurity = false) }
             models.unlock()
             assistant.unlock(documents)
+            // The assistant answers from the user's documents by default once any exist.
+            if (documents.isNotEmpty()) assistant.selectAllDocuments()
             if (pendingImports.isNotEmpty()) importPending(expectedSession)
         }
     }
@@ -155,6 +172,7 @@ class VaultUiModel(
     fun receiveImports(uris: List<Uri>) {
         if (uris.isEmpty()) return
         pendingImports = uris
+        pendingImportFolder = mutableState.value.openFolderId
         if (mutableState.value.unlocked) runOperation { importPending(it) }
         else showMessage(R.string.unlock_to_finish_import)
     }
@@ -162,7 +180,9 @@ class VaultUiModel(
     private suspend fun importPending(expectedSession: Long) {
         requireSession(expectedSession)
         val uris = pendingImports
+        val folderId = pendingImportFolder
         pendingImports = emptyList()
+        pendingImportFolder = null
         var completed = 0
         val failures = mutableSetOf<VaultImportFailure>()
         for (uri in uris) {
@@ -174,7 +194,7 @@ class VaultUiModel(
                     name to context.contentResolver.getType(uri)
                 }
                 requireSession(expectedSession)
-                vault.importDocument(uri, mime, name)
+                vault.importDocument(uri, mime, name, folderId)
                 requireSession(expectedSession)
                 completed++
             } catch (cancelled: CancellationException) {
@@ -192,6 +212,7 @@ class VaultUiModel(
             }
         }
         val documents = vault.documents()
+        val wasEmpty = mutableState.value.documents.isEmpty()
         publish(expectedSession) { it.copy(
             documents = documents,
             importCount = completed.takeIf { count -> count > 0 },
@@ -201,6 +222,8 @@ class VaultUiModel(
                 else -> R.string.import_some_failed
             },
         ) }
+        if (wasEmpty && documents.isNotEmpty() && !assistant.state.value.allDocuments &&
+            assistant.state.value.selectedDocument == null) assistant.selectAllDocuments()
     }
 
     fun prepareExport(document: VaultDocument): Boolean {
@@ -248,6 +271,136 @@ class VaultUiModel(
             closeDocument()
             if (mutableState.value.factsDocument?.id == document.id) clearFactsDocument()
             publish(expectedSession) { it.copy(documents = documents, message = R.string.document_deleted) }
+        }
+    }
+
+    fun openFolder(folder: VaultFolder?) {
+        if (!mutableState.value.unlocked) return
+        closeDocument()
+        mutableState.update { it.copy(openFolderId = folder?.id, page = AppPage.DOCUMENTS) }
+    }
+
+    fun createFolder(name: String, thenMove: VaultDocument? = null) {
+        if (name.isBlank()) return
+        runOperation { expectedSession ->
+            requireSession(expectedSession)
+            val folder = vault.createFolder(name)
+            if (thenMove != null && isCurrentDocument(thenMove)) vault.moveDocument(thenMove.id, folder.id)
+            refreshLibrary(expectedSession, R.string.folder_created)
+        }
+    }
+
+    fun renameFolder(folder: VaultFolder, name: String) {
+        if (name.isBlank()) return
+        runOperation { expectedSession ->
+            requireSession(expectedSession)
+            vault.renameFolder(folder.id, name)
+            refreshLibrary(expectedSession, null)
+        }
+    }
+
+    /** Only the folder is removed; its documents stay in the vault, unfiled. */
+    fun deleteFolder(folder: VaultFolder) {
+        runOperation { expectedSession ->
+            requireSession(expectedSession)
+            vault.deleteFolder(folder.id)
+            publish(expectedSession) { it.copy(openFolderId = if (it.openFolderId == folder.id) null else it.openFolderId) }
+            refreshLibrary(expectedSession, R.string.folder_deleted)
+        }
+    }
+
+    fun moveDocument(document: VaultDocument, folder: VaultFolder?) {
+        if (!isCurrentDocument(document)) return
+        runOperation { expectedSession ->
+            requireSession(expectedSession)
+            vault.moveDocument(document.id, folder?.id)
+            refreshLibrary(expectedSession, R.string.document_moved)
+        }
+    }
+
+    fun renameDocument(document: VaultDocument, name: String) {
+        if (!isCurrentDocument(document) || name.isBlank()) return
+        runOperation { expectedSession ->
+            requireSession(expectedSession)
+            vault.renameDocument(document.id, name)
+            refreshLibrary(expectedSession, null)
+        }
+    }
+
+    /** Opens the assistant pinned to this document; the user then types their own question. */
+    fun askAbout(document: VaultDocument) {
+        if (!isCurrentDocument(document)) return
+        setPage(AppPage.ASSISTANT)
+        assistant.selectDocument(document)
+    }
+
+    /** Opens a chat-offered document only if it is still a current authorized revision. */
+    fun openFromChat(document: VaultDocument) {
+        val current = mutableState.value.documents.singleOrNull { it.id == document.id && it.revisionId == document.revisionId }
+            ?: return
+        if (mutableState.value.busy) return
+        setPage(AppPage.DOCUMENTS)
+        openDocument(current, null)
+    }
+
+    private suspend fun refreshLibrary(expectedSession: Long, @StringRes message: Int?) {
+        val documents = vault.documents()
+        val folders = vault.folders()
+        publish(expectedSession) { state ->
+            state.copy(documents = documents, folders = folders,
+                openFolderId = state.openFolderId?.takeIf { id -> folders.any { it.id == id } },
+                selectedDocument = state.selectedDocument?.let { selected -> documents.firstOrNull { it.id == selected.id } },
+                message = message ?: state.message)
+        }
+    }
+
+    /** Runs a user-confirmed local tool. Plaintext stays in memory and is cleared after storing outputs. */
+    private inner class VaultToolHost : AssistantToolHost {
+        override fun folderName(folderId: String?): String? =
+            folderId?.let { id -> mutableState.value.folders.firstOrNull { it.id == id }?.name }
+
+        override suspend fun documentsCreated() {
+            val expectedSession = session
+            refreshLibrary(expectedSession, null)
+        }
+
+        override suspend fun run(request: AssistantToolRequest, cancelled: () -> Boolean): AssistantToolOutcome {
+            val expectedSession = session
+            val document = request.document
+            if (!isCurrentDocument(document)) throw VaultSourceUnavailableException()
+            val original = vault.readOriginal(document.id, document.revisionId)
+            try {
+                requireSession(expectedSession)
+                val result = withContext(Dispatchers.Default) {
+                    val executor = DocumentToolExecutor(cancelled)
+                    when (request.kind) {
+                        ToolKind.COMPRESS -> executor.compress(original, document.mimeType, request.targetBytes)
+                        ToolKind.TO_IMAGE -> executor.toImages(original, document.mimeType)
+                        ToolKind.TO_PDF -> executor.toPdf(original, document.mimeType)
+                        ToolKind.PASSPORT_PHOTO -> executor.passportPhoto(original, document.mimeType, request.spec)
+                    }
+                }
+                return when (result) {
+                    is ToolResult.AlreadyFits -> AssistantToolOutcome.AlreadyFits(result.bytes)
+                    is ToolResult.Unreachable -> AssistantToolOutcome.Unreachable(result.smallestBytes)
+                    is ToolResult.Created -> {
+                        val stored = ArrayList<VaultDocument>()
+                        try {
+                            for (output in result.outputs) {
+                                if (cancelled()) throw CancellationException("Tool cancelled")
+                                requireSession(expectedSession)
+                                val name = derivativeName(document.displayName, output.nameSuffix, output.extension)
+                                stored += vault.storeDerivative(document, output.bytes, output.mimeType, name)
+                            }
+                        } finally {
+                            result.outputs.forEach { it.bytes.fill(0) }
+                        }
+                        AssistantToolOutcome.Created(stored, result.faceFound)
+                    }
+                }
+            } finally {
+                original.fill(0)
+            }
         }
     }
 
@@ -557,6 +710,8 @@ class VaultUiModel(
                 if (session == currentSession) showMessage(R.string.export_failed)
             } catch (_: VaultIndexException) {
                 if (session == currentSession) showMessage(R.string.indexing_failed)
+            } catch (_: VaultFolderException) {
+                if (session == currentSession) showMessage(R.string.folder_name_invalid)
             } catch (_: Exception) {
                 if (session == currentSession) showMessage(R.string.vault_operation_failed)
             } finally {
@@ -572,6 +727,11 @@ class VaultUiModel(
         private const val MAX_QUERY_CHARS = 256
         private const val SEARCH_DEBOUNCE_MILLIS = 250L
     }
+}
+
+internal fun derivativeName(original: String, suffix: String, extension: String): String {
+    val base = original.substringBeforeLast('.', original).trim().ifBlank { "Document" }.take(180)
+    return "$base - $suffix.$extension"
 }
 
 internal fun VaultDocument.indexSummary(searchablePages: Int = 0) = IndexSummaryUi(

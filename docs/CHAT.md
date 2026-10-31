@@ -5,6 +5,43 @@ questions beyond a small set of printed policy/invoice fields. Consult STATUS
 for actual validation and APK availability. The exact compact model and receipt
 are unchanged; an intact existing installation can be reused.
 
+## Personal identifiers and file tools (code 10 / 0.6.0-dev)
+
+The Assistant now opens in **My documents** scope once the vault has documents.
+Before any model call, `AssistantCommandParser` reads only the user's own typed
+message with deterministic English rules. It recognizes:
+
+- **Identifier lookups** such as “What is my PAN number?”, “my Aadhaar no”,
+  passport, voter ID (EPIC), driving licence, GSTIN, IFSC, vehicle registration,
+  bank account, UAN, email, mobile and date of birth. `PersonalIdentifierExtractor`
+  scans bounded stored page text (at most 16 sources / 200,000 UTF-16 units per
+  request, name matches first) with strict patterns: PAN holder-type letter, Aadhaar
+  Verhoeff checksum and consistent grouping, document-label gates for passport/
+  voter/licence/IFSC/vehicle numbers and same/previous-line labels for account,
+  UAN, mobile and date of birth. Each value is shown exactly as printed with its
+  cited page; masked Aadhaar is labelled masked. Several different values are all
+  shown. No value is generated, and no model is needed. Unread scans are reported
+  instead of claiming absence.
+- **Find a document**: “show my PAN card”, “open my passport”.
+- **Compress to a size**: “this PDF under 200 KB”, “compress my resume to 1.5 MB”.
+  KB/MB are decimal (200 KB = 200,000 bytes), which also satisfies forms that count
+  1,024-byte KB. Results are measured encoder output; an unreachable target reports
+  the smallest measured size instead of producing an oversized file.
+- **Convert**: “my PAN in image format” (PDF pages → JPEG, up to 10 pages; PNG →
+  JPEG), “convert this photo to PDF” (A4 page).
+- **Passport-size photo**: 35 × 45 mm (413 × 531 px at 300 DPI) or US 2 × 2 in,
+  cropped around the face found by Android's on-device `FaceDetector`. Background
+  and lighting are not altered; without a face the crop is centred and says so.
+
+A tool request becomes an app-owned card naming the resolved document, the
+operation and (for PDF compression) the disclosure that page text, links, forms
+and signatures are not preserved. Nothing runs until the user taps **Create
+copy**. Ambiguous matches show a document choice first. Outputs are stored as new
+encrypted documents in the source's folder with a parent link; the original is
+unchanged. Result cards offer **Open** and **Save to phone** (system picker).
+Clear, lock and source removal discard pending cards. Rules are English-only and
+limited; anything else falls through to the existing chat routes unchanged.
+
 ## General chat
 
 Choose **General chat**, type a message, then Send. System instructions, recent

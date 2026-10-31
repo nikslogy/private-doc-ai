@@ -5,7 +5,12 @@ import android.content.ContextWrapper
 import android.content.res.AssetManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.privateassistant.app.ui.ActionStatus
 import com.privateassistant.app.ui.AssistantChatUiModel
+import com.privateassistant.app.ui.AssistantToolHost
+import com.privateassistant.app.ui.AssistantToolOutcome
+import com.privateassistant.app.ui.AssistantToolRequest
+import com.privateassistant.app.ui.ToolKind
 import com.privateassistant.app.ui.AssistantChatBackend
 import com.privateassistant.app.ui.AssistantChatUiState
 import com.privateassistant.app.ui.AssistantMessageKind
@@ -497,6 +502,85 @@ class AssistantChatLifecycleTest {
         }
     }
 
+    @Test
+    fun personalIdentifierLookupIsCitedAndNeedsNoModel() = runBlocking {
+        val card = document("pan-card")
+        val other = document("notes")
+        val text = "INCOME TAX DEPARTMENT\nPermanent Account Number\nABCPE1234F"
+        val tools = RecordingTools()
+        withModel({ if (it.id == card.id) pages(it, text) else pages(it, "Shopping list") }, tools = tools) {
+            unlock(card, other)
+            ask("What is my PAN number?")
+            val answer = response()
+            assertEquals(AssistantMessageKind.DOCUMENT, answer.kind)
+            val value = answer.identifiers.single()
+            assertEquals("ABCPE1234F", value.value)
+            assertEquals(card.id, value.document.id)
+            assertEquals("ABCPE1234F", answer.citations.single().quote)
+            assertTrue(tools.requests.isEmpty())
+        }
+    }
+
+    @Test
+    fun toolRequestsRunOnlyAfterExplicitConfirmation() = runBlocking {
+        val resume = document("resume").copy(displayName = "Resume.pdf", mimeType = "application/pdf", sizeBytes = 900_000)
+        val photo = document("photo").copy(displayName = "Holiday.jpg", mimeType = "image/jpeg", sizeBytes = 50_000)
+        val tools = RecordingTools()
+        withModel({ pages(it, "Synthetic text") }, tools = tools) {
+            unlock(resume, photo)
+            ask("compress my resume to under 200 kb")
+            val proposal = response()
+            val action = requireNotNull(proposal.action)
+            assertEquals(ToolKind.COMPRESS, action.tool)
+            assertEquals(ActionStatus.PROPOSED, action.status)
+            assertEquals(resume.id, action.document?.id)
+            assertEquals(200_000L, action.targetBytes)
+            assertTrue(tools.requests.isEmpty())
+            onMain { model.confirmAction(proposal.id) }
+            val result = response()
+            assertEquals(1, tools.requests.size)
+            assertEquals(resume.id, tools.requests.single().document.id)
+            assertEquals("Resume - compressed.pdf", result.documents.single().displayName)
+            assertEquals(ActionStatus.DONE, model.state.value.messages.first { it.id == proposal.id }.action?.status)
+            // A finished card cannot be confirmed again.
+            onMain { model.confirmAction(proposal.id) }
+            assertEquals(1, tools.requests.size)
+        }
+    }
+
+    @Test
+    fun clearingOrLockingDropsUnconfirmedToolProposals() = runBlocking {
+        val photo = document("selfie").copy(displayName = "my photo.jpg", mimeType = "image/jpeg")
+        val tools = RecordingTools()
+        withModel({ pages(it, "") }, tools = tools) {
+            unlock(photo)
+            ask("make my photo passport size")
+            val proposal = response()
+            assertEquals(ToolKind.PASSPORT_PHOTO, proposal.action?.tool)
+            onMain { model.clearConversation() }
+            onMain { model.confirmAction(proposal.id) }
+            assertTrue(tools.requests.isEmpty())
+            ask("make my photo passport size")
+            val second = response()
+            onMain { model.lock() }
+            onMain { model.confirmAction(second.id) }
+            assertTrue(tools.requests.isEmpty())
+        }
+    }
+
+    private class RecordingTools : AssistantToolHost {
+        val requests = ArrayList<AssistantToolRequest>()
+        override suspend fun run(request: AssistantToolRequest, cancelled: () -> Boolean): AssistantToolOutcome {
+            requests += request
+            val name = request.document.displayName.substringBeforeLast('.') + " - compressed.pdf"
+            return AssistantToolOutcome.Created(listOf(request.document.copy(id = "created-${requests.size}",
+                revisionId = "created-revision-${requests.size}", displayName = name, sizeBytes = 150_000,
+                parentDocumentId = request.document.id)))
+        }
+        override suspend fun documentsCreated() = Unit
+        override fun folderName(folderId: String?): String? = null
+    }
+
     private class RecordingBackend(private val respond: suspend (LocalChatRequest) -> String) : AssistantChatBackend {
         val requests = ArrayList<LocalChatRequest>()
         override suspend fun isReady() = true
@@ -509,14 +593,15 @@ class AssistantChatLifecycleTest {
     private suspend fun withModel(loader: suspend (VaultDocument) -> List<VaultPageEvidence>,
         backend: AssistantChatBackend? = null,
         searchSources: suspend (String) -> List<VaultDocument> = { emptyList() },
+        tools: AssistantToolHost? = null,
         block: suspend Fixture.() -> Unit,
     ) {
-        val fixture = Fixture(loader, backend, searchSources)
+        val fixture = Fixture(loader, backend, searchSources, tools)
         try { fixture.block() } finally { withContext(NonCancellable) { fixture.close() } }
     }
 
     private class Fixture(loader: suspend (VaultDocument) -> List<VaultPageEvidence>, backend: AssistantChatBackend?,
-        searchSources: suspend (String) -> List<VaultDocument>,
+        searchSources: suspend (String) -> List<VaultDocument>, tools: AssistantToolHost?,
     ) {
         private val instrumentation = InstrumentationRegistry.getInstrumentation()
         private val root = File(instrumentation.targetContext.cacheDir,
@@ -532,8 +617,8 @@ class AssistantChatLifecycleTest {
         private val lifetime = SupervisorJob()
         private val scope = CoroutineScope(lifetime + Dispatchers.Main.immediate)
         private val releases = ArrayList<CompletableDeferred<Unit>>()
-        val model = if (backend == null) AssistantChatUiModel(context, scope, loader, searchSources)
-            else AssistantChatUiModel(context, scope, loader, backend, searchSources)
+        val model = if (backend == null) AssistantChatUiModel(context, scope, loader, searchSources, tools)
+            else AssistantChatUiModel(context, scope, loader, backend, searchSources, tools)
 
         fun releaseOnClose(release: CompletableDeferred<Unit>) { releases.add(release) }
         suspend fun <T> onMain(block: () -> T): T = withContext(Dispatchers.Main.immediate) { block() }

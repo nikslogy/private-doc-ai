@@ -85,6 +85,8 @@ fun PrivateAssistantApp(
     val context = LocalContext.current
     BackHandler(enabled = state.unlocked && state.selectedDocument != null) { model.closeDocument() }
     BackHandler(enabled = state.unlocked && state.modelManagerOpen) { model.closeModels() }
+    BackHandler(enabled = state.unlocked && state.selectedDocument == null && state.openFolderId != null &&
+        state.page == AppPage.DOCUMENTS) { model.openFolder(null) }
     LaunchedEffect(state.message, state.importCount) {
         val message = state.message?.let(context::getString)
             ?: state.importCount?.let { context.resources.getQuantityString(R.plurals.documents_imported, it, it) }
@@ -117,7 +119,7 @@ fun PrivateAssistantApp(
                 if (state.unlocked) NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
                     AppPage.entries.forEach { page ->
                         val label = when (page) {
-                            AppPage.DOCUMENTS -> R.string.tab_documents
+                            AppPage.DOCUMENTS -> R.string.tab_home
                             AppPage.ASSISTANT -> R.string.tab_assistant
                             AppPage.PRIVACY -> R.string.tab_privacy
                         }
@@ -148,19 +150,31 @@ fun PrivateAssistantApp(
                                 onOcr = { script -> model.readDocument(document, script) },
                                 onExport = { model.closeDocument(); onExport(document) },
                                 onDelete = { model.deleteDocument(document) })
-                        } ?: DocumentsScreen(state, model::setQuery, onImport, model::openDocument)
+                        } ?: HomeScreen(state, HomeActions(
+                            onQuery = model::setQuery, onImport = onImport, onOpen = model::openDocument,
+                            onOpenFolder = model::openFolder, onCreateFolder = model::createFolder,
+                            onRenameFolder = model::renameFolder, onDeleteFolder = model::deleteFolder,
+                            onMove = model::moveDocument, onRename = model::renameDocument,
+                            onDelete = model::deleteDocument, onExport = onExport, onAsk = model::askAbout,
+                            onOpenAssistant = { model.setPage(AppPage.ASSISTANT) }))
                         AppPage.ASSISTANT -> if (state.modelManagerOpen) ModelManagerScreen(modelState,
                             onBack = model::closeModels, onImport = onImportModel,
                             onDiagnostic = model.models::diagnostic, onRemove = model.models::remove,
                             onCancel = model.models::cancel, onRefresh = model.models::refresh,
                             onOpenLink = onOpenModelLink)
-                        else AssistantChatScreen(chatState,
+                        else AssistantChatScreen(chatState, AssistantCallbacks(
                             onDraft = model.assistant::setDraft, onSend = model.assistant::send,
                             onCancel = model.assistant::cancel, onClear = model.assistant::clearConversation,
                             onSelectDocument = model.assistant::selectDocument,
                             onSelectAllDocuments = model.assistant::selectAllDocuments,
                             onViewSource = model::viewChatSource, onOpenModels = model::openModels,
-                            onRefreshModel = model.assistant::refreshModel)
+                            onRefreshModel = model.assistant::refreshModel,
+                            onConfirmAction = model.assistant::confirmAction,
+                            onCancelAction = model.assistant::cancelAction,
+                            onChooseActionDocument = model.assistant::chooseActionDocument,
+                            onProposeTool = model.assistant::proposeTool,
+                            onOpenDocument = model::openFromChat,
+                            onSaveDocument = onExport))
                         AppPage.PRIVACY -> PrivacyScreen(onLock)
                     }
                 }
@@ -217,148 +231,6 @@ private fun LockedScreen(state: VaultUiState, onUnlock: () -> Unit, onDeviceSecu
         Spacer(Modifier.height(12.dp))
         Text(stringResource(R.string.welcome_recovery_note), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
-    }
-}
-
-@Composable
-private fun DocumentsScreen(
-    state: VaultUiState,
-    onQuery: (String) -> Unit,
-    onImport: () -> Unit,
-    onDocument: (VaultDocument, Int?) -> Unit,
-) {
-    val filtered = remember(state.documents, state.visibleDocumentIds, state.query) {
-        if (state.query.isBlank()) state.documents
-        else {
-            val byId = state.documents.associateBy { it.id }
-            state.visibleDocumentIds.orEmpty().mapNotNull { byId[it] }
-        }
-    }
-    LazyColumn(
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp),
-    ) {
-        item {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween) {
-                Column(Modifier.weight(1f)) {
-                    Text(stringResource(R.string.documents_title), style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.SemiBold)
-                    Spacer(Modifier.height(4.dp))
-                    Text(pluralStringResource(R.plurals.documents_in_vault, state.documents.size, state.documents.size),
-                        style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                Button(onClick = onImport, enabled = !state.busy) {
-                    AppIcon(R.drawable.ic_add, null, Modifier.size(18.dp))
-                    Spacer(Modifier.width(6.dp))
-                    Text(stringResource(R.string.import_document))
-                }
-            }
-        }
-        item {
-            Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(12.dp))
-                .padding(horizontal = 14.dp, vertical = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_shield), null, Modifier.size(18.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                Spacer(Modifier.width(9.dp))
-                Text(stringResource(R.string.documents_storage_note), style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
-            }
-        }
-        if (state.documents.isNotEmpty()) item {
-            OutlinedTextField(value = state.query, onValueChange = onQuery, singleLine = true,
-                leadingIcon = { AppIcon(R.drawable.ic_search, null) },
-                label = { Text(stringResource(R.string.search_documents)) },
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
-            Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.search_scope), style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 4.dp))
-            if (state.searching) {
-                Spacer(Modifier.height(8.dp))
-                LinearProgressIndicator(Modifier.fillMaxWidth())
-                Text(stringResource(R.string.search_in_progress), style = MaterialTheme.typography.labelSmall)
-            }
-            if (state.searchFailed) Text(stringResource(R.string.search_failed),
-                color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-        }
-        if (state.documents.isEmpty()) item {
-            EmptyDocuments(state.busy, onImport)
-        } else if (filtered.isEmpty() && !state.searching && !state.searchFailed) item {
-            Column(Modifier.fillMaxWidth().padding(vertical = 40.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                AppIcon(R.drawable.ic_search, null, Modifier.size(36.dp))
-                Spacer(Modifier.height(12.dp))
-                Text(stringResource(R.string.no_search_results), style = MaterialTheme.typography.titleMedium)
-                TextButton(onClick = { onQuery("") }) { Text(stringResource(R.string.clear_search)) }
-            }
-        } else items(filtered, key = { it.id }) { document ->
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                DocumentRow(document, enabled = !state.busy, onClick = { onDocument(document, null) })
-                state.searchMatches.filter { it.documentId == document.id }.take(3).forEach { match ->
-                    Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.surface) {
-                        Column(Modifier.fillMaxWidth().clickable(enabled = !state.busy,
-                            onClick = { onDocument(document, match.pageNumber) }).padding(horizontal = 16.dp, vertical = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text(stringResource(R.string.search_source_page, match.pageNumber),
-                                style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-                            Text(match.excerpt, maxLines = 4, overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.bodySmall)
-                        }
-                    }
-                }
-            }
-        }
-        item {
-            Text(stringResource(R.string.supported_formats), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp), textAlign = TextAlign.Center)
-        }
-    }
-}
-
-@Composable
-private fun EmptyDocuments(busy: Boolean, onImport: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 42.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(22.dp)) {
-                AppIcon(R.drawable.ic_documents, null, Modifier.padding(20.dp).size(38.dp))
-            }
-            Spacer(Modifier.height(22.dp))
-            Text(stringResource(R.string.empty_documents_title), style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
-            Spacer(Modifier.height(8.dp))
-            Text(stringResource(R.string.empty_documents_body), style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(Modifier.height(22.dp))
-            FilledTonalButton(onClick = onImport, enabled = !busy) { Text(stringResource(R.string.choose_documents)) }
-        }
-    }
-}
-
-@Composable
-private fun DocumentRow(document: VaultDocument, enabled: Boolean, onClick: () -> Unit) {
-    val context = LocalContext.current
-    Surface(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)) {
-        Row(Modifier.fillMaxWidth().clickable(enabled = enabled, onClick = onClick).padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.primaryContainer) {
-                Icon(painterResource(if (document.mimeType.startsWith("image/")) R.drawable.ic_image else R.drawable.ic_file),
-                    null, Modifier.padding(12.dp).size(24.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
-            }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text(document.displayName, maxLines = 2, overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Spacer(Modifier.height(5.dp))
-                Text(stringResource(R.string.document_summary, fileType(document.mimeType),
-                    Formatter.formatShortFileSize(context, document.sizeBytes)),
-                    style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                Spacer(Modifier.height(6.dp))
-                IndexStatusBadge(document.indexSummary().status)
-            }
-            Spacer(Modifier.width(8.dp))
-            AppIcon(R.drawable.ic_chevron, R.string.document_details, Modifier.size(20.dp))
-        }
     }
 }
 

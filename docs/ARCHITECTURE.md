@@ -80,6 +80,27 @@ orphan ciphertext. It does not remove original
 provider files or external copies. Core's single-use export/delete permits are
 available for the future typed-action executor; no model executor is connected.
 
+## Folders, identifiers and derivative tools (schema 3)
+
+Schema 3 adds an encrypted `folders` table and nullable `folderId`/
+`parentDocumentId` columns on documents. Migration 2→3 only creates the table,
+columns and folder index; original identity, objects and evidence are untouched.
+Deleting a folder unfiles its documents in the same transaction; deleting a parent
+detaches derivatives, which stay valid documents.
+
+`core.identity.PersonalIdentifierExtractor`, `core.assistant.AssistantCommandParser`,
+`DocumentResolver`, `core.tools.SizeTargetSearch`, `PassportPhotoLayout` and
+`JpegPdfWriter` are pure Kotlin with JVM tests. `platform.tools.DocumentToolExecutor`
+performs compression, PDF→JPEG, image→PDF and passport crops on in-memory bytes
+through the existing heavy-work gate (pdfium rendering, BitmapFactory, framework
+JPEG encoder, `android.media.FaceDetector`). PDFs are written by `JpegPdfWriter`
+with JPEG passthrough because Android's `PdfDocument` re-encodes bitmaps losslessly.
+`VaultController.readOriginal` returns one authenticated pinned revision for a
+confirmed tool; `storeDerivative` reuses the import path (streaming encryption,
+validation, dedupe, evidence) for outputs. The app's `AssistantToolHost` is the
+only executor; `AssistantChatUiModel.confirmAction` is reachable only from the
+card button and rechecks the document's current authorization.
+
 ## Domain safety
 
 `core` preserves explicit document/revision references and decimal source text.
