@@ -26,6 +26,9 @@ EXPECTED_TESTS = {
     "unavailableModelStillShowsRelevantDocumentExcerpts",
     "generatedSubsetKeepsOriginalSourceReferenceNumber",
     "uncitedExplanationShowsAllSuppliedContextWithoutClaimingVerifiedMeaning",
+    "personalIdentifierLookupIsCitedAndNeedsNoModel",
+    "toolRequestsRunOnlyAfterExplicitConfirmation",
+    "clearingOrLockingDropsUnconfirmedToolProposals",
 }
 MAX_REPORT_BYTES = 8 * 1024 * 1024
 
