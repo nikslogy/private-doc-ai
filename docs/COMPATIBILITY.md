@@ -58,7 +58,7 @@ Gradle 8.13 and JDK 17 or newer. The project uses JDK 21 to run Gradle.
 | `net.zetetic:sqlcipher-android:4.9.0` | SQLite encryption | Maintained package family; tagged API21+ source inspected; Room/encryption/wrong-key probes passed on API 36 x86_64; physical checks pending |
 | `androidx.sqlite:sqlite-ktx:2.5.0` | Room SupportSQLite integration | Use `SupportOpenHelperFactory`, without `setDriver` or bundled plaintext SQLite |
 | `androidx.exifinterface:exifinterface:1.4.2` | Bounded image EXIF orientation handling | Official release documented; actual Android decoder/rotation tests pending |
-| `com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0@aar` | Local bitmap OCR | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; actual synthetic recognition passed on API 36 x86_64; physical quality/privacy pending |
+| `cz.adaptech.tesseract4android:tesseract4android:4.9.0@aar` | Local bitmap OCR | Exact 12,848,454-byte AAR SHA-256 pinned; no transitive dependencies; actual synthetic recognition passed on API 36 x86_64; physical quality/privacy pending |
 | `com.google.mlkit:text-recognition:16.0.1` and `text-recognition-devanagari:16.0.1` | Instrumentation probes only | Official bundled coordinates/APIs inspected; excluded from both production variants due diagnostics collection |
 
 The new runtime's official AAR is 20,192,711 bytes, SHA-256

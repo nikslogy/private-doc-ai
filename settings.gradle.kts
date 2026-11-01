@@ -27,7 +27,7 @@ dependencyResolutionManagement {
         exclusiveContent {
             forRepositories(verifiedOcrRuntime, pinnedOcrOrigin)
             filter {
-                includeVersion("com.github.adaptech-cz.Tesseract4Android", "tesseract4android", "4.9.0")
+                includeVersion("cz.adaptech.tesseract4android", "tesseract4android", "4.9.0")
             }
         }
     }

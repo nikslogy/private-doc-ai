@@ -21,7 +21,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "artifacts/ocr-provenance"
-BASE = "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0"
+BASE = "https://jitpack.io/cz/adaptech/tesseract4android/tesseract4android/4.9.0/tesseract4android-4.9.0"
 REVISION = "15c534717b1cb58261b58d4e4c1200c7f81f668c"
 TESSDATA_REVISION = "87416418657359cb625c412a48b6e1d6d41c29bd"
 TESSDATA_BASE = f"https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/{TESSDATA_REVISION}/"
@@ -88,7 +88,7 @@ def main():
     native = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = native
     spec.loader.exec_module(native)
-    report = {"schemaVersion": 1, "probeOnly": True, "coordinate": "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0",
+    report = {"schemaVersion": 1, "probeOnly": True, "coordinate": "cz.adaptech.tesseract4android:tesseract4android:4.9.0",
               "sourceRevision": REVISION, "inputs": [], "nativeLibraries": []}
     try:
         report["tessdataRevision"] = TESSDATA_REVISION

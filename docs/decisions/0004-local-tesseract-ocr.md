@@ -79,3 +79,17 @@ canaries, and physical-device latency/memory/16 KiB measurements. Keep those
 results distinct from successful compilation and static artifact verification.
 Finish the complete native notices and provenance audit for all app components.
 No cloud fallback, network OCR, telemetry SDK or assistant model is enabled.
+
+## Amendment, 1 November 2026: resolution coordinate
+
+The original JitPack path
+`com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/…aar` began
+returning 404 and its build API reported "No build artifacts found" for 4.9.0.
+Upstream's README coordinate `cz.adaptech.tesseract4android:tesseract4android:4.9.0`
+(JitPack custom-domain group) still serves the AAR. Its downloaded bytes were
+independently measured as exactly 12,848,454 bytes with SHA-256
+bce5d6413a1a5ae3d7240033fbbc851ba3217d0a08d9769400e17a077f42cb2a — identical to
+the reviewed pin. Only the URL/Gradle coordinate changed; the pinned size, hash,
+source revision, exclusive repository filter and pre-build verification are
+unchanged, so no new binary was accepted. JitPack remains a single third-party
+origin; if it stops serving these bytes, builds fail closed again.

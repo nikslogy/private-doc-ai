@@ -7,7 +7,7 @@ plugins {
 
 // The direct AAR has no transitive dependency or POM-driven behavior. The exact
 // same coordinate is verified below before Android preBuild can complete.
-val tesseractAarCoordinate = "com.github.adaptech-cz.Tesseract4Android:tesseract4android:${libs.versions.tesseract.get()}@aar"
+val tesseractAarCoordinate = "cz.adaptech.tesseract4android:tesseract4android:${libs.versions.tesseract.get()}@aar"
 val tesseractBinary by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true

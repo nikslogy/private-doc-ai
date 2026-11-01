@@ -70,7 +70,7 @@ class OcrRuntimePreparationTest(unittest.TestCase):
         return RUNTIME.prepare_runtime(self.record, self.repository, download=True, fetch=fetch or self.fetch,
                                        gradle_user_home=self.gradle_home)
 
-    def gradle_entry(self, home=None, version="4.9.0", group="com.github.adaptech-cz.Tesseract4Android"):
+    def gradle_entry(self, home=None, version="4.9.0", group="cz.adaptech.tesseract4android"):
         return (home or self.gradle_home) / "caches/modules-2/files-2.1" / group / "tesseract4android" / version / ("a" * 40) / RUNTIME.ARTIFACT_PATH.name
 
     def assert_no_staging(self):
@@ -84,7 +84,7 @@ class OcrRuntimePreparationTest(unittest.TestCase):
         self.prepare()
         self.assertEqual(len(self.fetches), 1)
         self.assertEqual(self.target.relative_to(self.repository).as_posix(),
-                         "com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar")
+                         "cz/adaptech/tesseract4android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar")
         self.assert_no_staging()
 
     def test_verify_only_missing_or_invalid_cache_never_downloads_or_creates_directories(self):

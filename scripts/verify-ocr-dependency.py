@@ -8,8 +8,8 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-COORDINATE = "com.github.adaptech-cz.Tesseract4Android:tesseract4android:4.9.0"
-URL = "https://jitpack.io/com/github/adaptech-cz/Tesseract4Android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar"
+COORDINATE = "cz.adaptech.tesseract4android:tesseract4android:4.9.0"
+URL = "https://jitpack.io/cz/adaptech/tesseract4android/tesseract4android/4.9.0/tesseract4android-4.9.0.aar"
 
 
 def verify_artifact(record, path):
