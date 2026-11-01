@@ -1,58 +1,52 @@
 # Development status
 
-## Checkpoint 14 — folders, home redesign, ID lookup and local file tools (code 10 source)
+## Checkpoint 14 — folders, home redesign, ID lookup and local file tools (code 10)
 
-Source-only development update toward the product vision (a private document
-scanner/vault whose assistant can find, convert and resize the user's own files).
-**No APK was built or delivered from this checkpoint yet**; see the OCR runtime
-blocker below. Version is 0.6.0-dev / code 10 with database schema 3.
+Development update toward the product vision (a private document scanner/vault
+whose assistant can find, convert and resize the user's own files). Version
+0.6.0-dev / code 10, database schema 3.
 
 What changed:
 
-- **Home**: new CamScanner-style home with search, quick actions (Import, Ask,
-  New folder), horizontally scrolling folders, rich document cards and a ⋮ menu
-  per document (Ask about this, Details & text, Move to folder, Rename, Save to
-  phone, Delete with confirmation). Folder screens support Import here, rename and
-  delete (documents are kept and unfiled).
+- **Home**: CamScanner-style home with search, quick actions (Import, Ask, New
+  folder), horizontally scrolling folders, rich document cards and a ⋮ menu per
+  document (Ask about this, Details & text, Move to folder, Rename, Save to phone,
+  Delete with confirmation). Folder screens support Import here, rename and delete
+  (documents are kept and unfiled).
 - **Folders/derivatives (schema 3)**: encrypted `folders` table plus nullable
   `folderId`/`parentDocumentId`; migration 2→3 adds only these. See ARCHITECTURE.
-- **Assistant**: redesigned chat (scope chip, suggestion chips, bubbles, sticky
-  composer) that defaults to **My documents** once documents exist. A deterministic
-  command layer handles, without any AI model: printed identifier lookups (PAN,
-  Aadhaar with Verhoeff checksum, passport, voter ID, driving licence, GSTIN, IFSC,
-  vehicle registration, bank account, UAN, email, mobile, date of birth) with exact
-  cited values and a sensitive-flagged Copy; finding a document; compressing an
-  image/PDF to a stated size; PDF→JPEG; image→PDF; passport-size photos (35×45 mm
-  or 2×2 in, framework face detection). Tools run only after **Create copy** on an
+- **Assistant**: redesigned chat (scope chip, suggestion chips, bubbles, composer)
+  that defaults to **My documents** once documents exist. A deterministic command
+  layer handles, without any AI model: printed identifier lookups (PAN, Aadhaar
+  with Verhoeff checksum, passport, voter ID, driving licence, GSTIN, IFSC, vehicle
+  registration, bank account, UAN, email, mobile, date of birth) with exact cited
+  values and a sensitive-flagged Copy; finding a document; compressing an image/
+  PDF to a stated size; PDF→JPEG; image→PDF; passport-size photos (35×45 mm or
+  2×2 in, framework face detection). Tools run only after **Create copy** on an
   app-owned card and save new encrypted documents; originals never change.
-  All-documents questions with no relevant passages and no private intent now get
-  a general local-model reply instead of a dead-end notice.
+  All-documents questions with no relevant passages and no private intent get a
+  general local-model reply instead of a dead-end notice.
+- **OCR runtime coordinate**: the old JitPack path for the pinned Tesseract AAR
+  began returning 404 ("No build artifacts found"). Upstream's documented
+  `cz.adaptech.tesseract4android:tesseract4android:4.9.0` coordinate serves bytes
+  measured identical to the pin (12,848,454 bytes, SHA-256 bce5d641…cb2a). Only the
+  URL/coordinate changed; see the amendment in decision 0004.
 
-| Gate | Actual result (31 October 2026, this container) |
+| Gate | Actual result |
 | --- | --- |
-| Core JVM | 168 passing, 0 failures/errors/skips (136 existing + 32 new: identifiers, commands/resolver, compatibility with existing chat questions, size search, passport crop, JPEG-PDF writer) |
-| Platform JVM | 28 + 28 passing (offline/connected), 0 failures |
-| Compilation | platform/app main and all four instrumentation source sets compiled |
-| Lint | platform and app, offline and connected: passed |
-| Production dependency gate | `:app:verifyProductionDependencies` passed (no ML Kit) |
-| Python host checks | all 11 scripts in check-host.sh passed |
-| Assembly, verify-artifact, full check-host.sh | **Not run** — see blocker |
-| Android instrumentation/device | **Not run**; no device/KVM. New authored cases: 3 chat controller (ID lookup cited without model; tools run only after confirmation; clear/lock drop proposals) and schema-3 folder assertions in the migration test |
+| Local full `scripts/check-host.sh` (1 Nov, this container) | PASS in 195 s, unmodified, with the verified AAR: 11 Python checks, core/platform JVM, lint, all instrumentation compilation, production dependency gate, both assemblies and verify-artifact (offline has no INTERNET) |
+| Core JVM | 168 passing, 0 failures/skips (136 existing + 32 new) |
+| Platform JVM | 28 + 28 passing (offline/connected) |
+| CI Host checks run 41269991915 (commit 3b52c84) | **Success**: host gate, disposable stable-signing check and Android 16 emulator regressions |
+| Android 16 emulator (run 41268395031 report, digest f7e4ed6d…f1f8, independently downloaded/parsed) | 21 app + 38 platform cases per variant, none failed/skipped, including the 3 new controller cases and schema-3 folder migration assertions. That run failed only because the chat result allow-list lacked the new names; fixed in 3b52c84, whose run passed |
+| Physical phone | **Not run** |
 
-**Blocker — pinned OCR runtime unavailable at its origin.** JitPack now returns
-404 for the pinned `tesseract4android-4.9.0.aar` and its build API reports
-"Error: No build artifacts found" for 4.9.0. Maven Central has no such coordinate.
-The pin (12,848,454 bytes, SHA-256 bce5d641…cb2a) was not changed and no
-replacement bytes were accepted. For local Kotlin type-checking only, Gradle ran
-with `-x verifyTesseractBinary` against a throwaway signatures-only stub placed in
-the ignored `.tooling` repository; it was deleted afterwards, nothing was
-assembled from it, and it is not in the repository. CI's restored Gradle cache
-may still hold the verified bytes; otherwise the OCR runtime source needs an owner
-decision (e.g. re-pin an official release after review) before APKs can be built.
-Confirmed: CI Host checks run 41234502663 (commit aafa88c, branch
-ccr-0ddcfe16-2fmc7k) failed in its first validation step with the same
-"Pinned OCR runtime download unavailable (HTTP_404)" before any Gradle task; its
-restored cache did not supply the AAR. No APK or Android result was produced.
+Test-signed (`.dev`, disposable identity) APK artifact 13068599290 from run
+41269991915: 316,242,203 bytes, digest
+sha256:81d6ecc6e2c41c99ddb28cd7c992cd19d3969ea5d9f78a0fd955a73efc8e074b, expires
+8 November 2026. It installs as a separate app and cannot update **Private Vault
+Preview**. A stable-signed Preview update requires the stable-development workflow
+on `main` (merge this branch, then update config/development-delivery.json).
 
 Not yet evaluated: identifier precision/recall on real cards (OCR errors, layouts,
 Hindi/Marathi labels), PDF compression quality/size on real scans, face-detector
@@ -60,9 +54,8 @@ accuracy and passport-photo compliance (background/lighting are not changed),
 phone UI layout, memory/time of tools on 4 GB devices, and the general-chat
 fallback behaviour. English-only command rules; not an evaluated intent classifier.
 
-Next: obtain a verified OCR runtime path (or CI cache confirmation), run full
-check-host and both Android suites, build the code 10 APKs, then phone-check the
-new home/folders, ID lookup, compress/convert/passport flows and schema 2→3
+Next: merge to `main` and run the stable-development delivery, then phone-check
+the new home/folders, ID lookup, compress/convert/passport flows and schema 2→3
 upgrade preservation on the iQOO Neo 10. After that: camera scanning (in-memory
 capture with edge crop), Sharesheet export via expiring grants, and an evaluated
 identifier/tool fixture set.
